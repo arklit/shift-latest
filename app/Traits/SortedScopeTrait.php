@@ -1,13 +1,13 @@
 <?php
 
-    namespace App\Traits;
+namespace App\Traits;
 
-    use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder;
 
-    trait SortedScopeTrait
+trait SortedScopeTrait
+{
+    public function scopeSorted(Builder $query, $direction = 'desc'): Builder
     {
-        public function scopeSorted(Builder $query, $direction = 'desc'): Builder
-        {
-            return $query->orderBy('sort', $direction);
-        }
+        return $query->orderBy('sort', $direction);
     }
+}

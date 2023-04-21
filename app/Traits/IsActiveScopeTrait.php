@@ -1,13 +1,13 @@
 <?php
 
-    namespace App\Traits;
+namespace App\Traits;
 
-    use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder;
 
-    trait IsActiveScopeTrait
+trait IsActiveScopeTrait
+{
+    public function scopeActive(Builder $query): Builder
     {
-        public function scopeActive(Builder $query): Builder
-        {
-            return $query->where('is_active','=',  true);
-        }
+        return $query->where('is_active', '=', true);
     }
+}

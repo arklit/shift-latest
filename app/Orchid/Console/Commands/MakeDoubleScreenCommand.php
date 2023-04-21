@@ -3,6 +3,7 @@
 namespace App\Orchid\RocontModule\Console\Commands;
 
 use App\Helpers\LoggerHelper;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 
@@ -20,7 +21,7 @@ class MakeDoubleScreenCommand extends Command
         try {
             Artisan::call('rocont:make_list', ['name' => $listScreen]);
             Artisan::call('rocont:make_edit', ['name' => $editScreen]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             LoggerHelper::commonErrorVerbose($e);
             $this->error('Error occurred!');
         }

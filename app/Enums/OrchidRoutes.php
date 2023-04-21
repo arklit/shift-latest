@@ -10,6 +10,9 @@ enum OrchidRoutes: string
     case seo = 'seo';
     case robot = 'robot';
     case sitemap = 'sitemap';
+    case static = 'static_page';
+    case conf = 'configurator';
+
 
     public function edit()
     {

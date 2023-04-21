@@ -45,7 +45,7 @@ class CategoryFilter extends Filter
         }
 
         $value = $filter['category_id'];
-        return $builder->whereHas('category', fn ($q) => (mb_strlen($value) > 1) ? $q->where('title', 'LIKE', "%$value%") : $q->where('title', '=', "$value"));
+        return $builder->whereHas('category', fn($q) => (mb_strlen($value) > 1) ? $q->where('title', 'LIKE', "%$value%") : $q->where('title', '=', "$value"));
     }
 
     /**

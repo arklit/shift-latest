@@ -1,17 +1,17 @@
 <?php
 
-    namespace App\Orchid\RocontModule\Traits;
+namespace App\Orchid\RocontModule\Traits;
 
-    use Orchid\Screen\Actions\Button;
-    use Orchid\Screen\Actions\Link;
+use Orchid\Screen\Actions\Button;
+use Orchid\Screen\Actions\Link;
 
-    trait CommandBarUndelitableTrait
+trait CommandBarUndelitableTrait
+{
+    public function commandBar()
     {
-        public function commandBar()
-        {
-            return [
-                Link::make(__('orchid.go-back'))->icon('arrow-left-circle')->route($this->listRedirect, $this->redirectParams),
-                Button::make(__('orchid.save'))->icon('save')->method('save'),
-            ];
-        }
+        return [
+            Link::make(__('orchid.go-back'))->icon('arrow-left-circle')->route($this->listRedirect, $this->redirectParams),
+            Button::make(__('orchid.save'))->icon('save')->method('save'),
+        ];
     }
+}

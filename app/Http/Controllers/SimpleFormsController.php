@@ -6,6 +6,7 @@ use App\Helpers\DebugNotificationHelper;
 use App\Helpers\LoggerHelper;
 use App\Mail\ManagerMailService;
 use App\Traits\CommonResponsesTrait;
+use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -53,7 +54,7 @@ class SimpleFormsController
             $mailer = new ManagerMailService();
             $method = $this->params['mail_method'];
             $mailer->$method($payload, $this->params['subject'], $this->params['letter_view']);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             LoggerHelper::debug(json_encode($payload, JSON_UNESCAPED_UNICODE));
             LoggerHelper::commonErrorVerbose($e);
             DebugNotificationHelper::sendVerboseErrorEmail($e);

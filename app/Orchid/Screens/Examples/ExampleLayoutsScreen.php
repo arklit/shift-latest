@@ -6,6 +6,7 @@ use App\Orchid\Layouts\Examples\TabMenuExample;
 use Orchid\Screen\Action;
 use Orchid\Screen\Screen;
 use Orchid\Support\Facades\Layout;
+use Throwable;
 
 class ExampleLayoutsScreen extends Screen
 {
@@ -52,9 +53,9 @@ class ExampleLayoutsScreen extends Screen
     /**
      * The screen's layout elements.
      *
-     * @throws \Throwable
-     *
      * @return \Orchid\Screen\Layout[]
+     * @throws Throwable
+     *
      */
     public function layout(): iterable
     {

@@ -1,8 +1,8 @@
 <?php
 
-    namespace App\Enums;
+namespace App\Enums;
 
-    enum PivotTables: string
-    {
+enum PivotTables: string
+{
 
-    }
+}

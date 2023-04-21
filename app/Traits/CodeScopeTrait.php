@@ -1,13 +1,13 @@
 <?php
 
-    namespace App\Traits;
+namespace App\Traits;
 
-    use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder;
 
-    trait CodeScopeTrait
+trait CodeScopeTrait
+{
+    public function scopeCode(Builder $query, $code): Builder
     {
-        public function scopeCode(Builder $query, $code): Builder
-        {
-            return $query->where('code', $code);
-        }
+        return $query->where('code', $code);
     }
+}

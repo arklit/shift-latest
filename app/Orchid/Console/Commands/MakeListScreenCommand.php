@@ -2,7 +2,6 @@
 
 namespace App\Orchid\RocontModule\Console\Commands;
 
-use Illuminate\Console\Command;
 use Illuminate\Console\GeneratorCommand;
 use function app_path;
 

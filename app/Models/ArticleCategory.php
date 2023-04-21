@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use App\Traits\CodeScopeTrait;
-use App\Orchid\RocontModule\Traits\SortedScopeTrait;
 use App\Orchid\RocontModule\Traits\IsActiveScopeTrait;
+use App\Orchid\RocontModule\Traits\SortedScopeTrait;
+use App\Traits\CodeScopeTrait;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ArticleCategory extends ProtoModel

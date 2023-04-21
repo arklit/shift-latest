@@ -1,13 +1,13 @@
 <?php
 
-    namespace App\Traits;
+namespace App\Traits;
 
-    use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder;
 
-    trait IsMainScopeTrait
+trait IsMainScopeTrait
+{
+    public function scopeIsMain(Builder $query): Builder
     {
-        public function scopeIsMain(Builder $query): Builder
-        {
-            return $query->where('is_main','=',  true);
-        }
+        return $query->where('is_main', '=', true);
     }
+}

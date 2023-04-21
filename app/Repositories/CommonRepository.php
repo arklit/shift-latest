@@ -1,30 +1,30 @@
 <?php
 
-    namespace App\Repositories;
+namespace App\Repositories;
 
-    use App\Models\Article;
-    use App\Models\Product;
-    use Illuminate\Support\Collection;
+use App\Models\Article;
+use App\Models\Product;
+use Illuminate\Support\Collection;
 
-    class CommonRepository extends AbstractRepository
+class CommonRepository extends AbstractRepository
+{
+    private static $instance;
+
+    public static function take(): static
     {
-        private static $instance;
+        return static::$instance ?? (static::$instance = new static());
+    }
 
-        public static function take(): static
-        {
-            return static::$instance ?? (static::$instance = new static());
+    public function getProductsByCharacteristics(array $characteristics, int $currentID): Collection
+    {
+        $json = [];
+        foreach ($characteristics as $characteristic) {
+            $json[] = "JSON_CONTAINS(`characteristics`, '{\"code\":\"$characteristic\"}')";
         }
 
-        public function getProductsByCharacteristics(array $characteristics, int $currentID): Collection
-        {
-            $json = [];
-            foreach ($characteristics as $characteristic) {
-                $json[] = "JSON_CONTAINS(`characteristics`, '{\"code\":\"$characteristic\"}')";
-            }
+        $whereJson = implode(' OR ', $json);
 
-            $whereJson = implode(' OR ', $json);
-
-            $sql = "
+        $sql = "
                 SELECT *
                 FROM products AS p
                 WHERE p.is_active = 1 AND p.id != $currentID
@@ -32,12 +32,12 @@
                 ORDER BY sort ASC
             ";
 
-            return collect(self::executeSelectAll($sql, Product::class));
-        }
+        return collect(self::executeSelectAll($sql, Product::class));
+    }
 
-        public function getRelativeLastArticles(int $articleID, string $categoryCode): Collection
-        {
-            $sql = "
+    public function getRelativeLastArticles(int $articleID, string $categoryCode): Collection
+    {
+        $sql = "
                 SELECT ar.*, ac.code
                 FROM articles AS ar
                 LEFT JOIN article_categories AS ac ON category_id = ac.id
@@ -47,6 +47,6 @@
                 LIMIT 4;
             ";
 
-            return collect(self::executeSelectAll($sql, Article::class));
-        }
+        return collect(self::executeSelectAll($sql, Article::class));
     }
+}

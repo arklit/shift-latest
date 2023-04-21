@@ -3,21 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
-use App\Helpers\Constants;
-use Illuminate\Http\Request;
 use App\Models\ArticleCategory;
 use Illuminate\Http\JsonResponse;
-use App\Repositories\CommonRepository;
+use Illuminate\Http\Request;
 
 class BlogController extends Controller
 {
-    private int $perPage = Constants::DEFAULT_ITEMS_PER_PAGE;
+    private int $perPage = 10;
 
     /**
      * Страница со списком категорий и статей
      * @route /articles
      * @method GET
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * @param Request $request
+     * @return JsonResponse
      */
     public function getArticlesList(Request $request)
     {
@@ -26,19 +25,18 @@ class BlogController extends Controller
         $categories = ArticleCategory::query()->active()->sorted('asc')->whereHas('articles', fn($q) => $q->active()->publicated())->get();
         $articles = Article::query()->select('*')->active()->publicated()->publicationSorted()->paginate($this->perPage, $page);
 
-        return view('pages.articles', compact('categories', 'articles'));
+        return $this->responseData(compact('categories', 'articles'));
     }
 
     /**
      * Страница со статьями из выбранной категории
      * @route /articles/{categoryCode}
      * @method GET
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * @return JsonResponse
      */
     public function getArticlesCategory(Request $request, string $categoryCode)
     {
         $page = $this->getPage($request);
-
         $articles = Article::query()->select('*')->active()->publicated()->publicationSorted()
             ->whereHas('category', fn($q) => $q->active()->code($categoryCode))->paginate($this->perPage, $page);
         abort_if($articles->isEwmpty(), 404);
@@ -50,16 +48,14 @@ class BlogController extends Controller
      * Подробная страница конкретной статьи
      * @route /articles/{categoryCode}/{articleCode}
      * @method GET
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * @return JsonResponse
      */
     public function getArticlePage(string $categoryCode, string $articleSlug)
     {
         $article = Article::query()->active()->publicated()->where('slug', '=', $articleSlug)
             ->whereHas('category', fn($q) => $q->active()->code($categoryCode))->firstOrFail();
-        $lastArticles = CommonRepository::take()->getRelativeLastArticles($article->id, $categoryCode);
 
-
-        return view('pages.article', compact('article', 'lastArticles'));
+        return $this->responseData(compact('article'));
     }
 
     protected function getPage(Request $request)

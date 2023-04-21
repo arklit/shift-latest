@@ -1,23 +1,24 @@
 <?php
 
-    namespace App\Http\Controllers;
+namespace App\Http\Controllers;
 
-    use App\Helpers\DebugNotificationHelper;
-    use App\Helpers\LoggerHelper;
-    use App\Services\SitemapGenerator;
+use App\Helpers\DebugNotificationHelper;
+use App\Helpers\LoggerHelper;
+use App\Services\SitemapGenerator;
+use Exception;
 
-    class SitemapController extends Controller
+class SitemapController extends Controller
+{
+    public function __invoke()
     {
-        public function __invoke()
-        {
-            try {
-                $generator = new SitemapGenerator();
-                $map = $generator->generateMap();
-                return response($map,200, ['Content-Type' => 'application/xml']);
-            } catch (\Exception $e) {
-                LoggerHelper::commonErrorVerbose($e);
-                DebugNotificationHelper::sendVerboseErrorEmail($e);
-                abort(500);
-            }
+        try {
+            $generator = new SitemapGenerator();
+            $map = $generator->generateMap();
+            return response($map, 200, ['Content-Type' => 'application/xml']);
+        } catch (Exception $e) {
+            LoggerHelper::commonErrorVerbose($e);
+            DebugNotificationHelper::sendVerboseErrorEmail($e);
+            abort(500);
         }
     }
+}
