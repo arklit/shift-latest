@@ -3,15 +3,12 @@
 namespace App\Orchid\Screens\Articles;
 
 use App\Enums\OrchidRoutes;
-use App\Helpers\CommonHelper;
 use App\Models\Article;
 use App\Models\ArticleCategory;
-use App\Orchid\RocontModule\Abstraction\EditScreenPattern;
-use App\Orchid\RocontModule\Helpers\OrchidHelper;
-use App\Orchid\RocontModule\Traits\CommandBarDeletableTrait;
-use App\Services\MakeCodeValidator;
+use App\Orchid\Abstractions\EditScreenPattern;
+use App\Orchid\Helpers\OrchidHelper;
+use App\Orchid\Traits\CommandBarDeletableTrait;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Orchid\Screen\Fields\CheckBox;
@@ -24,6 +21,7 @@ use Orchid\Screen\Fields\Quill;
 use Orchid\Screen\Fields\Select;
 use Orchid\Screen\Fields\TextArea;
 use Orchid\Support\Facades\Layout;
+use function Symfony\Component\Translation\t;
 
 class ArticleEdit extends EditScreenPattern
 {
@@ -37,6 +35,7 @@ class ArticleEdit extends EditScreenPattern
 
     public function __construct()
     {
+        $this->route = OrchidRoutes::article;
         $this->listRedirect = OrchidRoutes::article->list();
     }
 
@@ -69,21 +68,24 @@ class ArticleEdit extends EditScreenPattern
                     ,
                 ]),
 
-                Layout::modal('deleteArticle', Layout::rows([]))->title('Удалить статью??')
-                    ->applyButton('Да')->closeButton('Нет')->async('asyncGetArticle'),
             ]),
+            Layout::modal('deleteArticle', Layout::rows([]))->title('Удалить статью??')
+                ->applyButton('Да')->closeButton('Нет')->async('asyncGetArticle'),
         ];
     }
 
     public function query(Article $item)
     {
-        return $this->queryMake($item);
+        return $this->queryMake($item, $this->route);
     }
 
     public function save(Article $item, Request $request)
     {
         $data = $request->input('item');
-        $data['slug'] = Str::slug($data['title']);
+        $data['slug'] = $item->exists ? $item : Str::slug($data['title']);
+
+        // проверка уникальности слага
+        // если статья уже создана, то слаг не перезаписывается
 
         $presets = OrchidHelper::getPreset('validators', OrchidRoutes::article->value);
         $presets['rules']['slug'] = [Rule::unique($item->getTable(), 'slug')->ignore($item->id)];
@@ -94,7 +96,10 @@ class ArticleEdit extends EditScreenPattern
             return $result;
         }
 
-        return $this->saveItem($item, $data);
+        $redirector =  $this->saveItem($item, $data);
+
+
+
     }
 
     public function asyncGetArticle(Article $item)
@@ -106,6 +111,8 @@ class ArticleEdit extends EditScreenPattern
 
     public function remove(Article $item)
     {
+
+
         return $this->removeItem($item);
     }
 }

@@ -4,21 +4,24 @@
 
     use App\Enums\OrchidRoutes;
     use App\Models\ArticleCategory;
-    use App\Orchid\RocontModule\Abstraction\EditScreenPattern;
-    use App\Orchid\RocontModule\Traits\CommandBarDeletableTrait;
-    use App\Services\MakeCodeValidator;
+    use App\Orchid\Abstractions\EditScreenPattern;
+    use App\Orchid\Helpers\OrchidHelper;
+    use App\Orchid\Traits\CommandBarDeletableTrait;
     use Illuminate\Http\Request;
     use Illuminate\Support\Str;
+    use Illuminate\Validation\Rule;
     use Orchid\Screen\Fields\CheckBox;
     use Orchid\Screen\Fields\Input;
     use Orchid\Screen\Fields\TextArea;
     use Orchid\Support\Facades\Alert;
     use Orchid\Support\Facades\Layout;
+    use Tabuna\Breadcrumbs\Breadcrumbs;
+    use Tabuna\Breadcrumbs\Trail;
 
     class ArticleCategoryEdit extends EditScreenPattern
     {
         protected string $createTitle      = 'Создание Категории Статей';
-        protected string $updateTitle      = 'Редактирование Категории Публикации';
+        protected string $updateTitle      = 'Редактирование Категории Статей';
         protected string $deleteMessage    = 'Запись успешно удалена';
         protected string $createMessage    = 'Запись успешно добавлена';
         protected string $titleName        = 'title';
@@ -27,6 +30,7 @@
 
         public function __construct()
         {
+            $this->route = OrchidRoutes::art_cat;
             $this->routeName = OrchidRoutes::art_cat->list();
         }
 
@@ -47,7 +51,7 @@
 
         public function query(ArticleCategory $item)
         {
-            return $this->queryMake($item);
+            return $this->queryMake($item, OrchidRoutes::art_cat);
         }
 
         public function save(ArticleCategory $item, Request $request)
@@ -55,12 +59,14 @@
             $data = $request->input('item');
             $data['code'] = Str::slug($data['code']);
             $data['sort'] = $data['sort'] ?? 0;
-            $validator = MakeCodeValidator::handle($item, $data, 'code', 'код');
-            $arguments = ($item->exists) ? ['id' => $item->id] : [];
-            $route = ($item->exists) ? OrchidRoutes::art_cat->edit() : OrchidRoutes::art_cat->create();
 
-            if ($validator->fails()) {
-                return redirect()->route($route, $arguments)->withErrors($validator)->withInput();
+            $presets = OrchidHelper::getPreset('validators', OrchidRoutes::art_cat->value);
+            $presets['rules']['code'] = [Rule::unique($item->getTable(), 'code')->ignore($item->id)];
+            $presets['messages']['code.unique'] = 'Такой код уже используется';
+            $result = OrchidHelper::validate($item, OrchidRoutes::article, $data, $presets);
+
+            if (!is_null($result)) {
+                return $result;
             }
 
             return $this->saveItem($item, $data);

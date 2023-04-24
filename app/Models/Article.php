@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use App\Orchid\RocontModule\Traits\IsActiveScopeTrait;
-use App\Orchid\RocontModule\Traits\ReadyToPublicationScopeTrait;
-use App\Orchid\RocontModule\Traits\SortedByPublicationScopeTrait;
+
+use App\Traits\IsActiveScopeTrait;
+use App\Traits\ReadyToPublicationScopeTrait;
+use App\Traits\SortedByPublicationScopeTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Article extends ProtoModel
@@ -25,6 +26,11 @@ class Article extends ProtoModel
     public function getTitle()
     {
         return $this->title;
+    }
+
+    public function getSlug()
+    {
+        return $this->slug;
     }
 }
 

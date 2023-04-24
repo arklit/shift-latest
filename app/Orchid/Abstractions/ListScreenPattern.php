@@ -21,18 +21,6 @@ abstract class ListScreenPattern extends Screen
      */
     protected int $paginate = 10;
 
-//        /**
-//         * Имя роута для списка (используется для редиректа на этот список, после редактирования элемента)
-//         * @var string|null
-//         */
-//        protected ?string $listRedirect = '';
-
-//        /**
-//         * Имя роута, используемого для редактирования элемента
-//         * @var string|null
-//         */
-//        protected ?string $updateRoute = '';
-
     /**
      * Имя роута
      * @var string

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Orchid\RocontModule\Traits;
+namespace App\Orchid\Traits;
 
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\Link;

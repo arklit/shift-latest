@@ -2,85 +2,86 @@
 
 namespace App\Orchid\Abstractions;
 
+use App\Enums\OrchidRoutes;
 use App\Interfaces\ProtoInterface;
 use Orchid\Screen\Screen;
 use Orchid\Support\Facades\Alert;
+use Tabuna\Breadcrumbs\Breadcrumbs;
+use Tabuna\Breadcrumbs\Trail;
 use function redirect;
 use function session;
 
 abstract class EditScreenPattern extends Screen
 {
-    /**
-     * Название страницы редактирования. Задаётся вручную или же автоматически подставляется как Updated/Created
+    /** Название страницы редактирования. Задаётся вручную или же автоматически подставляется как Updated/Created
      * @var string
      */
     public string $name = '';
 
-    /**
-     * Переменная определяющая редактируется ли уже существующая запись или создаётся новая
+    /** Переменная определяющая редактируется ли уже существующая запись или создаётся новая
      * @var bool
      */
     protected bool $exists = false;
 
-    /**
-     * Имя роута, на который будет происходить редирект после сохранения записи
+    /** Имя роута, на который будет происходить редирект после сохранения записи
      * @var string|null
      */
     protected ?string $listRedirect = null;
 
-    /**
-     * Параметры для редиректа к списку моделей (номер страницы)
+    /** Параметры для редиректа к списку моделей (номер страницы)
      * @var array
      */
     protected array $redirectParams = [];
 
-    /**
-     * Если true, то произойдёт редирект на основе данных из сессии, если false, то маршрут для перенаправления будет
+    /** Если true, то произойдёт редирект на основе данных из сессии, если false, то маршрут для перенаправления будет
      * взят из дефолтного значения переменной
      * @var bool
      */
     protected bool $redirectAfterUpdate = true;
 
-    /**
-     * Определяет дефолтное значение сообщения об успешном редактировании записи
+    /** Определяет дефолтное значение сообщения об успешном редактировании записи
      * @var string
      */
     protected string $createMessage = '';
 
-    /**
-     * Определяет дефолтное значение сообщения об успешном редактировании записи
+    /** Определяет дефолтное значение сообщения об успешном редактировании записи
      * @var string
      */
     protected string $updateMessage = '';
 
-    /**
-     * Определяет дефолтное значение сообщения об успешном удалении записи
+    /** Определяет дефолтное значение сообщения об успешном удалении записи
      * @var string
      */
     protected string $deleteMessage = '';
 
-    /**
-     * Определяет дефолтное значение заголовка для редактирования записи
+    /** Определяет дефолтное значение заголовка для редактирования записи
      * @var string
      */
     protected string $updateTitle = 'Редактирование записи';
 
-    /**
-     * Определяет дефолтное значение заголовка для удаления записи
+    /** Определяет дефолтное значение заголовка для удаления записи
      * @var string
      */
     protected string $createTitle = 'Создание записи';
 
-    /**
-     * Имя свойства (колонки в БД) у редактируемой сущности, в котором хранится её название (title, name, etc.)
+    /** Имя свойства (колонки в БД) у редактируемой сущности, в котором хранится её название (title, name, etc.)
      * @var string
      */
     protected string $titleName = '';
 
-    protected function queryMake($item)
+    /** Enum в котором хранятся данные по именам роутов для админки
+     * @var OrchidRoutes
+     */
+    protected OrchidRoutes $route;
+
+    protected function queryMake(ProtoInterface $item, OrchidRoutes $route)
     {
         $this->redirectTo();
-        $this->exists = !empty($item->id);
+        $this->exists = $item->exists;
+        $currentRoute = $this->exists ? $route->edit() : $route->create();
+        $name = $this->exists ? $this->updateTitle : $this->createTitle;
+
+        Breadcrumbs::for($currentRoute, fn(Trail $t) => $t->parent($route->list())->push($name, route($currentRoute)));
 
         if (empty($this->name)) {
             $this->name = $item->exists ? $this->updateTitle : $this->createTitle;

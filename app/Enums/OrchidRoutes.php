@@ -5,12 +5,12 @@ namespace App\Enums;
 enum OrchidRoutes: string
 {
     case article = 'article';
-    case art_cat = 'article_category';
+    case art_cat = 'article-category';
     case vacancy = 'vacancy';
     case seo = 'seo';
     case robot = 'robot';
     case sitemap = 'sitemap';
-    case static = 'static_page';
+    case static = 'static-page';
     case conf = 'configurator';
 
 
@@ -27,5 +27,10 @@ enum OrchidRoutes: string
     public function create()
     {
         return 'platform.' . $this->value . '.create';
+    }
+
+    public function base()
+    {
+        return 'platform.' . $this->value;
     }
 }

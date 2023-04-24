@@ -4,8 +4,8 @@
 
     use App\Enums\OrchidRoutes;
     use App\Models\StaticPage;
-    use App\Orchid\RocontModule\Abstraction\EditScreenPattern;
-    use App\Orchid\RocontModule\Traits\CommandBarDeletableTrait;
+    use App\Orchid\Abstractions\EditScreenPattern;
+    use App\Orchid\Traits\CommandBarDeletableTrait;
     use Illuminate\Http\Request;
     use Orchid\Screen\Fields\CheckBox;
     use Orchid\Screen\Fields\Input;

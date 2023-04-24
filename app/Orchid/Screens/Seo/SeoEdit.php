@@ -4,9 +4,8 @@
 
     use App\Enums\OrchidRoutes;
     use App\Models\Seo;
-    use App\Orchid\RocontModule\Abstraction\EditScreenPattern;
-    use App\Orchid\RocontModule\Traits\CommandBarDeletableTrait;
-    use App\Services\MakeCodeValidator;
+    use App\Orchid\Abstractions\EditScreenPattern;
+    use App\Orchid\Traits\CommandBarDeletableTrait;
     use Illuminate\Http\Request;
     use Illuminate\Support\Str;
     use Orchid\Screen\Fields\CheckBox;
@@ -16,8 +15,8 @@
 
     class SeoEdit extends EditScreenPattern
     {
-        protected string $createTitle      = 'Создание SEO-записи';
-        protected string $updateTitle      = 'Редактирование SEO-записи';
+        protected string $createTitle      = 'Создание SEO страницы';
+        protected string $updateTitle      = 'Редактирование SEO страницы';
         protected string $deleteMessage    = 'Запись успешно удалена';
         protected string $createMessage    = 'Запись успешно добавлена';
         protected string $titleName        = 'title';
@@ -26,7 +25,8 @@
 
         public function __construct()
         {
-            $this->routeName = OrchidRoutes::seo->value;
+            $this->route = OrchidRoutes::seo;
+//            $this->routeName = $this->route->value;
         }
 
         public function layout(): iterable
@@ -44,7 +44,7 @@
 
         public function query(Seo $item)
         {
-            return $this->queryMake($item);
+            return $this->queryMake($item, $this->route);
         }
 
         public function save(Seo $item, Request $request)
@@ -55,8 +55,8 @@
 
             if ($validator->fails()) {
                 return ($item->exists)
-                    ? redirect(route(OrchidRoutes::partner->edit(), ['id' => $item->id]))->withErrors($validator)->withInput()
-                    : redirect(route(OrchidRoutes::partner->create()))->withErrors($validator)->withInput();
+                    ? redirect(route(OrchidRoutes::seo->edit(), ['id' => $item->id]))->withErrors($validator)->withInput()
+                    : redirect(route(OrchidRoutes::seo->create()))->withErrors($validator)->withInput();
             }
 
             return $this->saveItem($item, $data);

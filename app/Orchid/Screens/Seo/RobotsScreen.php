@@ -3,8 +3,8 @@
     namespace App\Orchid\Screens\Seo;
 
     use App\Enums\OrchidRoutes;
-    use App\Orchid\RocontModule\Abstraction\EditScreenPattern;
-    use App\Orchid\RocontModule\Traits\CommandBarUndelitableTrait;
+    use App\Orchid\Abstractions\EditScreenPattern;
+    use App\Orchid\Traits\CommandBarUndelitableTrait;
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\Storage;
     use Orchid\Screen\Fields\Code;
@@ -14,6 +14,7 @@
     class RobotsScreen extends EditScreenPattern
     {
         public string $name = 'Редактирование файла robots.txt';
+        protected string $file = '/robots.txt';
 
         use CommandBarUndelitableTrait;
 
@@ -33,7 +34,10 @@
 
         public function query()
         {
-            $fileContent = Storage::disk('public')->get('/robots.txt');
+//            $f = Storage::disk('public')->path($this->file);
+
+//            dd(file_exists($f));
+            $fileContent = Storage::disk('public')->get($this->file);
 
             return [
                 'robots' => $fileContent ?? '',
@@ -43,7 +47,9 @@
         public function save(Request $request)
         {
             $data = $request->input('robots');
-            Storage::disk('public')->put('/robots.txt', $data);
+            Storage::disk('public')->put($this->file, $data);
             Alert::success('Файл robots.txt успешно обновлён');
         }
+
+
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Orchid\RocontModule\Helpers;
+namespace App\Orchid\Helpers;
 
 use App\Enums\OrchidRoutes;
 use App\Models\ProtoModel;
