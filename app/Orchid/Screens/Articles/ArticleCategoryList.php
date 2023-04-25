@@ -17,7 +17,7 @@ use Orchid\Support\Facades\Layout;
 
 class ArticleCategoryList extends ListScreenPattern
 {
-    public string $name = 'Список Категорий Публикаций';
+    public string $name = 'Список Категорий Статей';
 
     use ActivitySignsTrait;
 

@@ -74,14 +74,14 @@ abstract class EditScreenPattern extends Screen
      */
     protected OrchidRoutes $route;
 
-    protected function queryMake(ProtoInterface $item, OrchidRoutes $route)
+    protected function queryMake(ProtoInterface $item)
     {
         $this->redirectTo();
         $this->exists = $item->exists;
-        $currentRoute = $this->exists ? $route->edit() : $route->create();
+        $currentRoute = $this->exists ? $this->route->edit() : $this->route->create();
         $name = $this->exists ? $this->updateTitle : $this->createTitle;
 
-        Breadcrumbs::for($currentRoute, fn(Trail $t) => $t->parent($route->list())->push($name, route($currentRoute)));
+        Breadcrumbs::for($currentRoute, fn(Trail $t) => $t->parent($this->route->list())->push($name, route($currentRoute, $item->id)));
 
         if (empty($this->name)) {
             $this->name = $item->exists ? $this->updateTitle : $this->createTitle;

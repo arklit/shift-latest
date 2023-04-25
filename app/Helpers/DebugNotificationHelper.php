@@ -1,20 +1,20 @@
 <?php
 
-    namespace App\Helpers;
+namespace App\Helpers;
 
-    use App\Mail\DebugMailService;
+use App\Mail\DebugMailService;
 
-    class DebugNotificationHelper
+class DebugNotificationHelper
+{
+    public static function sendVerboseErrorEmail(\Throwable $exception): void
     {
-        public static function sendVerboseErrorEmail(\Throwable $exception): void
-        {
-            $mailer = new DebugMailService();
-            $mailer->sendErrorVerboseMessage($exception);
-        }
-
-        public static function sendShortErrorMessage(string $exception): void
-        {
-            $mailer = new DebugMailService();
-            $mailer->sendShortErrorMessage($exception);
-        }
+        $mailer = new DebugMailService();
+        $mailer->sendErrorVerboseMessage($exception);
     }
+
+    public static function sendShortErrorMessage(string $exception): void
+    {
+        $mailer = new DebugMailService();
+        $mailer->sendShortErrorMessage($exception);
+    }
+}

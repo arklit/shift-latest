@@ -15,8 +15,6 @@
     use Orchid\Screen\Fields\TextArea;
     use Orchid\Support\Facades\Alert;
     use Orchid\Support\Facades\Layout;
-    use Tabuna\Breadcrumbs\Breadcrumbs;
-    use Tabuna\Breadcrumbs\Trail;
 
     class ArticleCategoryEdit extends EditScreenPattern
     {
@@ -31,7 +29,7 @@
         public function __construct()
         {
             $this->route = OrchidRoutes::art_cat;
-            $this->routeName = OrchidRoutes::art_cat->list();
+            $this->routeName = $this->route->list();
         }
 
         public function layout(): iterable
@@ -51,7 +49,7 @@
 
         public function query(ArticleCategory $item)
         {
-            return $this->queryMake($item, OrchidRoutes::art_cat);
+            return $this->queryMake($item);
         }
 
         public function save(ArticleCategory $item, Request $request)
@@ -60,10 +58,12 @@
             $data['code'] = Str::slug($data['code']);
             $data['sort'] = $data['sort'] ?? 0;
 
-            $presets = OrchidHelper::getPreset('validators', OrchidRoutes::art_cat->value);
-            $presets['rules']['code'] = [Rule::unique($item->getTable(), 'code')->ignore($item->id)];
+            $presets = OrchidHelper::getPreset('validators',$this->route->value);
+            $presets['rules']['code'][] = Rule::unique($item->getTable(), 'code')->ignore($item->id);
             $presets['messages']['code.unique'] = 'Такой код уже используется';
-            $result = OrchidHelper::validate($item, OrchidRoutes::article, $data, $presets);
+
+//            dd($data, $presets);
+            $result = OrchidHelper::validate($item, $this->route, $data, $presets);
 
             if (!is_null($result)) {
                 return $result;
@@ -76,7 +76,7 @@
         {
             if ($item->articles()->count() !== 0) {
                 Alert::error('Эта категория не является пустой. Её нельзя удалить');
-                return redirect()->route(OrchidRoutes::art_cat->edit(), ['id' => $item->id]);
+                return redirect()->route($this->route->edit(), ['id' => $item->id]);
             }
 
             return $this->removeItem($item);

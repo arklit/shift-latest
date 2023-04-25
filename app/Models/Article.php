@@ -7,6 +7,7 @@ use App\Traits\IsActiveScopeTrait;
 use App\Traits\ReadyToPublicationScopeTrait;
 use App\Traits\SortedByPublicationScopeTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 class Article extends ProtoModel
 {
@@ -31,6 +32,12 @@ class Article extends ProtoModel
     public function getSlug()
     {
         return $this->slug;
+    }
+
+    public function setSlug(string $slug)
+    {
+        $this->slug = Str::slug($this->id . '-' . $slug);
+        return $this;
     }
 }
 

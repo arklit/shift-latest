@@ -35,12 +35,11 @@ class OrchidHelper
 
     public static function validate(ProtoModel $item, OrchidRoutes $route, array $data, array $presets)
     {
-        $validator = Validator::make($data, $presets['messages'], $presets['rules']);
-        $arguments = ($item->exists) ? ['id' => $item->id] : [];
+        $validator = Validator::make($data, $presets['rules'], $presets['messages']);
         $route = ($item->exists) ? $route->edit() : $route->create();
 
         if ($validator->fails()) {
-            return redirect()->route($route, $arguments)->withErrors($validator)->withInput();
+            return redirect()->route($route, $item->id)->withErrors($validator)->withInput();
         }
         return null;
     }

@@ -13,7 +13,7 @@ abstract class AbstractMailService
 
     protected function send(array $data, array $savedFiles = [], array $memoryFiles = []): bool
     {
-        if (config('rocont.mail_disabled')) {
+        if (config('rocont.mails_disabled')) {
             return false;
         }
 

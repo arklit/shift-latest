@@ -36,7 +36,7 @@ class ArticleEdit extends EditScreenPattern
     public function __construct()
     {
         $this->route = OrchidRoutes::article;
-        $this->listRedirect = OrchidRoutes::article->list();
+        $this->listRedirect = $this->route->list();
     }
 
     public function layout(): iterable
@@ -48,23 +48,20 @@ class ArticleEdit extends EditScreenPattern
                         CheckBox::make('item.is_active')->title('Активность')->sendTrueOrFalse()->value(true),
                         Label::make('item.slug')->title('Код')->popover('Генерируется автоматически на основе заголовка'),
                     ]),
-                    Select::make('item.category_id')->title('Категория')->empty('Категория не выбрана')
-                        ->fromQuery(ArticleCategory::query()->active()->sorted(), 'title', 'id')->required(),
+                    Input::make('item.title')->title('Заголовок')->required()->maxlength(120)->help('Не более 120 символов'),
                     TextArea::make('item.description')->title('Анонс')->rows(5)->maxlength(1024)->required(),
-                    Input::make('item.seo_title')->title('Title ')->required()->maxlength(169)->help('Заголовок для SEO. Не более 169 символов'),
+                    Input::make('item.seo_title')->title('Title ')->required()->maxlength(160)->help('Заголовок для SEO. Не более 160 символов'),
                     TextArea::make('item.seo_description')->title('Description ')->maxlength(1024)->rows(5)->help('Описание для SEO. Не более 1024 символов'),
-                    Cropper::make('item.image_outer')->title('Изображение для страницы')->targetRelativeUrl()
-//                        ->required()
+                    Cropper::make('item.image_outer')->title('Изображение для страницы')->targetRelativeUrl()->required()
                     ,
 
                 ]),
                 Layout::rows([
-                    Input::make('item.title')->title('Заголовок')->required()->maxlength(169)->help('Не более 169 символов'),
+                    Select::make('item.category_id')->title('Категория')->empty('Категория не выбрана')
+                        ->fromQuery(ArticleCategory::query()->active()->sorted(), 'title', 'id')->required(),
                     DateTimer::make('item.publication_date')->title('Дата публикации')->format24hr()->required(),
                     Quill::make('item.text')->title('Текст публикации')->required(),
-
-                    Cropper::make('item.image_inner')->title('Изображение для списка')->targetRelativeUrl()
-//                        ->required()
+                    Cropper::make('item.image_inner')->title('Изображение для списка')->targetRelativeUrl()->required()
                     ,
                 ]),
 
@@ -76,30 +73,31 @@ class ArticleEdit extends EditScreenPattern
 
     public function query(Article $item)
     {
-        return $this->queryMake($item, $this->route);
+        return $this->queryMake($item);
     }
 
     public function save(Article $item, Request $request)
     {
         $data = $request->input('item');
-        $data['slug'] = $item->exists ? $item : Str::slug($data['title']);
 
-        // проверка уникальности слага
-        // если статья уже создана, то слаг не перезаписывается
-
-        $presets = OrchidHelper::getPreset('validators', OrchidRoutes::article->value);
-        $presets['rules']['slug'] = [Rule::unique($item->getTable(), 'slug')->ignore($item->id)];
-        $presets['messages']['slug.unique'] = 'Такой заголовок уже используется';
-        $result = OrchidHelper::validate($item, OrchidRoutes::article, $data, $presets);
+        $presets = OrchidHelper::getPreset('validators', $this->route->value);
+        $presets['rules']['title'][] = Rule::unique($item->getTable(), 'slug')->ignore($item->id);
+        $presets['messages']['title.unique'] = 'Такой заголовок уже используется';
+        $result = OrchidHelper::validate($item, $this->route, $data, $presets);
 
         if (!is_null($result)) {
             return $result;
         }
 
-        $redirector =  $this->saveItem($item, $data);
+        if ($item->exists) {
+            $data['slug'] = $item->getSlug();
+        } else {
+            $data['slug'] = Str::slug($data['title']);
+            $item->fill($data)->save();
+            $data['slug'] = Str::slug($item->id . '-' . $data['title']);
+        }
 
-
-
+        return $this->saveItem($item, $data);
     }
 
     public function asyncGetArticle(Article $item)
@@ -111,8 +109,6 @@ class ArticleEdit extends EditScreenPattern
 
     public function remove(Article $item)
     {
-
-
         return $this->removeItem($item);
     }
 }
