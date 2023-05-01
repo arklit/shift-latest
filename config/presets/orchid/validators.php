@@ -1,6 +1,27 @@
 <?php
 // Файл с правилами валидации для экранов создания/редактирования в админ панели
 return [
+    'defaults' => [
+        'rules' => [
+            'title'            => ['bail', 'required', 'max:120', 'regex:~^[А-Яа-яЁё0-9\s]+$~u'],
+            'text'             => ['bail', 'required',],
+            'description'      => ['bail', 'required', 'max:1024'],
+            'sort'             => ['bail', 'required', 'numeric'],
+            'url'              => ['bail', 'required', 'max:250'],
+        ],
+        'messages' => [
+            'title.required'            => 'Введите заголовок',
+            'title.max'                 => 'Заголовок не может быть длиннее 120 символов',
+            'description.required'      => 'Введите описание',
+            'description.max'           => 'Описание не может быть длиннее 1024 символов',
+            'text.required'             => 'Введите основной текст',
+            'sort.required'             => 'Укажите приоритет сортировки',
+            'sort.numeric'              => 'Приоритет сортировки должен быть числом',
+            'url.required'              => 'Введите URL',
+            'url.max'                   => 'URL не может быть длиннее 250 символов',
+        ],
+    ],
+
     'article' => [
         'rules' => [
             'title'            => ['bail', 'required', 'max:120'],
@@ -13,10 +34,10 @@ return [
             'seo_description'  => ['bail', 'nullable', 'max:1024'],
         ],
         'messages' => [
-            'title.required'            => 'Введите заголовок',
-            'title.max'                 => 'Заголовок не может быть длиннее 120 символов',
+            'title.required'            => 'Введите заголовок статьи',
+            'title.max'                 => 'Заголовок статьи не может быть длиннее 120 символов',
             'category_id.required'      => 'Выберите категорию статьи',
-            'description.required'      => 'Введите описание',
+            'description.required'      => 'Введите анонс статьи',
             'description.max'           => 'Анонс не может быть длиннее 1024 символов',
             'text.required'             => 'Введите текст статьи',
             'image_inner.required'      => 'Загрузите изображение для страницы',
