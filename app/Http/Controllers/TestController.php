@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\OrchidRoutes;
+use App\Orchid\Helpers\OrchidHelper;
 use App\Services\SitemapGenerator;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Carbon;
@@ -16,6 +18,10 @@ class TestController extends Controller
     {
         abort_if(!auth($this->managersGuard)->check(), 404);
 
+
+        $route = OrchidRoutes::article;
+
+        OrchidHelper::getValidationStructure($route->value, ['title', 'text', 'description']);
 
 
 //        $file =    public_path('/robots.txt');

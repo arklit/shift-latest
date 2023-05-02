@@ -44,6 +44,7 @@
                     Input::make('item.seo_title')->title('Title ')->required()->maxlength(169)->help('Не более 169 символов'),
                     TextArea::make('item.seo_description')->title('Description ')->rows(5),
                 ]),
+
             ];
         }
 

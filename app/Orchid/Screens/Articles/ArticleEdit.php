@@ -80,9 +80,8 @@ class ArticleEdit extends EditScreenPattern
     {
         $data = $request->input('item');
 
-        $presets = OrchidHelper::getPreset('validators', $this->route->value);
-        $presets['rules']['title'][] = Rule::unique($item->getTable(), 'slug')->ignore($item->id);
-        $presets['messages']['title.unique'] = 'Такой заголовок уже используется';
+        $presets = OrchidHelper::getValidationStructure($this->route->value);
+        $presets = OrchidHelper::setUniqueRule($presets, $item, 'title', 'slug', 'заголовок');
         $result = OrchidHelper::validate($item, $this->route, $data, $presets);
 
         if (!is_null($result)) {
