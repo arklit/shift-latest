@@ -39,20 +39,20 @@ abstract class EditScreenPattern extends Screen
      */
     protected bool $redirectAfterUpdate = true;
 
-    /** Определяет дефолтное значение сообщения об успешном редактировании записи
+    /** Определяет дефолтное значение сообщения об успешном создании записи
      * @var string
      */
-    protected string $createMessage = '';
+    protected string $createMessage = 'Запись успешно создана';
 
     /** Определяет дефолтное значение сообщения об успешном редактировании записи
      * @var string
      */
-    protected string $updateMessage = '';
+    protected string $updateMessage = 'Запись успешно обновлена';
 
     /** Определяет дефолтное значение сообщения об успешном удалении записи
      * @var string
      */
-    protected string $deleteMessage = '';
+    protected string $deleteMessage = 'Запись успешно удалена';
 
     /** Определяет дефолтное значение заголовка для редактирования записи
      * @var string
@@ -67,12 +67,13 @@ abstract class EditScreenPattern extends Screen
     /** Имя свойства (колонки в БД) у редактируемой сущности, в котором хранится её название (title, name, etc.)
      * @var string
      */
-    protected string $titleName = '';
+    protected string $titleColumnName = 'title';
 
     /** Enum в котором хранятся данные по именам роутов для админки
      * @var OrchidRoutes
      */
     protected OrchidRoutes $route;
+    protected array $relations = [];
 
     protected function queryMake(ProtoInterface $item)
     {
@@ -96,11 +97,17 @@ abstract class EditScreenPattern extends Screen
     {
         $this->redirectTo();
 
-        $itemTitle = empty($this->titleName) ? ("#" . $item->id) : ('ID: ' . $item->id . ': ' . $item->{$this->titleName});
+        $itemTitle = empty($this->titleColumnName) ? ("#" . $item->id) : ('ID: ' . $item->id . ': ' . $item->{$this->titleColumnName});
         $this->updateMessage = $this->updateMessage ?: "Запись [$itemTitle] успешно обновлена";
         $this->createMessage = $this->createMessage ?: "Запись успешно создана";
         $message = $item->exists ? $this->updateMessage : $this->createMessage;
         $item->fill($data)->save();
+
+        if (!empty($this->relations)) {
+            foreach ($this->relations as $relation) {
+                $item->$relation()->sync($data[$relation]);
+            }
+        }
 
         Alert::info($message);
         return redirect()->route($this->listRedirect, $this->redirectParams);
@@ -109,10 +116,18 @@ abstract class EditScreenPattern extends Screen
     protected function removeItem(ProtoInterface $item)
     {
         // TODO настройка динамического сообщения об удалении
+        if (!empty($this->relations)) {
+            foreach ($this->relations as $relation) {
+                $item->$relation()->detach();
+            }
+        }
+
+        $title = !is_null($item->{$this->titleColumnName});
+        $this->deleteMessage = $this->deleteMessage ?: "Запись [$item->id : $title] успешно удалена";
+
         $item->delete();
         $this->redirectTo();
 
-        $this->deleteMessage = $this->deleteMessage ?: "Запись [$item->id : $item->title] успешно удалена";
         Alert::warning($this->deleteMessage);
 
         return redirect()->route($this->listRedirect, $this->redirectParams);

@@ -23,7 +23,7 @@ class ArticleCategoryList extends ListScreenPattern
 
     public function __construct()
     {
-        $this->routeName = OrchidRoutes::art_cat->value;
+        $this->route = OrchidRoutes::art_cat;
     }
 
     public function query()

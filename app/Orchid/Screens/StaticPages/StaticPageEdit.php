@@ -19,7 +19,7 @@
         protected string $updateTitle      = 'Редактирование Страницы';
         protected string $deleteMessage    = 'Запись успешно удалена';
         protected string $createMessage    = 'Запись успешно добавлена';
-        protected string $titleName        = 'title';
+        protected string $titleColumnName        = 'title';
 
         use CommandBarDeletableTrait;
 
