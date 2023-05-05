@@ -32,7 +32,7 @@
             $this->routeName = OrchidRoutes::static->value;
         }
 
-        public function query()
+        public function query(): iterable
         {
             $this->model = StaticPage::query()->filters([
                 IsActiveFilter::class,

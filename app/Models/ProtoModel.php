@@ -17,4 +17,14 @@ abstract class ProtoModel extends Model implements ProtoInterface
     use Filterable;
 
     protected $guarded = ['id', 'created_at', 'updated_at'];
+
+    public function getTitle()
+    {
+        return $this->title ?? $this->name;
+    }
+
+    public function getIdentifier()
+    {
+        return $this->code ?? $this->slug;
+    }
 }

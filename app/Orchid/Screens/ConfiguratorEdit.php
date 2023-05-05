@@ -4,6 +4,7 @@
 
     use App\Models\Configurator;
     use App\Orchid\Abstractions\EditScreenPattern;
+    use App\Repositories\CommonRepository;
     use Illuminate\Http\Request;
     use Orchid\Screen\Actions\Button;
     use Orchid\Screen\Actions\Link;
@@ -20,8 +21,9 @@
         protected string $updateTitle      = 'Редактирование конфигурации';
         protected string $deleteMessage    = 'Запись успешно удалена';
         protected string $createMessage    = 'Запись успешно добавлена';
-        protected array $redirectParams    = ['id' => 1];
+//        protected array $redirectParams    = ['id' => 1];
         protected bool $redirectAfterUpdate = false;
+        protected array $fields = [];
 
         public function commandBar()
         {
@@ -33,29 +35,53 @@
 
         public function layout(): array
         {
+            $inputs = [];
+            foreach ($this->fields as $key => $field) {
+                $inputs[] = Input::make('item.' . $key)->title($field['title'])->required();
+            }
+//            dd($inputs)
             return [
-                Layout::columns([
-                    Layout::rows([
-                        Input::make('item.data.phone')->title('Телефон')->mask('+7 (999) 999-99-99')->required(),
-                        Input::make('item.data.address')->title('Адрес')->required(),
-                        Input::make('item.data.email')->title('Email')->type('email')->required(),
-                        TextArea::make('item.data.coordinates')->title('Координаты'),
-                        TextArea::make('item.data.schedule')->title('График работы'),
-                        Upload::make('item.attachment')->maxFiles(1)->groups('configurator')->title('Реквизиты (документы)')
-                    ]),
-                    Layout::rows([
-                        TextArea::make('item.data.requisites_text')->rows(5)->title('Реквизиты (текст)'),
-                        Picture::make('item.logo')->targetRelativeUrl()->title('Логотип'),
-                    ]),
-                ]),
+                Layout::rows($inputs),
+//                Layout::columns([
+//                    Layout::rows([
+//                        Input::make('item.phone')->title('Телефон')->mask('+7 (999) 999-99-99')->required(),
+//                        Input::make('item.address')->title('Адрес')->required(),
+//                        Input::make('item.email')->title('Email')->type('email')->required(),
+//                        TextArea::make('item.coordinates')->title('Координаты'),
+//                        TextArea::make('item.schedule')->title('График работы'),
+//                        Upload::make('item.attachment')->maxFiles(1)->groups('configurator')->title('Реквизиты (документы)')
+//                    ]),
+//                    Layout::rows([
+//                        TextArea::make('item.data.requisites_text')->rows(5)->title('Реквизиты (текст)'),
+//                        Picture::make('item.logo')->targetRelativeUrl()->title('Логотип'),
+//                    ]),
+//                ]),
             ];
         }
 
-        public function query(Configurator $item)
+        public function query()
         {
-//            abort_if(empty($item->id), 404);
+            $dd = CommonRepository::take()->getConfigurationData();
+            $item = [];
 
-            return $this->queryMake($item);
+            foreach ($dd as $d) {
+                $item[$d['key']] = $d['value'];
+                $this->fields[$d['key']]['value'] = $d['value'];
+                $this->fields[$d['key']]['title'] = $d['title'];
+            }
+
+//            dd($this->fields);
+
+
+
+//            dd($this->fields);
+//
+//            dd($dd);
+//            return $dd;
+            return [
+                'item' => $item
+            ];
+//            return $this->queryMake($item);
         }
 
         public function save(Configurator $item, Request $request)

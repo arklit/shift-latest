@@ -26,7 +26,7 @@ class ArticleCategoryList extends ListScreenPattern
         $this->route = OrchidRoutes::art_cat;
     }
 
-    public function query()
+    public function query(): iterable
     {
         $this->model = ArticleCategory::query()->filters([
             IsActiveFilter::class,

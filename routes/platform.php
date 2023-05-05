@@ -8,6 +8,7 @@ use App\Orchid\Screens\Articles\ArticleCategoryEdit;
 use App\Orchid\Screens\Articles\ArticleCategoryList;
 use App\Orchid\Screens\Articles\ArticleEdit;
 use App\Orchid\Screens\Articles\ArticleList;
+use App\Orchid\Screens\ConfiguratorEdit;
 use App\Orchid\Screens\PlatformScreen;
 use App\Orchid\Screens\Role\RoleEditScreen;
 use App\Orchid\Screens\Role\RoleListScreen;
@@ -25,8 +26,9 @@ use Tabuna\Breadcrumbs\Trail;
 
 // Main
 Route::screen('/home', PlatformScreen::class)->name('platform.main');
+Route::screen('/robots', RobotsScreen::class)->name(OrchidRoutes::robot->base());
 Route::screen('/sitemap', SitemapScreen::class)->name(OrchidRoutes::sitemap->base());
-Route::screen('/robots', RobotsScreen::class)->name(OrchidRoutes::robot->edit());
+Route::screen('/configurator', ConfiguratorEdit::class)->name(OrchidRoutes::conf->base());
 
 OrchidHelper::setAdminRoutes(OrchidRoutes::seo->value, SeoList::class, SeoEdit::class);
 OrchidHelper::setAdminRoutes(OrchidRoutes::static->value, StaticPageList::class, StaticPageEdit::class);

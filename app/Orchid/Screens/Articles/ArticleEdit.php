@@ -89,7 +89,7 @@ class ArticleEdit extends EditScreenPattern
         }
 
         if ($item->exists) {
-            $data['slug'] = $item->getSlug();
+            $data['slug'] = $item->slug();
         } else {
             $data['slug'] = Str::slug($data['title']);
             $item->fill($data)->save();

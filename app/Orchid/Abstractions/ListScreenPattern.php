@@ -30,7 +30,7 @@ abstract class ListScreenPattern extends Screen
      */
     protected OrchidRoutes $route;
 
-    public function query(): array
+    public function query(): iterable
     {
         $items = $this->model->paginate($this->paginate);
         $this->redirectParams = ['page' => $items->currentPage()];
@@ -41,7 +41,7 @@ abstract class ListScreenPattern extends Screen
         ];
     }
 
-    public function commandBar(): array
+    public function commandBar(): iterable
     {
         return [
             Link::make('Создать')->icon('plus')->route($this->route->create()),

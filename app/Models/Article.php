@@ -24,16 +24,6 @@ class Article extends ProtoModel
         return $this->belongsTo(ArticleCategory::class, 'category_id', 'id');
     }
 
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    public function getSlug()
-    {
-        return $this->slug;
-    }
-
     public function setSlug(string $slug)
     {
         $this->slug = Str::slug($this->id . '-' . $slug);

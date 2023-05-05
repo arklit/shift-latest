@@ -23,10 +23,10 @@ class SeoList extends ListScreenPattern
 
     public function __construct()
     {
-        $this->routeName = OrchidRoutes::seo->value;
+        $this->route = OrchidRoutes::seo;
     }
 
-    public function query()
+    public function query(): iterable
     {
         $this->model = Seo::query()->filters([
             IsActiveFilter::class,

@@ -31,7 +31,7 @@ class ArticleList extends ListScreenPattern
         $this->routeName = OrchidRoutes::article->value;
     }
 
-    public function query()
+    public function query(): iterable
     {
         $this->model = Article::query()->with('category')->filters([
             IsActiveFilter::class,

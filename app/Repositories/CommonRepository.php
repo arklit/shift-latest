@@ -3,36 +3,25 @@
 namespace App\Repositories;
 
 use App\Models\Article;
-use App\Models\Product;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 class CommonRepository extends AbstractRepository
 {
     private static $instance;
+    private Builder $query;
 
     public static function take(): static
     {
         return static::$instance ?? (static::$instance = new static());
     }
 
-    public function getProductsByCharacteristics(array $characteristics, int $currentID): Collection
+    public function getConfigurationData()
     {
-        $json = [];
-        foreach ($characteristics as $characteristic) {
-            $json[] = "JSON_CONTAINS(`characteristics`, '{\"code\":\"$characteristic\"}')";
-        }
-
-        $whereJson = implode(' OR ', $json);
-
-        $sql = "
-                SELECT *
-                FROM products AS p
-                WHERE p.is_active = 1 AND p.id != $currentID
-                AND ($whereJson)
-                ORDER BY sort ASC
-            ";
-
-        return collect(self::executeSelectAll($sql, Product::class));
+        $sql = "SELECT * FROM configurators";
+        return collect($this->executeSelectAll($sql));
     }
 
     public function getRelativeLastArticles(int $articleID, string $categoryCode): Collection
@@ -48,5 +37,31 @@ class CommonRepository extends AbstractRepository
             ";
 
         return collect(self::executeSelectAll($sql, Article::class));
+    }
+
+    public function setExceptedID(int $id)
+    {
+        $this->query->where('id', '!=', $id);
+        return $this;
+    }
+
+    public function getFirst(): Model|Builder|null
+    {
+        return $this->query->first();
+    }
+
+    public function getFirstOrFail(): Model|Builder
+    {
+        return $this->query->firstOrFail();
+    }
+
+    public function getAll(): iterable
+    {
+        return $this->query->get();
+    }
+
+    public function getPaginator(int $perPage = 8, int $page = 1): LengthAwarePaginator
+    {
+        return $this->query->paginate(perPage: $perPage, page: $page);
     }
 }

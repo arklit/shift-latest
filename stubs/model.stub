@@ -2,10 +2,10 @@
 
 namespace {{ namespace }};
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-
-class {{ class }} extends Model
+class {{ class }} extends ProtoModel
 {
-    use HasFactory;
+    public const TABLE_NAME = 'table_name';
+    protected $table = self::TABLE_NAME;
+    protected $allowedSorts = ['id', 'is_active', 'sort', 'title', 'code', 'slug', 'created_at'];
+
 }

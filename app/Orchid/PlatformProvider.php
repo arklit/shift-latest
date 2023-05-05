@@ -37,10 +37,10 @@ class PlatformProvider extends OrchidServiceProvider
 
             Menu::make('SEO')->icon('globe')->list([
                 Menu::make('SEO страницы')->route(OrchidRoutes::seo->list())->icon('docs'),
-                Menu::make('Robots.txt')->route(OrchidRoutes::robot->edit())->icon('android'),
+                Menu::make('Robots.txt')->route(OrchidRoutes::robot->base())->icon('android'),
                 Menu::make('Карта')->route(OrchidRoutes::sitemap->base())->icon('map'),
             ]),
-//            Menu::make('Конфигуратор')->route(OrchidRoutes::conf->edit(), ['id' => 1])->icon('settings'),
+            Menu::make('Конфигуратор')->route(OrchidRoutes::conf->base())->icon('settings'),
 
             Menu::make(__('Users'))->icon('user')->route('platform.systems.users')
                 ->permission('platform.systems.users')->title(__('Access rights')),
