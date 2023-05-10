@@ -7,7 +7,6 @@ use App\Orchid\Abstractions\EditScreenPattern;
 use App\Services\SitemapGenerator;
 use Illuminate\Support\Facades\Storage;
 use Orchid\Screen\Actions\Button;
-use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Fields\Code;
 use Orchid\Support\Color;
 use Orchid\Support\Facades\Alert;
@@ -15,18 +14,18 @@ use Orchid\Support\Facades\Layout;
 
 class SitemapScreen extends EditScreenPattern
 {
-    protected ?string $listRedirect = 'platform.main';
-    protected string $createTitle = 'Создание Карты';
-    protected string $updateTitle = 'Редактирование ITEM';
-    protected string $deleteMessage = 'Запись успешно удалена';
-    protected string $createMessage = 'Запись успешно добавлена';
     public string $name = 'Карта сайта';
+
+    public function __construct()
+    {
+        $this->route = OrchidRoutes::sitemap;
+        $this->redirectTo = $this->route->base();
+    }
 
     public function commandBar(): array
     {
         return [
             Button::make('Обновить')->icon('refresh')->type(Color::INFO())->method('generateXml'),
-            Link::make(__('orchid.go-back'))->icon('arrow-left-circle')->route('platform.main'),
         ];
     }
 
@@ -36,7 +35,6 @@ class SitemapScreen extends EditScreenPattern
         $mapContent = $generator->generateMap();
         Storage::disk('public')->put('/sitemap.xml', $mapContent);
         Alert::success('Карта сайта успешно обновлена!');
-//        return redirect()->route(OrchidRoutes::sitemap->base());
     }
 
     public function layout(): iterable

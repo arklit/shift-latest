@@ -14,11 +14,6 @@ enum OrchidRoutes: string
     case conf = 'configurator';
 
 
-    public function edit()
-    {
-        return 'platform.' . $this->value . '.edit';
-    }
-
     public function list()
     {
         return 'platform.' . $this->value . '.list';
@@ -29,8 +24,27 @@ enum OrchidRoutes: string
         return 'platform.' . $this->value . '.create';
     }
 
+    public function edit()
+    {
+        return 'platform.' . $this->value . '.edit';
+    }
+
     public function base()
     {
         return 'platform.' . $this->value;
+    }
+
+    public function getTitle()
+    {
+        return match ($this->value) {
+            self::article->value => 'Список статей',
+            self::art_cat->value => 'Список категорий статей',
+            self::static->value => 'Список статических страниц',
+            self::seo->value => 'SEO-страницы',
+            self::conf->value => 'Конфигуратор',
+            self::robot->value => 'Robots.txt',
+            self::sitemap->value => 'Карта сайта',
+            default => throw new \Exception('Unexpected match value'),
+        };
     }
 }

@@ -4,6 +4,7 @@ namespace App\Orchid\Abstractions;
 
 use App\Enums\OrchidRoutes;
 use App\Interfaces\ProtoInterface;
+use Illuminate\Support\Facades\Route;
 use Orchid\Screen\Screen;
 use Orchid\Support\Facades\Alert;
 use Tabuna\Breadcrumbs\Breadcrumbs;
@@ -14,75 +15,78 @@ use function session;
 abstract class EditScreenPattern extends Screen
 {
     /** Название страницы редактирования. Задаётся вручную или же автоматически подставляется как Updated/Created
-     * @var string
-     */
+     * @var string */
     public string $name = '';
 
     /** Переменная определяющая редактируется ли уже существующая запись или создаётся новая
-     * @var bool
-     */
+     * @var bool */
     protected bool $exists = false;
 
-    /** Имя роута, на который будет происходить редирект после сохранения записи
-     * @var string|null
-     */
-    protected ?string $listRedirect = null;
+    /** Имя роута, на который будет происходить редирект после манипуляций с записью
+     * @var string|null */
+    protected ?string $redirectTo = null;
 
     /** Параметры для редиректа к списку моделей (номер страницы)
-     * @var array
-     */
+     * @var array */
     protected array $redirectParams = [];
 
     /** Если true, то произойдёт редирект на основе данных из сессии, если false, то маршрут для перенаправления будет
      * взят из дефолтного значения переменной
-     * @var bool
-     */
+     * @var bool */
     protected bool $redirectAfterUpdate = true;
 
+    /** Если true, то произойдёт редирект на основе данных из сессии, если false, то маршрут для перенаправления будет
+     * взят из дефолтного значения переменной
+     * @var bool */
+    protected bool $redirectAfterDelete = true;
+
     /** Определяет дефолтное значение сообщения об успешном создании записи
-     * @var string
-     */
+     * @var string */
     protected string $createMessage = 'Запись успешно создана';
 
     /** Определяет дефолтное значение сообщения об успешном редактировании записи
-     * @var string
-     */
+     * @var string */
     protected string $updateMessage = 'Запись успешно обновлена';
 
     /** Определяет дефолтное значение сообщения об успешном удалении записи
-     * @var string
-     */
+     * @var string */
     protected string $deleteMessage = 'Запись успешно удалена';
 
     /** Определяет дефолтное значение заголовка для редактирования записи
-     * @var string
-     */
+     * @var string */
     protected string $updateTitle = 'Редактирование записи';
 
     /** Определяет дефолтное значение заголовка для удаления записи
-     * @var string
-     */
+     * @var string */
     protected string $createTitle = 'Создание записи';
 
     /** Имя свойства (колонки в БД) у редактируемой сущности, в котором хранится её название (title, name, etc.)
-     * @var string
-     */
+     * @var string */
     protected string $titleColumnName = 'title';
 
     /** Enum в котором хранятся данные по именам роутов для админки
-     * @var OrchidRoutes
-     */
+     * @var OrchidRoutes */
     protected OrchidRoutes $route;
+
+    /** Список отношений для синхронизации с текущей моделью
+     * @var array */
     protected array $relations = [];
+
+    /** Переменная для генерации хлебных крошек
+     * @var bool */
+    protected bool $makeBreadcrumbs = true;
+
 
     protected function queryMake(ProtoInterface $item)
     {
-        $this->redirectTo();
+        $this->redirectAfterQuery();
         $this->exists = $item->exists;
-        $currentRoute = $this->exists ? $this->route->edit() : $this->route->create();
         $name = $this->exists ? $this->updateTitle : $this->createTitle;
 
-        Breadcrumbs::for($currentRoute, fn(Trail $t) => $t->parent($this->route->list())->push($name, route($currentRoute, $item->id)));
+        if ($this->makeBreadcrumbs) {
+            $currentRoute = $this->exists ? $this->route->edit() : $this->route->create();
+            Breadcrumbs::for($currentRoute, fn(Trail $t) => $t->parent($this->route->list())->push($name, route($currentRoute, $item->id)));
+        }
 
         if (empty($this->name)) {
             $this->name = $item->exists ? $this->updateTitle : $this->createTitle;
@@ -95,7 +99,7 @@ abstract class EditScreenPattern extends Screen
 
     protected function saveItem(ProtoInterface $item, $data)
     {
-        $this->redirectTo();
+        $this->redirectAfterUpdate($item);
 
         $itemTitle = empty($this->titleColumnName) ? ("#" . $item->id) : ('ID: ' . $item->id . ': ' . $item->{$this->titleColumnName});
         $this->updateMessage = $this->updateMessage ?: "Запись [$itemTitle] успешно обновлена";
@@ -110,7 +114,7 @@ abstract class EditScreenPattern extends Screen
         }
 
         Alert::info($message);
-        return redirect()->route($this->listRedirect, $this->redirectParams);
+        return redirect()->route($this->redirectTo, $this->redirectParams);
     }
 
     protected function removeItem(ProtoInterface $item)
@@ -126,18 +130,40 @@ abstract class EditScreenPattern extends Screen
         $this->deleteMessage = $this->deleteMessage ?: "Запись [$item->id : $title] успешно удалена";
 
         $item->delete();
-        $this->redirectTo();
-
+        $this->redirectAfterDelete();
         Alert::warning($this->deleteMessage);
-
-        return redirect()->route($this->listRedirect, $this->redirectParams);
+        return redirect()->route($this->listRedirect);
     }
 
-    protected function redirectTo()
+    protected function redirectAfterUpdate(ProtoInterface $item)
     {
         if ($this->redirectAfterUpdate) {
-            $this->listRedirect = session()->has('listRedirect') ? session()->get('listRedirect') : $this->listRedirect;
-            $this->redirectParams = session()->has('redirectParams') ? session()->get('redirectParams') : $this->redirectParams;
+            $this->redirectTo = $this->route->edit();
+            $this->redirectParams = ['id' => $item->id];
         }
+    }
+
+    protected function redirectAfterDelete()
+    {
+        if ($this->redirectAfterDelete) {
+            if (Route::has($this->route->list())) {
+                $this->redirectTo = $this->route->list();
+            } else {
+                $this->redirectTo = 'platform.main';
+            }
+        }
+    }
+
+    protected function redirectAfterQuery()
+    {
+        if (Route::has($this->route->list())) {
+            $this->redirectTo = $this->route->list();
+        } else {
+            $this->redirectTo = 'platform.main';
+        }
+//        if ($this->redirectAfterUpdate) {
+//            $this->listRedirect = session()->has('listRedirect') ? session()->get('listRedirect') : $this->listRedirect;
+//            $this->redirectParams = session()->has('redirectParams') ? session()->get('redirectParams') : $this->redirectParams;
+//        }
     }
 }
