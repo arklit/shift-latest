@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Helpers\LoggerHelper;
 use App\Models\Article;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,6 +23,29 @@ class CommonRepository extends AbstractRepository
     {
         $sql = "SELECT * FROM configurators";
         return collect($this->executeSelectAll($sql));
+    }
+
+    public function updateConfigurationData(array $data)
+    {
+        $when = "UPDATE configurators SET `value` = CASE `key` ";
+        $keys = [];
+        foreach ($data as $key => $value) {
+            $keys[] = "'$key'";
+            $when .= "WHEN '$key' THEN '$value' ";
+        }
+//        array_keys($data)
+//        dd($keys);
+        $whereIn = implode(',', $keys);
+
+        $sql = $when . "ELSE null END WHERE `key` IN ($whereIn)";
+
+//        dd($sql);
+        try {
+            return self::execute($sql);
+        } catch (\Exception $e) {
+            LoggerHelper::commonErrorVerbose($e);
+            return false;
+        }
     }
 
     public function getRelativeLastArticles(int $articleID, string $categoryCode): Collection
