@@ -44,13 +44,13 @@ abstract class ListScreenPattern extends Screen
     public function commandBar(): iterable
     {
         return [
-            Link::make('Создать')->icon('plus')->route($this->route->create()),
+            Link::make('Добавить запись')->icon('plus')->route($this->route->create()),
         ];
     }
 
     protected function setRedirect(string $uri = null): void
     {
-        session()->put('listRedirect', $this->route->list());
+        session()->put('listRedirect', $this->route->edit());
         session()->put('redirectParams', $this->redirectParams);
     }
 }

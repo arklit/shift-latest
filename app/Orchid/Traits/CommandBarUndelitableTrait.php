@@ -10,7 +10,8 @@ trait CommandBarUndelitableTrait
     public function commandBar()
     {
         return [
-            Link::make(__('orchid.go-back'))->icon('arrow-left-circle')->route($this->listRedirect, $this->redirectParams),
+            Link::make(__('orchid.go-back'))->icon('arrow-left-circle')
+                ->route($this->redirectTo, $this->redirectParams),
             Button::make(__('orchid.save'))->icon('save')->method('save'),
         ];
     }

@@ -69,7 +69,7 @@ class OrchidHelper
         }
 
         // мержим правила модели и дефолтные правила, при этом приоритет отдаётся правилам модели
-        return array_merge($defaultRules, $modelRules);
+        return array_merge_recursive($defaultRules, $modelRules);
     }
 
     public static function setUniqueRule(array $presets, ProtoModel $item, string $fieldName, string $columnName, string $messageName): array

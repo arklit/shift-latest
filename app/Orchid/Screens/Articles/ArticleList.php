@@ -10,6 +10,7 @@ use App\Orchid\Filters\CategoryFilter;
 use App\Orchid\Filters\DateCreatedFilter;
 use App\Orchid\Filters\IsActiveFilter;
 use App\Orchid\Helpers\OrchidHelper;
+use App\Orchid\Layouts\EmptyModal;
 use App\Orchid\Traits\ActivitySignsTrait;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\DropDown;
@@ -22,13 +23,12 @@ use Orchid\Support\Facades\Layout;
 
 class ArticleList extends ListScreenPattern
 {
-    public string $name = 'Список статей';
-
     use  ActivitySignsTrait;
 
     public function __construct()
     {
-        $this->routeName = OrchidRoutes::article->value;
+        $this->route = OrchidRoutes::article;
+        $this->name = $this->route->getTitle();
     }
 
     public function query(): iterable
@@ -66,7 +66,7 @@ class ArticleList extends ListScreenPattern
                 ])),
             ]),
 
-            Layout::modal('deleteItem', Layout::rows([]))->title('Удалить статью??')
+            Layout::modal('deleteItem', EmptyModal::class)->title('Удалить статью??')
                 ->applyButton('Да')->closeButton('Нет')->async('asyncGetItem'),
         ];
     }

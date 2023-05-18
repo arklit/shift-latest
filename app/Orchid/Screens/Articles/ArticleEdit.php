@@ -7,10 +7,10 @@ use App\Models\Article;
 use App\Models\ArticleCategory;
 use App\Orchid\Abstractions\EditScreenPattern;
 use App\Orchid\Helpers\OrchidHelper;
+use App\Orchid\Layouts\EmptyModal;
 use App\Orchid\Traits\CommandBarDeletableTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 use Orchid\Screen\Fields\CheckBox;
 use Orchid\Screen\Fields\Cropper;
 use Orchid\Screen\Fields\DateTimer;
@@ -21,7 +21,6 @@ use Orchid\Screen\Fields\Quill;
 use Orchid\Screen\Fields\Select;
 use Orchid\Screen\Fields\TextArea;
 use Orchid\Support\Facades\Layout;
-use function Symfony\Component\Translation\t;
 
 class ArticleEdit extends EditScreenPattern
 {
@@ -36,7 +35,6 @@ class ArticleEdit extends EditScreenPattern
     public function __construct()
     {
         $this->route = OrchidRoutes::article;
-        $this->listRedirect = $this->route->list();
     }
 
     public function layout(): iterable
@@ -66,13 +64,14 @@ class ArticleEdit extends EditScreenPattern
                 ]),
 
             ]),
-            Layout::modal('deleteArticle', Layout::rows([]))->title('Удалить статью??')
+            Layout::modal('deleteArticle', EmptyModal::class)->title('Удалить статью??')
                 ->applyButton('Да')->closeButton('Нет')->async('asyncGetArticle'),
         ];
     }
 
     public function query(Article $item)
     {
+
         return $this->queryMake($item);
     }
 
@@ -81,7 +80,7 @@ class ArticleEdit extends EditScreenPattern
         $data = $request->input('item');
 
         $presets = OrchidHelper::getValidationStructure($this->route->value);
-        $presets = OrchidHelper::setUniqueRule($presets, $item, 'title', 'slug', 'заголовок');
+        $presets = OrchidHelper::setUniqueRule($presets, $item, 'slug', 'slug', 'заголовок');
         $result = OrchidHelper::validate($item, $this->route, $data, $presets);
 
         if (!is_null($result)) {
@@ -89,7 +88,7 @@ class ArticleEdit extends EditScreenPattern
         }
 
         if ($item->exists) {
-            $data['slug'] = $item->slug();
+            $data['slug'] = $item->getIdentifier();
         } else {
             $data['slug'] = Str::slug($data['title']);
             $item->fill($data)->save();

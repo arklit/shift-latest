@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('configurators', function (Blueprint $table) {
             $table->id();
             $table->string('key', 512);
-            $table->string('value', 512);
-            $table->string('title', 512);
+            $table->string('value', 512)->nullable();
+            $table->string('title', 512)->nullable();
             $table->timestamps();
         });
     }
