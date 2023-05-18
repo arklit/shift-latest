@@ -77,16 +77,16 @@ return [
     ],
     'seo' => [
         'rules' => [
-            'url'         => ['bail', 'required', 'max:180'],
             'title'       => ['bail', 'required', 'max:160'],
+            'url'         => ['bail', 'required', 'max:60'],
             'description' => ['bail', 'required',],
 
         ],
         'messages' => [
-            'url.required'         => 'Введите URL',
-            'url.max'              => 'URL не может быть длиннее 180 символов',
             'title.required'       => 'Введите заголовок',
             'title.max'            => 'Заголовок не может быть длиннее 160 символов',
+            'url.required'         => 'Введите URL',
+            'url.max'              => 'URL не может быть длиннее 60 символов',
             'description.required' => 'Введите описание',
         ],
     ],

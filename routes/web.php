@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\MainPageController;
+use App\Http\Controllers\PagesController;
 use App\Http\Controllers\RobotsTxtController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TestController;
@@ -16,7 +17,9 @@ Route::group(['as' => 'web.'], function () {
         Route::get('', 'index')->name('page');
     });
 
-
+    Route::controller(PagesController::class)->as('pages.')->prefix('/')->group(function () {
+        Route::get('', 'getPage')->name('get-page');
+    });
 
 });
 

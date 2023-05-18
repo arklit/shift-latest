@@ -37,7 +37,7 @@ foreach ($routesEnums as $enum) {
 //    ->push('Конфигуратор', route(OrchidRoutes::conf->list()))
 //);
 
-Breadcrumbs::for(OrchidRoutes::seo->list(), fn(Trail $t) => $t->parent($admin)
-    ->push('Список SEO страниц', route(OrchidRoutes::seo->list()))
-);
+//Breadcrumbs::for(OrchidRoutes::seo->list(), fn(Trail $t) => $t->parent($admin)
+//    ->push('Список SEO страниц', route(OrchidRoutes::seo->list()))
+//);
 

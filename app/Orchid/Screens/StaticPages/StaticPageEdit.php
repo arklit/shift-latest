@@ -25,7 +25,7 @@
 
         public function __construct()
         {
-            $this->listRedirect = OrchidRoutes::static->list();
+            $this->route = OrchidRoutes::static;
         }
 
         public function layout(): iterable
@@ -38,7 +38,7 @@
                     Input::make('item.code')->title('Код')->required()->maxlength(30)->help('Не более 30 символов'),
                     TextArea::make('item.description')->title('Описание')->rows(5)->required(),
                     Input::make('item.sort')->title('Порядок сортировки')->type('number')->value(0),
-                    Upload::make('item.documents')->groups(OrchidRoutes::static->value)->title('Документы'),
+                    Upload::make('item.documents')->groups($this->route->value)->title('Документы'),
                 ]),
             ];
         }
