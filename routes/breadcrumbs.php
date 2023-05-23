@@ -4,10 +4,19 @@ use App\Enums\OrchidRoutes;
 use Tabuna\Breadcrumbs\Breadcrumbs;
 use Tabuna\Breadcrumbs\Trail;
 
+// ======= CLIENT
 $main = 'web.main.page';
+$articles = 'web.articles.list';
 
-// АДМИНКА =============
+// Main page
+Breadcrumbs::for($main, fn(Trail $t) => $t->push('Главная', route($main)));
+
+// /articles
+Breadcrumbs::for($articles, fn(Trail $t) => $t->parent($main)->push('Статьи', route($articles)));
+
+// ADMIN DASHBOARD =============
 $admin = 'platform.main';
+
 // /admin/main
 Breadcrumbs::for($admin, fn(Trail $t) => $t->push('Главная', route($admin)));
 

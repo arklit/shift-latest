@@ -99,19 +99,26 @@ abstract class EditScreenPattern extends Screen
 
     protected function saveItem(ProtoInterface $item, $data)
     {
-        $this->redirectAfterUpdate($item);
 
         $itemTitle = empty($this->titleColumnName) ? ("#" . $item->id) : ('ID: ' . $item->id . ': ' . $item->{$this->titleColumnName});
         $this->updateMessage = $this->updateMessage ?: "Запись [$itemTitle] успешно обновлена";
         $this->createMessage = $this->createMessage ?: "Запись успешно создана";
         $message = $item->exists ? $this->updateMessage : $this->createMessage;
-        $item->fill($data)->save();
 
-        if (!empty($this->relations)) {
-            foreach ($this->relations as $relation) {
-                $item->$relation()->sync($data[$relation]);
+        try {
+            $item->fill($data)->save();
+
+            if (!empty($this->relations)) {
+                foreach ($this->relations as $relation) {
+                    $item->$relation()->sync($data[$relation]);
+                }
             }
+        } catch (\Exception $e) {
+            Alert::error($e->getMessage());
+            return redirect()->route(!empty($item->id) ? $this->route->edit() : $this->route->create(), $item->id ?? [])->withInput();
+
         }
+        $this->redirectAfterUpdate($item);
 
         Alert::info($message);
         return redirect()->route($this->redirectTo, $this->redirectParams);
