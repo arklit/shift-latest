@@ -25,7 +25,8 @@ Route::group(['as' => 'web.'], function () {
     });
 
     Route::controller(PagesController::class)->as('pages.')->prefix('/')->group(function () {
-        Route::get('/{staticPageCode}', 'getStaticPage')->name('static');
+        Route::get('/{staticPageCode}', 'getStaticPage')->name('static')
+            ->where('staticPageCode', '.*');;
     });
 
 
