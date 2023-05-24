@@ -25,7 +25,7 @@ class TestController extends Controller
 
         abort_if(!auth($this->managersGuard)->check(), 404);
         $sp = StaticPage::query()->with('children')->find(5);
-        StaticPagesService::makeParentsChainWithNesting($sp);
+        StaticPagesService::makeCrumbsChainWithNesting($sp);
 
 //        Crumbchain::makeParentsChain($sp);
         dump(
