@@ -4,8 +4,8 @@
 
     use App\Enums\OrchidRoutes;
     use App\Models\StaticPage;
-    use App\Orchid\RocontModule\Abstraction\EditScreenPattern;
-    use App\Orchid\RocontModule\Traits\CommandBarDeletableTrait;
+    use App\Orchid\Abstractions\EditScreenPattern;
+    use App\Orchid\Traits\CommandBarDeletableTrait;
     use Illuminate\Http\Request;
     use Orchid\Screen\Fields\CheckBox;
     use Orchid\Screen\Fields\Input;
@@ -19,7 +19,7 @@
         protected string $updateTitle      = 'Редактирование Страницы';
         protected string $deleteMessage    = 'Запись успешно удалена';
         protected string $createMessage    = 'Запись успешно добавлена';
-        protected string $titleName        = 'title';
+        protected string $titleColumnName        = 'title';
 
         use CommandBarDeletableTrait;
 

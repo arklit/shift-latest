@@ -5,19 +5,14 @@ namespace App\Enums;
 enum OrchidRoutes: string
 {
     case article = 'article';
-    case art_cat = 'article_category';
+    case art_cat = 'article-category';
     case vacancy = 'vacancy';
     case seo = 'seo';
     case robot = 'robot';
     case sitemap = 'sitemap';
-    case static = 'static_page';
+    case static = 'static-page';
     case conf = 'configurator';
 
-
-    public function edit()
-    {
-        return 'platform.' . $this->value . '.edit';
-    }
 
     public function list()
     {
@@ -27,5 +22,29 @@ enum OrchidRoutes: string
     public function create()
     {
         return 'platform.' . $this->value . '.create';
+    }
+
+    public function edit()
+    {
+        return 'platform.' . $this->value . '.edit';
+    }
+
+    public function base()
+    {
+        return 'platform.' . $this->value;
+    }
+
+    public function getTitle()
+    {
+        return match ($this->value) {
+            self::article->value => 'Список статей',
+            self::art_cat->value => 'Список категорий статей',
+            self::static->value => 'Список статических страниц',
+            self::seo->value => 'SEO-страницы',
+            self::conf->value => 'Конфигуратор',
+            self::robot->value => 'Robots.txt',
+            self::sitemap->value => 'Карта сайта',
+            default => throw new \Exception('Unexpected match value'),
+        };
     }
 }

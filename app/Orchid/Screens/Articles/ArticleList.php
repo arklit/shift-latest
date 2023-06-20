@@ -5,12 +5,13 @@ namespace App\Orchid\Screens\Articles;
 use App\Enums\OrchidRoutes;
 use App\Models\Article;
 use App\Models\ArticleCategory;
+use App\Orchid\Abstractions\ListScreenPattern;
 use App\Orchid\Filters\CategoryFilter;
 use App\Orchid\Filters\DateCreatedFilter;
 use App\Orchid\Filters\IsActiveFilter;
-use App\Orchid\RocontModule\Abstraction\ListScreenPattern;
-use App\Orchid\RocontModule\Helpers\OrchidHelper;
-use App\Orchid\RocontModule\Traits\ActivitySignsTrait;
+use App\Orchid\Helpers\OrchidHelper;
+use App\Orchid\Layouts\EmptyModal;
+use App\Orchid\Traits\ActivitySignsTrait;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\DropDown;
 use Orchid\Screen\Actions\Link;
@@ -22,16 +23,15 @@ use Orchid\Support\Facades\Layout;
 
 class ArticleList extends ListScreenPattern
 {
-    public string $name = 'Список статей';
-
     use  ActivitySignsTrait;
 
     public function __construct()
     {
-        $this->routeName = OrchidRoutes::article->value;
+        $this->route = OrchidRoutes::article;
+        $this->name = $this->route->getTitle();
     }
 
-    public function query()
+    public function query(): iterable
     {
         $this->model = Article::query()->with('category')->filters([
             IsActiveFilter::class,
@@ -66,7 +66,7 @@ class ArticleList extends ListScreenPattern
                 ])),
             ]),
 
-            Layout::modal('deleteItem', Layout::rows([]))->title('Удалить статью??')
+            Layout::modal('deleteItem', EmptyModal::class)->title('Удалить статью??')
                 ->applyButton('Да')->closeButton('Нет')->async('asyncGetItem'),
         ];
     }

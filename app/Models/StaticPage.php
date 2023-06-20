@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Orchid\RocontModule\Traits\IsActiveScopeTrait;
-use App\Orchid\RocontModule\Traits\SortedScopeTrait;
+use App\Traits\IsActiveScopeTrait;
+use App\Traits\SortedScopeTrait;
 use App\Traits\CodeScopeTrait;
 
 class StaticPage extends ProtoModel

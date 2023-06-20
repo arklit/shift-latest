@@ -8,9 +8,9 @@
     use App\Models\StaticPage;
     use App\Orchid\Filters\DateCreatedFilter;
     use App\Orchid\Filters\IsActiveFilter;
-    use App\Orchid\RocontModule\Abstraction\ListScreenPattern;
-    use App\Orchid\RocontModule\Helpers\OrchidHelper;
-    use App\Orchid\RocontModule\Traits\ActivitySignsTrait;
+    use App\Orchid\Abstractions\ListScreenPattern;
+    use App\Orchid\Helpers\OrchidHelper;
+    use App\Orchid\Traits\ActivitySignsTrait;
     use Orchid\Screen\Actions\Button;
     use Orchid\Screen\Actions\DropDown;
     use Orchid\Screen\Actions\Link;
@@ -32,7 +32,7 @@
             $this->routeName = OrchidRoutes::static->value;
         }
 
-        public function query()
+        public function query(): iterable
         {
             $this->model = StaticPage::query()->filters([
                 IsActiveFilter::class,

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Orchid\RocontModule\Console\Commands;
+namespace App\Orchid\Console\Commands;
 
 use Illuminate\Console\GeneratorCommand;
 use function app_path;

@@ -6,9 +6,9 @@ use App\Enums\OrchidRoutes;
 use App\Models\ArticleCategory;
 use App\Orchid\Filters\DateCreatedFilter;
 use App\Orchid\Filters\IsActiveFilter;
-use App\Orchid\RocontModule\Abstraction\ListScreenPattern;
-use App\Orchid\RocontModule\Helpers\OrchidHelper;
-use App\Orchid\RocontModule\Traits\ActivitySignsTrait;
+use App\Orchid\Abstractions\ListScreenPattern;
+use App\Orchid\Helpers\OrchidHelper;
+use App\Orchid\Traits\ActivitySignsTrait;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Fields\DateTimer;
 use Orchid\Screen\Fields\Select;
@@ -17,16 +17,16 @@ use Orchid\Support\Facades\Layout;
 
 class ArticleCategoryList extends ListScreenPattern
 {
-    public string $name = 'Список Категорий Публикаций';
+    public string $name = 'Список Категорий Статей';
 
     use ActivitySignsTrait;
 
     public function __construct()
     {
-        $this->routeName = OrchidRoutes::art_cat->value;
+        $this->route = OrchidRoutes::art_cat;
     }
 
-    public function query()
+    public function query(): iterable
     {
         $this->model = ArticleCategory::query()->filters([
             IsActiveFilter::class,

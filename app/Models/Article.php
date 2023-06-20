@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
-use App\Orchid\RocontModule\Traits\IsActiveScopeTrait;
-use App\Orchid\RocontModule\Traits\ReadyToPublicationScopeTrait;
-use App\Orchid\RocontModule\Traits\SortedByPublicationScopeTrait;
+
+use App\Traits\IsActiveScopeTrait;
+use App\Traits\ReadyToPublicationScopeTrait;
+use App\Traits\SortedByPublicationScopeTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 class Article extends ProtoModel
 {
@@ -22,9 +24,10 @@ class Article extends ProtoModel
         return $this->belongsTo(ArticleCategory::class, 'category_id', 'id');
     }
 
-    public function getTitle()
+    public function setSlug(string $slug)
     {
-        return $this->title;
+        $this->slug = Str::slug($this->id . '-' . $slug);
+        return $this;
     }
 }
 

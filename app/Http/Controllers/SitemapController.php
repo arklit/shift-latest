@@ -2,23 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\DebugNotificationHelper;
-use App\Helpers\LoggerHelper;
 use App\Services\SitemapGenerator;
-use Exception;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class SitemapController extends Controller
 {
     public function __invoke()
     {
-        try {
-            $generator = new SitemapGenerator();
-            $map = $generator->generateMap();
-            return response($map, 200, ['Content-Type' => 'application/xml']);
-        } catch (Exception $e) {
-            LoggerHelper::commonErrorVerbose($e);
-            DebugNotificationHelper::sendVerboseErrorEmail($e);
-            abort(500);
+        $fileName = '/sitemap.xml';
+        $generator = new SitemapGenerator();
+        $compareTime = Carbon::now()->subDay()->timestamp;
+        $disk = Storage::disk('public');
+
+        if (!$disk->exists($fileName) || $disk->lastModified($fileName) < $compareTime) {
+            $mapContent = $generator->generateMap();
+            $disk->put($fileName, $mapContent);
+        } else {
+            $mapContent = $disk->get($fileName);
         }
+        return response($mapContent, 200, ['Content-Type' => 'application/xml']);
     }
 }

@@ -4,11 +4,12 @@
 
     use App\Enums\OrchidRoutes;
     use App\Models\ArticleCategory;
-    use App\Orchid\RocontModule\Abstraction\EditScreenPattern;
-    use App\Orchid\RocontModule\Traits\CommandBarDeletableTrait;
-    use App\Services\MakeCodeValidator;
+    use App\Orchid\Abstractions\EditScreenPattern;
+    use App\Orchid\Helpers\OrchidHelper;
+    use App\Orchid\Traits\CommandBarDeletableTrait;
     use Illuminate\Http\Request;
     use Illuminate\Support\Str;
+    use Illuminate\Validation\Rule;
     use Orchid\Screen\Fields\CheckBox;
     use Orchid\Screen\Fields\Input;
     use Orchid\Screen\Fields\TextArea;
@@ -18,16 +19,17 @@
     class ArticleCategoryEdit extends EditScreenPattern
     {
         protected string $createTitle      = 'Создание Категории Статей';
-        protected string $updateTitle      = 'Редактирование Категории Публикации';
+        protected string $updateTitle      = 'Редактирование Категории Статей';
         protected string $deleteMessage    = 'Запись успешно удалена';
         protected string $createMessage    = 'Запись успешно добавлена';
-        protected string $titleName        = 'title';
+        protected string $titleColumnName        = 'title';
 
         use CommandBarDeletableTrait;
 
         public function __construct()
         {
-            $this->routeName = OrchidRoutes::art_cat->list();
+            $this->route = OrchidRoutes::art_cat;
+            $this->routeName = $this->route->list();
         }
 
         public function layout(): iterable
@@ -42,6 +44,7 @@
                     Input::make('item.seo_title')->title('Title ')->required()->maxlength(169)->help('Не более 169 символов'),
                     TextArea::make('item.seo_description')->title('Description ')->rows(5),
                 ]),
+
             ];
         }
 
@@ -55,12 +58,16 @@
             $data = $request->input('item');
             $data['code'] = Str::slug($data['code']);
             $data['sort'] = $data['sort'] ?? 0;
-            $validator = MakeCodeValidator::handle($item, $data, 'code', 'код');
-            $arguments = ($item->exists) ? ['id' => $item->id] : [];
-            $route = ($item->exists) ? OrchidRoutes::art_cat->edit() : OrchidRoutes::art_cat->create();
 
-            if ($validator->fails()) {
-                return redirect()->route($route, $arguments)->withErrors($validator)->withInput();
+            $presets = OrchidHelper::getPreset('validators',$this->route->value);
+            $presets['rules']['code'][] = Rule::unique($item->getTable(), 'code')->ignore($item->id);
+            $presets['messages']['code.unique'] = 'Такой код уже используется';
+
+//            dd($data, $presets);
+            $result = OrchidHelper::validate($item, $this->route, $data, $presets);
+
+            if (!is_null($result)) {
+                return $result;
             }
 
             return $this->saveItem($item, $data);
@@ -70,7 +77,7 @@
         {
             if ($item->articles()->count() !== 0) {
                 Alert::error('Эта категория не является пустой. Её нельзя удалить');
-                return redirect()->route(OrchidRoutes::art_cat->edit(), ['id' => $item->id]);
+                return redirect()->route($this->route->edit(), ['id' => $item->id]);
             }
 
             return $this->removeItem($item);
