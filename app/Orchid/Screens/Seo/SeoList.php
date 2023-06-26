@@ -44,7 +44,7 @@ class SeoList extends ListScreenPattern
     {
         return [
             Layout::table('items', [
-                TD::make('id', 'ID')->sort()->filter(TD::FILTER_NUMBER_RANGE),
+                TD::make('id', 'ID')->sort()->filter(TD::FILTER_NUMERIC),
                 TD::make('is_active', 'Активность')->sort()->filter(
                     Select::make()->options(OrchidHelper::getYesNoArray())->empty()->title('Фильтр активности')
                 )->render(fn($item) => $item->is_active ? $this->activeSign : $this->inactiveSign),

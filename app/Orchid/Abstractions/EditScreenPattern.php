@@ -139,7 +139,7 @@ abstract class EditScreenPattern extends Screen
         $item->delete();
         $this->redirectAfterDelete();
         Alert::warning($this->deleteMessage);
-        return redirect()->route($this->listRedirect);
+        return redirect()->route($this->redirectTo);
     }
 
     protected function redirectAfterUpdate(ProtoInterface $item)
