@@ -31,7 +31,7 @@ class ArticleCategoryList extends ListScreenPattern
         $this->model = ArticleCategory::query()->filters([
             IsActiveFilter::class,
             DateCreatedFilter::class,
-        ]);;
+        ]);
         return parent::query();
     }
 
@@ -39,7 +39,7 @@ class ArticleCategoryList extends ListScreenPattern
     {
         return [
             Layout::table('items', [
-                TD::make('id', 'ID')->sort()->filter(TD::FILTER_NUMBER_RANGE),
+                TD::make('id', 'ID')->sort()->filter(TD::FILTER_NUMERIC),
                 TD::make('is_active', 'Активность')->sort()->filter(
                     Select::make()->options(OrchidHelper::getYesNoArray())->empty()->title('Фильтр активности')
                 )->render(fn($item) => $item->is_active ? $this->activeSign : $this->inactiveSign),
@@ -51,7 +51,7 @@ class ArticleCategoryList extends ListScreenPattern
                     ->filter(DateTimer::make()->title('Фильтр по дате')->format('d-m-Y'))
                     ->render(fn($item) => $item->created_at?->format('d-m-Y')),
                 TD::make()->width(10)->alignRight()->render(fn($item) => Link::make()
-                    ->icon('wrench')->route('platform.' . $this->routeName . '.edit', $item)),
+                    ->icon('wrench')->route($this->route->edit(), $item)),
             ]),
         ];
     }

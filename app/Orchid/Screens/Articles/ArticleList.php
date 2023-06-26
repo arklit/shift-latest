@@ -45,10 +45,10 @@ class ArticleList extends ListScreenPattern
     {
         return [
             Layout::table('items', [
-                TD::make('id', 'ID')->sort()->filter(TD::FILTER_NUMBER_RANGE),
+                TD::make('id', 'ID')->sort()->filter(TD::FILTER_NUMERIC),
                 TD::make('is_active', 'Активность')->sort()->filter(
                     Select::make()->options(OrchidHelper::getYesNoArray())->empty()->title('Фильтр активности')
-                )->render(fn($item) => $item->is_active ? $this->activeSign : $this->inactiveSign),
+                )->render(fn($item) => $this->isActive($item)),
                 TD::make('title', 'Название')->sort()->filter(),
                 TD::make('slug', 'Код')->sort()->filter(),
                 TD::make('category_id', 'Категория')->render(fn($item) => $item->category?->title)

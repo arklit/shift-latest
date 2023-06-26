@@ -23,7 +23,7 @@ class MakeModifiedFormRequest extends GeneratorCommand
 
     protected function getStub()
     {
-        return app_path() . '/Orchid/RocontModule/Console/Stubs/form-request.stub';
+        return app_path() . '/Orchid/Console/Stubs/form-request.stub';
     }
 
     public function getDefaultNamespace($rootNamespace): string
