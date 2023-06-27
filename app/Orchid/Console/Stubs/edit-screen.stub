@@ -1,45 +1,45 @@
 <?php
 
-    namespace App\Orchid\Screens\DirectoryName;
+namespace App\Orchid\Screens\DirectoryName;
 
-    use App\Orchid\RocontModule\Abstraction\EditScreenPattern;
-    use App\Orchid\RocontModule\Traits\CommandBarDeletableTrait;
-    use Illuminate\Http\Request;
-    use Orchid\Support\Facades\Layout;
+use App\Orchid\Abstractions\EditScreenPattern;
+use App\Orchid\Traits\CommandBarDeletableTrait;
+use Illuminate\Http\Request;
+use Orchid\Support\Facades\Layout;
 
-    class StubEditScreen extends EditScreenPattern
+class StubEditScreen extends EditScreenPattern
+{
+    use CommandBarDeletableTrait;
+
+    protected ?string $listRedirect    = 'platform.ITEM.list';
+    protected string $createTitle      = 'Создание ITEM';
+    protected string $updateTitle      = 'Редактирование ITEM';
+    protected string $deleteMessage    = 'Запись успешно удалена';
+    protected string $createMessage    = 'Запись успешно добавлена';
+    protected string $titleName        = 'title';
+
+    public function layout(): iterable
     {
-        use CommandBarDeletableTrait;
-
-        protected ?string $listRedirect    = 'platform.ITEM.list';
-        protected string $createTitle      = 'Создание ITEM';
-        protected string $updateTitle      = 'Редактирование ITEM';
-        protected string $deleteMessage    = 'Запись успешно удалена';
-        protected string $createMessage    = 'Запись успешно добавлена';
-        protected string $titleName        = 'title';
-
-        public function layout(): iterable
-        {
-            return [
-                Layout::rows([
-                   // fields ...
-                ]),
-            ];
-        }
-
-        public function query(ModelName $item)
-        {
-            return $this->queryMake($item);
-        }
-
-        public function save(ModelName $item, Request $request)
-        {
-            $data = $request->input('item');
-            return $this->saveItem($item, $data);
-        }
-
-        public function remove(ModelName $item)
-        {
-            return $this->removeItem($item);
-        }
+        return [
+            Layout::rows([
+               // fields ...
+            ]),
+        ];
     }
+
+    public function query(ModelName $item)
+    {
+        return $this->queryMake($item);
+    }
+
+    public function save(ModelName $item, Request $request)
+    {
+        $data = $request->input('item');
+        return $this->saveItem($item, $data);
+    }
+
+    public function remove(ModelName $item)
+    {
+        return $this->removeItem($item);
+    }
+}

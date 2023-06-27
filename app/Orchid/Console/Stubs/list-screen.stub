@@ -1,43 +1,43 @@
 <?php
 
-    namespace App\Orchid\Screens\DirectoryName;
+namespace App\Orchid\Screens\DirectoryName;
 
-    use App\Models\ModelName;
-    use App\Orchid\RocontModule\Abstraction\ListScreenPattern;
-    use Orchid\Screen\Actions\Link;
-    use Orchid\Screen\Fields\DateTimer;
-    use Orchid\Screen\TD;
-    use Orchid\Support\Facades\Layout;
+use App\Models\ModelName;
+use App\Orchid\Abstractions\ListScreenPattern;
+use Orchid\Screen\Actions\Link;
+use Orchid\Screen\Fields\DateTimer;
+use Orchid\Screen\TD;
+use Orchid\Support\Facades\Layout;
 
-    class StubListScreen extends ListScreenPattern
+class StubListScreen extends ListScreenPattern
+{
+    protected string $routeName         = 'name';
+    public string $name                 = 'Список ITEMS';
+
+    public function query(): iterable
     {
-        protected string $routeName         = 'name';
-        public string $name                 = 'Список ITEMS';
-
-        public function query()
-        {
-            $this->model = ModelName::query();
-            return parent::query();
-        }
-
-        public function layout(): iterable
-        {
-            return [
-                Layout::table('items', [
-                    TD::make('id', 'ID')->sort()->filter(TD::FILTER_NUMBER_RANGE),
-                    TD::make('', ''),
-                    TD::make('', ''),
-                    TD::make('', ''),
-                    TD::make('', ''),
-
-                    // table columns ...
-
-                    TD::make('created_at', 'Дата')->width(100)->alignRight()->sort()
-                        ->filter(DateTimer::make()->title('Фильтр по дате')->format('d-m-Y'))
-                        ->render(fn ($item) => $item->created_at?->format('d-m-Y')),
-                    TD::make()->width(10)->alignRight()->render(fn ($item) => Link::make()
-                        ->icon('wrench')->route('platform.' . $this->routeName . '.edit', $item)),
-                ])
-            ];
-        }
+        $this->model = ModelName::query();
+        return parent::query();
     }
+
+    public function layout(): iterable
+    {
+        return [
+            Layout::table('items', [
+                TD::make('id', 'ID')->sort()->filter(TD::FILTER_NUMBER_RANGE),
+                TD::make('', ''),
+                TD::make('', ''),
+                TD::make('', ''),
+                TD::make('', ''),
+
+                // table columns ...
+
+                TD::make('created_at', 'Дата')->width(100)->alignRight()->sort()
+                    ->filter(DateTimer::make()->title('Фильтр по дате')->format('d-m-Y'))
+                    ->render(fn ($item) => $item->created_at?->format('d-m-Y')),
+                TD::make()->width(10)->alignRight()->render(fn ($item) => Link::make()
+                    ->icon('wrench')->route('platform.' . $this->routeName . '.edit', $item)),
+            ])
+        ];
+    }
+}

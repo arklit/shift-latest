@@ -21,7 +21,7 @@ class DebugMailService
         $this->recipients = explode(',', $mails);
     }
 
-    protected function send(array $data)
+    protected function send(array $data): void
     {
         $mailer = new CommonMailer($data, $this->view);
         $mailer->subject = $this->subject;

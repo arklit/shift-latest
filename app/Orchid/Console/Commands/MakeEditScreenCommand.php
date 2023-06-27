@@ -23,7 +23,7 @@ class MakeEditScreenCommand extends GeneratorCommand
 
     protected function getStub()
     {
-        return app_path() . '/Orchid/RocontModule/Console/Stubs/edit-screen.stub';
+        return app_path() . '/Orchid/Console/Stubs/edit-screen.stub';
     }
 
     public function getDefaultNamespace($rootNamespace): string

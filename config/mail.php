@@ -45,6 +45,17 @@ return [
             'local_domain' => env('MAIL_EHLO_DOMAIN'),
         ],
 
+        'rocont' => [
+            'transport' => 'smtp',
+            'host' => env('ROCONT_MAIL_HOST', 'smtp.mailgun.org'),
+            'port' => env('ROCONT_MAIL_PORT', 587),
+            'encryption' => env('ROCONT_MAIL_ENCRYPTION', 'tls'),
+            'username' => env('ROCONT_MAIL_USERNAME'),
+            'password' => env('ROCONT_MAIL_PASSWORD'),
+            'timeout' => null,
+            'local_domain' => env('ROCONT_MAIL_EHLO_DOMAIN'),
+        ],
+
         'ses' => [
             'transport' => 'ses',
         ],
