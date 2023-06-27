@@ -23,7 +23,7 @@ class MakeListScreenCommand extends GeneratorCommand
 
     protected function getStub()
     {
-        return app_path() . '/Orchid/RocontModule/Console/Stubs/list-screen.stub';
+        return app_path() . '/Orchid/Console/Stubs/list-screen.stub';
     }
 
     public function getDefaultNamespace($rootNamespace): string

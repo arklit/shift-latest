@@ -6,14 +6,11 @@
         $width = $isLoginPage ? 125 : 250;
         $height = $isLoginPage ? 90 : 125;
 @endphp
-@if($isLoginPage)
-    <a href="/admin/main" class="logo-admin-container{{ $additionalClass }}"><img class="admin-logo" src="{{ $logo }}" width="{{ $width }}" height="{{ $height }}"></a>
-@else
-    <a href="/admin/main" class="logo-admin-container{{ $additionalClass }}"><img class="admin-logo" src="{{ $logo }}" width="{{ $width }}" height="{{ $height }}"></a>
-@endif
+<a href="/admin/home" class="logo-admin-container{{ $additionalClass }}" style="display:block;@if($isLoginPage)max-width: 300px;margin: 0 auto;@endif">
+    <img class="admin-logo" src="{{ $logo }}" style="max-width: 100%">
+
 <p class="h2 n-m font-thin v-center">
     <span class="m-l d-none d-sm-block">
     </span>
 </p>
-
 {{-- \vendor\orchid\platform\resources\views\header.blade.php--}}

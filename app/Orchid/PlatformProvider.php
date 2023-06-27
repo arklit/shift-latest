@@ -35,6 +35,7 @@ class PlatformProvider extends OrchidServiceProvider
                 Menu::make('Категории статей')->route(OrchidRoutes::art_cat->list())->icon('list'),
             ]),
 
+            Menu::make('Статические страницы')->icon('docs')->route(OrchidRoutes::static->list()),
             Menu::make('SEO')->icon('globe')->list([
                 Menu::make('SEO страницы')->route(OrchidRoutes::seo->list())->icon('docs'),
                 Menu::make('Robots.txt')->route(OrchidRoutes::robot->base())->icon('android'),

@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Contracts\Routing\ResponseFactory;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Imagick;
+use League\Flysystem\FilesystemException;
 use Orchid\Attachment\File;
 use Orchid\Attachment\Models\Attachment;
 use Orchid\Platform\Dashboard;
 use Orchid\Platform\Events\UploadedFileEvent;
 use Orchid\Platform\Http\Controllers\Controller;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Str;
 
 class FilesController extends Controller
 {
@@ -33,16 +33,21 @@ class FilesController extends Controller
 
     /**
      * @param Request $request
-     *
      * @return JsonResponse
      */
     public function upload(Request $request): JsonResponse
     {
-        foreach ($request->files->all() as $file) {
+        $filesArray = $request->files->all();
+        if (isset($filesArray['files'])) {
+            $filesArray = $filesArray['files'];
+        }
+        foreach ($filesArray as $file) {
             $fileItem['mimeType'] = $file->getClientMimeType();
             $fileItem['originalName'] = $file->getClientOriginalName();
             $fileItem['pathName'] = $file->getPathname();
-            $files[] = $this->cropImage($fileItem, $request->acceptedFiles === 'image/png');
+            if (Str::contains($file->getClientMimeType(), 'image')) {
+                $files[] = $this->cropImage($fileItem);
+            }
         }
 
         $files = $files ?? $request->allFiles();
@@ -56,16 +61,16 @@ class FilesController extends Controller
         return response()->json($response);
     }
 
-    public function cropImage($fileItem, $isPng = false)
+    public function cropImage($fileItem)
     {
         $imagickObj = new Imagick();
         $imagickObj->readImage($fileItem['pathName']);
-        if (!$isPng) {
-            $imagickObj->setImageBackgroundColor('white');
-            $imagickObj->setImageFormat('jpg');
-            $imagickObj->setImageCompression(Imagick::COMPRESSION_JPEG);
-            $fileItem['mimeType'] = 'image/jpeg';
-        }
+        $imagickObj->setImageBackgroundColor('white');
+        $imagickObj->setImageFormat("webp");
+        $imagickObj->setOption('webp:method', '6');
+        $imagickObj->setOption('lossless', true);
+        $fileItem['mimeType'] = 'image/webp';
+
         $imagickObj->writeImage($fileItem['pathName']);
         return new UploadedFile(
             $fileItem['pathName'],
@@ -89,9 +94,9 @@ class FilesController extends Controller
 
     /**
      * Delete files.
-     *
      * @param string $id
      * @param Request $request
+     * @throws Exception
      */
     public function destroy(string $id, Request $request): void
     {
@@ -102,8 +107,7 @@ class FilesController extends Controller
     /**
      * @param string $id
      * @param Request $request
-     *
-     * @return ResponseFactory|Response
+     * @return JsonResponse
      */
     public function update(string $id, Request $request)
     {
@@ -119,10 +123,8 @@ class FilesController extends Controller
     /**
      * @param UploadedFile $file
      * @param Request $request
-     *
      * @return mixed
-     * @throws BindingResolutionException
-     *
+     * @throws FilesystemException
      */
     private function createModel(UploadedFile $file, Request $request)
     {
@@ -150,6 +152,7 @@ class FilesController extends Controller
     public function media(): JsonResponse
     {
         $attachments = $this->attachment->filters()->paginate(12);
+
         return response()->json($attachments);
     }
 }

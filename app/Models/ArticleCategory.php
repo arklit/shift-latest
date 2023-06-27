@@ -12,6 +12,7 @@ class ArticleCategory extends ProtoModel
     public const TABLE_NAME = 'article_categories';
     protected $table = self::TABLE_NAME;
     protected $allowedSorts = ['id', 'is_active', 'sort', 'title', 'code', 'created_at'];
+    protected $allowedFilters = ['id', 'title', 'code', 'created_at'];
 
     use IsActiveScopeTrait;
     use SortedScopeTrait;

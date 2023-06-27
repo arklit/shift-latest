@@ -2,46 +2,38 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\OrchidRoutes;
-use App\Orchid\Helpers\OrchidHelper;
-use App\Services\SitemapGenerator;
+use App\Models\StaticPage;
+use App\Services\Crumbchain;
+use App\Services\StaticPagesService;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
+use Tabuna\Breadcrumbs\Breadcrumbs;
+use Tabuna\Breadcrumbs\Trail;
 
 class TestController extends Controller
 {
     protected string $managersGuard = 'web';
     protected ?Authenticatable $manager;
 
-    public function __invoke()
+    public function __invoke(Request $request)
     {
+        $url = request()->path();
+
+        dd($url);
+        $data =
+
+
         abort_if(!auth($this->managersGuard)->check(), 404);
+        $sp = StaticPage::query()->with('children')->find(5);
+        StaticPagesService::makeCrumbsChainWithNesting($sp);
 
-
-        $route = OrchidRoutes::article;
-
-        OrchidHelper::getValidationStructure($route->value, ['title', 'text', 'description']);
-
-
-//        $file =    public_path('/robots.txt');
-
-        dd(
-            Storage::disk('publicity')->exists('/robots.txt'),
-//            file_exists($file)
+//        Crumbchain::makeParentsChain($sp);
+        dump(
+//            $sp,
+            Crumbchain::cs()->getCrumbs()
         );
 
-//        $fileName = '/sitemap.xml';
-//        $generator = new SitemapGenerator();
-//        $compareTime = Carbon::now()->subDay()->timestamp;
-//        $disk = Storage::disk('public');
-//
-//        if (!$disk->exists($fileName) || $disk->lastModified($fileName) < $compareTime) {
-//            $mapContent = $generator->generateMap();
-//            $disk->put($fileName, $mapContent);
-//        } else {
-//            $mapContent = $disk->get($fileName);
-//        }
-//        return response($mapContent, 200, ['Content-Type' => 'application/xml']);
+
+
     }
 }
