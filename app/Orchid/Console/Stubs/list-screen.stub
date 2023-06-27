@@ -1,6 +1,6 @@
 <?php
 
-    namespace App\Orchid\Screens\DirectoryName;
+namespace App\Orchid\Screens\DirectoryName;
 
     use App\Enums\OrchidRoutes;
     use App\Models\ProtoModel;
@@ -76,3 +76,4 @@
             Alert::success("Запись №:$id - '$title'  успешно удалена!");
         }
     }
+}

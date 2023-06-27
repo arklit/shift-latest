@@ -14,17 +14,17 @@ enum OrchidRoutes: string
     case conf = 'configurator';
 
 
-    public function list()
+    public function list(): string
     {
         return 'platform.' . $this->value . '.list';
     }
 
-    public function create()
+    public function create(): string
     {
         return 'platform.' . $this->value . '.create';
     }
 
-    public function edit()
+    public function edit(): string
     {
         return 'platform.' . $this->value . '.edit';
     }

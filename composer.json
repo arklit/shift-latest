@@ -7,9 +7,9 @@
     "require": {
         "php": "^8.1",
         "barryvdh/laravel-debugbar": "^3.8",
-        "guzzlehttp/guzzle": "^7.2",
-        "laravel/framework": "^9.19",
-        "laravel/sanctum": "^3.0",
+        "guzzlehttp/guzzle": "7.7.0",
+        "laravel/framework": "v9.52.9",
+        "laravel/sanctum": "3.2.5",
         "laravel/tinker": "^2.7",
         "orchid/platform": "^13.10"
     },
