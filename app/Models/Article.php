@@ -14,6 +14,7 @@ class Article extends ProtoModel
     public const TABLE_NAME = 'articles';
     protected $table = self::TABLE_NAME;
     protected $allowedSorts = ['id', 'is_active', 'category_id', 'sort', 'title', 'slug', 'created_at'];
+    protected $allowedFilters = ['id', 'title', 'slug', 'created_at'];
 
     use IsActiveScopeTrait;
     use ReadyToPublicationScopeTrait;
@@ -28,6 +29,12 @@ class Article extends ProtoModel
     {
         $this->slug = Str::slug($this->id . '-' . $slug);
         return $this;
+    }
+
+    public function getDateFormatted()
+    {
+        $date = Carbon::make($this->publication_date);
+        return $date->isoFormat("DD.MM.YYYY");
     }
 }
 

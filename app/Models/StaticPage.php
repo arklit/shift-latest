@@ -10,14 +10,25 @@ class StaticPage extends ProtoModel
 {
     public const TABLE_NAME = 'static_pages';
     protected $table = self::TABLE_NAME;
+    protected $with = ['parent'];
     protected $allowedSorts = ['id', 'is_active', 'sort', 'title', 'code', 'created_at'];
 
     use IsActiveScopeTrait;
     use SortedScopeTrait;
     use CodeScopeTrait;
 
-    public function getTitle()
+    public function parent()
     {
-        return $this->title;
+        return $this->hasOne(self::class, 'id', 'parent_id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(self::class, 'parent_id', 'id');
+    }
+
+    public function isActive(): bool
+    {
+        return $this->is_active;
     }
 }

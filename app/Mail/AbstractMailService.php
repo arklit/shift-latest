@@ -9,7 +9,8 @@ abstract class AbstractMailService
     protected CommonMailer $mailer;
     protected string $view;
     protected string $subject;
-    protected array $recipients;
+    protected array $prodMails = [];
+    protected array $debugMails = [];
 
     protected function send(array $data, array $savedFiles = [], array $memoryFiles = []): bool
     {
@@ -32,7 +33,8 @@ abstract class AbstractMailService
             }
         }
 
-        Mail::to($this->recipients)->send($this->mailer);
+        $recipients = app()->isProduction() ? $this->prodMails : $this->debugMails;
+        Mail::to($recipients)->send($this->mailer);
         return true;
     }
 }

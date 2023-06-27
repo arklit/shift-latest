@@ -6,6 +6,7 @@ use App\Enums\OrchidRoutes;
 use App\Models\ProtoModel;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class OrchidHelper
@@ -29,22 +30,26 @@ class OrchidHelper
 
     public static function getPreset(string $title, ?string $block = null)
     {
-        $data = config('presets.orchid.' . $title);
-        $data = $data ?? [];
-        return (is_null($block) || empty($data)) ? $data : $data[$block];
+        $path = 'presets.orchid.' . $title;
+        if (!is_null($block)) {
+            $path = $path . '.' . $block;
+        }
+
+        $data = config($path);
+        return $data ?? [];
     }
 
     public static function getValidationStructure(string $name, array $defaults = []): array
     {
         $defaultRules = [];
         $existedMessageKeys = [];
-        $modelRules = OrchidHelper::getPreset('validators', $name);
+        $modelRules = self::getPreset('validators', $name);
 
         if (empty($defaults)) {
             return $modelRules;
         }
-        $defaultsPresets = OrchidHelper::getPreset('validators', 'defaults');
-
+        $defaultsPresets = self::getPreset('validators', 'defaults');
+        //        dd($defaultsPresets);
         if (empty($defaultsPresets)) {
             return $modelRules;
         }
@@ -75,13 +80,12 @@ class OrchidHelper
     public static function setUniqueRule(array $presets, ProtoModel $item, string $fieldName, string $columnName, string $messageName): array
     {
         $presets['rules'][$fieldName][] = Rule::unique($item->getTable(), $columnName)->ignore($item->id);
-        $presets['messages']['title.' . $fieldName] = "Такой $messageName уже используется";
+        $presets['messages'][$fieldName  . '.unique'] = "Такой $messageName уже используется";
         return $presets;
     }
 
     public static function validate(ProtoModel $item, OrchidRoutes $route, array $data, array $presets)
     {
-
         $validator = Validator::make($data, $presets['rules'], $presets['messages']);
         $route = ($item->exists) ? $route->edit() : $route->create();
 
@@ -89,5 +93,31 @@ class OrchidHelper
             return redirect()->route($route, $item->id)->withErrors($validator)->withInput();
         }
         return null;
+    }
+
+    public static function saveForSlug(ProtoModel $item, array &$data)
+    {
+        if ($item->exists) {
+            $data['slug'] = $item->slug;
+        } else {
+            $item->fill($data)->save();
+            $item->refresh();
+            $data['slug'] = Str::slug($item->id . '-' . $data['title']);
+        }
+    }
+
+    /** Quill даже без текста может отправлять тэги форматирования, из-за чего поле будет считаться не пустым и валидация required будет провалена
+     * @param array $data - массив с данными из реквеста
+     * @param array $fields - список полей, которые нужно проверить
+     * @return void
+     */
+    public static function clearQuillTags(array &$data, array $fields)
+    {
+        foreach ($fields as $field) {
+            $text = trim(strip_tags($data[$field]));
+            if (empty($text)) {
+                $data[$field] = $text;
+            }
+        }
     }
 }

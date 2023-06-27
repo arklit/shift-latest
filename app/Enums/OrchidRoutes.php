@@ -47,4 +47,18 @@ enum OrchidRoutes: string
             default => throw new \Exception('Unexpected match value'),
         };
     }
+
+    public function isSingle(): bool
+    {
+        return match ($this->value) {
+            self::article->value,
+            self::art_cat->value,
+            self::static->value,
+            self::seo->value => false,
+            self::conf->value,
+            self::sitemap->value,
+            self::robot->value => true,
+            default => throw new \Exception('Unexpected match value'),
+        };
+    }
 }
