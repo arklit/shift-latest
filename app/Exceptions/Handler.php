@@ -53,6 +53,7 @@ class Handler extends ExceptionHandler
 
     public function report(Throwable $e)
     {
+        return response()->json(['error' => $e->getMessage(), 'file' => $e->getFile() . ':' . $e->getLine()]);
         LoggerHelper::commonErrorVerbose($e);
         if (app()->isProduction() && !($e instanceof HttpException)) {
             DebugNotificationHelper::sendVerboseErrorEmail($e);
