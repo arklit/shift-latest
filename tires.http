@@ -1,0 +1,23 @@
+POST http://localhost:1033/api/auth/register
+Content-Type: application/json
+
+{
+  "companyName": "ООО Роконт",
+  "inn": 1234567890,
+  "activities": [],
+  "name": "Михаил",
+  "surname": "Маргасов",
+  "patronymic": "Алексеевич",
+  "phone": "+7 (921) 897 6333",
+  "email": "m.margasov@rocont.ru"
+}
+
+
+###
+POST http://localhost:1033/api/auth/login
+Content-Type: application/json
+
+{
+    "login": "+79218976333",
+    "password": "y3BBE1RLvh"
+}

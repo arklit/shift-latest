@@ -4,26 +4,29 @@ namespace App\Mail;
 
 class ClientMailService extends AbstractMailService
 {
-    public function __construct()
+    public function setEmail(string $email): self
     {
-        $this->debugMails = explode(',', config('rocont.debug_mails'));
-    }
+        $this->emails[] = $email;
 
-    public function setEmail(string $email)
-    {
-        $this->prodMails[] = $email;
         return $this;
     }
 
-    public function setView(string $view)
+    public function setView(string $view): self
     {
-        $this->view = 'client.' . $view;
+        $this->view = 'mails.' . $view;
+
         return $this;
     }
 
-    public function regularMailMethod(array $formData, string $subject): bool
+    public function setSubject(string $subject): self
     {
         $this->subject = $subject;
+
+        return $this;
+    }
+
+    public function regularMailMethod(array $formData): bool
+    {
         return $this->send($formData);
     }
 }
