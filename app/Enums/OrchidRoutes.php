@@ -6,13 +6,11 @@ enum OrchidRoutes: string
 {
     case article = 'article';
     case art_cat = 'article-category';
-    case vacancy = 'vacancy';
     case seo = 'seo';
     case robot = 'robot';
     case sitemap = 'sitemap';
     case static = 'static-page';
     case conf = 'configurator';
-
 
     public function list(): string
     {

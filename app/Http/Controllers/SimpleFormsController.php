@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\CommonHelper;
 use App\Helpers\DebugNotificationHelper;
 use App\Helpers\LoggerHelper;
 use App\Mail\ManagerMailService;
@@ -65,7 +66,7 @@ class SimpleFormsController
 
     protected function prepare(string $code): void
     {
-        $this->params = config("forms.$code");
+        $this->params = CommonHelper::getPreset('forms.' . $code);
         abort_if(!$this->params, 404);
     }
 }

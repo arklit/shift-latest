@@ -18,10 +18,10 @@ return new class extends Migration
             $table->boolean('is_active');
             $table->string('title');
             $table->string('code');
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->integer('sort')->default(0);
             $table->string('seo_title');
-            $table->text('seo_description');
+            $table->text('seo_description')->nullable();
             $table->timestamps();
         });
     }

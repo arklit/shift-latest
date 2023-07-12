@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Enums\OrchidRoutes;
+use App\Http\Controllers\FilesController;
 use App\Orchid\Helpers\OrchidHelper;
 use App\Orchid\Screens\Articles\ArticleCategoryEdit;
 use App\Orchid\Screens\Articles\ArticleCategoryList;
@@ -23,6 +24,10 @@ use App\Orchid\Screens\User\UserListScreen;
 use App\Orchid\Screens\User\UserProfileScreen;
 use Illuminate\Support\Facades\Route;
 use Tabuna\Breadcrumbs\Trail;
+
+Route::prefix('systems')->group(function () {
+    Route::post('files', [FilesController::class, 'upload'])->name('systems.files.upload');
+});
 
 // Main
 Route::screen('/home', PlatformScreen::class)->name('platform.main');

@@ -55,6 +55,7 @@
                 $item[$row['key']] = $row['value'];
                 $this->fields[$row['key']]['value'] = $row['value'];
                 $this->fields[$row['key']]['title'] = $row['title'];
+                $this->fields[$row['key']]['key'] = $row['key'];
             }
 
             return [

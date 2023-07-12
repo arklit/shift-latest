@@ -43,8 +43,6 @@ Route::group(['as' => 'web.'], function () {
         Route::get('password/recover', 'getPasswordRecoverPage')->name('password.recover');
     });
 
-
-
     // Standard Pages
     Route::controller(BlogController::class)->as('articles.')->prefix('/articles')->group(function () {
         Route::get('/', 'getArticlesList')->name('list');
