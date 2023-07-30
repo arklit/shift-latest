@@ -1,22 +1,30 @@
 <?php
 // Файл с правилами валидации для экранов создания/редактирования в админ панели
+
+$codeRegex = 'regex:~^[A-z0-9\-]+$~';
+$titleRegex = 'regex:~^[А-Яа-яЁёa-zA-Z\-0-9\s\'"«»]+$~u';
+
 return [
     'defaults' => [
         'rules' => [
-            'title'        => ['bail', 'required', 'max:120', 'regex:~^[А-Яа-яЁё0-9\s]+$~u'],
+            'title'        => ['bail', 'required', 'max:220', $titleRegex],
             'text'         => ['bail', 'required',],
             'description'  => ['bail', 'required', 'max:164'],
             'announcement' => ['bail', 'required', 'max:164'],
-            'sort'         => ['bail', 'required', 'numeric'],
-            'code'         => ['bail', 'required', 'max:30'],
+            'sort'         => ['bail', 'required', 'numeric', 'min:0', 'max:9999'],
+            'code'         => ['bail', 'required', 'max:30', $codeRegex],
+            'slug'         => ['bail', 'required', ],
             'url'          => ['bail', 'required', 'max:250'],
             'email'        => ['bail', 'required', 'email'],
+            'image'        => ['bail', 'required',],
         ],
+
         'messages' => [
             'title.required'        => 'Введите заголовок',
-            'title.max'             => 'Заголовок не может быть длиннее 120 символов',
+            'title.max'             => 'Заголовок не может быть длиннее 220 символов',
             'title.regex'           => 'В заголовке допустимы только кириллица, латиница и арабские цифры',
             'code.required'         => 'Введите код',
+            'code.slug'             => 'Введите заголовок',
             'code.max'              => 'Код не может быть длиннее 30 символов',
             'description.required'  => 'Введите описание',
             'description.max'       => 'Описание не может быть длиннее 164 символов',
@@ -25,10 +33,13 @@ return [
             'text.required'         => 'Введите основной текст',
             'sort.required'         => 'Укажите приоритет сортировки',
             'sort.numeric'          => 'Приоритет сортировки должен быть числом',
+            'sort.min'              => 'Сортировка не может быть меньше нуля',
+            'sort.max'              => 'Сортировка не может быть больше 9999',
             'url.required'          => 'Введите URL',
             'url.max'               => 'URL не может быть длиннее 250 символов',
             'email.required'        => 'Введите адрес электронной почты',
             'email.email'           => 'Некорректный формат электронной почты',
+            'image.required'       => 'Загрузите изображение для этой записи',
         ],
     ],
 
@@ -90,5 +101,4 @@ return [
             'description.required' => 'Введите описание',
         ],
     ],
-
 ];

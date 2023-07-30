@@ -26,4 +26,9 @@ class StaticPage extends ProtoModel
     {
         return $this->hasMany(self::class, 'parent_id', 'id');
     }
+
+    public function isActive(): bool
+    {
+        return $this->is_active;
+    }
 }

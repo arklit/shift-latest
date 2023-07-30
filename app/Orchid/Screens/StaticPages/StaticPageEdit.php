@@ -42,8 +42,6 @@
                             ->fromQuery(StaticPage::query()->active()->sorted()->where('id', '!=', $this->item->id), 'title', 'id'),
                         Input::make('item.sort')->title('Порядок сортировки')->type('number')->value(0),
                     ]),
-//                    Select::make('item.category_id')->title('Категория')->empty('Категория не выбрана')
-//                        ->fromQuery(ArticleCategory::query()->active()->sorted(), 'title', 'id')->required(),
                     Group::make([
                         Input::make('item.title')->title('Название')->required()->maxlength(169)->help('Не более 169 символов'),
                         Input::make('item.code')->title('Код')->required()->maxlength(30)->help('Не более 30 символов'),
@@ -63,10 +61,6 @@
         public function save(StaticPage $item, Request $request)
         {
             $data = $request->input('item');
-//            $data['parent_id'] = $data['parent_id'] ?? 0;
-
-//            dd($data);
-
             return $this->saveItem($item, $data);
         }
 

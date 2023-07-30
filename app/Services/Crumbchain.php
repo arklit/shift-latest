@@ -33,17 +33,6 @@ class Crumbchain implements JsonSerializable
         return static::$instance;
     }
 
-    public static function makeParentsChain(StaticPage $page)
-    {
-        if (!is_null($page->getRelation('parent'))) {
-            $dto = CrumbDTO::make($page->title, route(self::ROUTE, $page->code));
-            self::makeParentsChain($page->parent);
-            static::cs()->addCrumb($dto);
-        } else {
-            static::makeCrumb('Главная', route('web.main.page'));
-        }
-    }
-
     public function addCrumb(CrumbDTO $crumb): static
     {
         $this->storage->add($crumb);

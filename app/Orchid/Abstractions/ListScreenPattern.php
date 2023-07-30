@@ -3,6 +3,7 @@
 namespace App\Orchid\Abstractions;
 
 use App\Enums\OrchidRoutes;
+use App\Models\ProtoModel;
 use Illuminate\Database\Eloquent\Builder;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Screen;
@@ -30,6 +31,10 @@ abstract class ListScreenPattern extends Screen
      */
     protected OrchidRoutes $route;
 
+    /** Список отношений для синхронизации с текущей моделью
+     * @var array */
+    protected array $relations = [];
+
     public function query(): iterable
     {
         $items = $this->model->paginate($this->paginate);
@@ -52,5 +57,14 @@ abstract class ListScreenPattern extends Screen
     {
         session()->put('listRedirect', $this->route->edit());
         session()->put('redirectParams', $this->redirectParams);
+    }
+
+    public function detachRelations(ProtoModel $item)
+    {
+        if (!empty($this->relations)) {
+            foreach ($this->relations as $relation) {
+                $item->$relation()->detach();
+            }
+        }
     }
 }

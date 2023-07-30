@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\DTO\CrumbDTO;
 use App\Models\StaticPage;
 
 class StaticPagesService
@@ -11,45 +10,51 @@ class StaticPagesService
 
     public static function isSequenceCorrect(StaticPage $page, array $sequence)
     {
+        $codes = [];
         $currentNode = $page;
-        foreach ($sequence as $point) {
-            if ($currentNode->code !== $point) {
-                return false;
-            }
+
+        while(true) {
+            $codes[] = $currentNode->code;
             if (!is_null($currentNode->getRelation('parent'))) {
                 $currentNode = $currentNode->parent;
+            } else {
+                break;
+            }
+        }
+
+        if (count($codes) !== count($sequence)) {
+            return false;
+        }
+
+        foreach ($codes as $index => $code) {
+            if (empty($sequence[$index]) || $code !== $sequence[$index]) {
+                return false;
             }
         }
         return true;
     }
 
-    public static function tt(StaticPage $node, string $point)
+    public static function makeCrumbsChainWithNesting(StaticPage $page)
     {
-        if (!is_null($node->getRelation('parent'))) {
-            self::tt($node->parent, $point);
-        }
+        $code = is_null($page->parent_id) ? $page->code : self::makeCrumbsChainWithNesting($page->parent) . '/' . $page->code;
+        Crumbchain::cs()->makeCrumb($page->title, route(self::ROUTE, $code));
+        return $code;
     }
 
-
-    public static function makeParentsChainWithNesting(StaticPage $page)
+    public static function makeLinkForChildren(StaticPage $page)
     {
-        if (!is_null($page->getRelation('parent'))) {
-            $code = self::makeParentsChainWithNesting($page->parent) . '/' . $page->code;
-            Crumbchain::cs()->makeCrumb($page->title, route(self::ROUTE, $code));
-            return $code;
+        $codes = [];
+        $currentNode = $page;
+        while(true) {
+            $codes[] = $currentNode->code;
+            if (!is_null($currentNode->getRelation('parent'))) {
+                $currentNode = $currentNode->parent;
+            } else {
+                break;
+            }
         }
-        Crumbchain::makeCrumb('Главная', route('web.main.page'));
-        return '/';
-    }
 
-    public static function makeParentsChain(StaticPage $page)
-    {
-        if (!is_null($page->getRelation('parent'))) {
-            $dto = CrumbDTO::make($page->title, route(self::ROUTE, $page->code));
-            self::makeParentsChain($page->parent);
-            Crumbchain::cs()->addCrumb($dto);
-        } else {
-            Crumbchain::makeCrumb('Главная', route('web.main.page'));
-        }
+        $codes = array_reverse($codes);
+        return implode('/', $codes);
     }
 }

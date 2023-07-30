@@ -3,6 +3,7 @@
 namespace App\DTO;
 
 use JsonSerializable;
+use function Symfony\Component\Translation\t;
 
 class CrumbDTO implements JsonSerializable
 {
@@ -40,6 +41,12 @@ class CrumbDTO implements JsonSerializable
     public function setIsActive(bool $isActive): void
     {
         $this->isActive = $isActive;
+    }
+
+    public function deactivate(): static
+    {
+        $this->isActive = false;
+        return $this;
     }
 
     public function jsonSerialize(): array
