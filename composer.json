@@ -11,9 +11,7 @@
         "laravel/framework": "v9.52.9",
         "laravel/sanctum": "3.2.5",
         "laravel/tinker": "^2.7",
-        "orchid/platform": "^13.10",
-        "spatie/laravel-permission": "^5.10",
-        "ext-pdo": "*"
+        "orchid/platform": "^13.10"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

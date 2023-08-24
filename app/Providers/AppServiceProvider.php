@@ -27,6 +27,6 @@ class AppServiceProvider extends ServiceProvider
         Paginator::useBootstrapFive();
 
         // загрузка роутов для хлебных крошек
-//        require base_path('routes/breadcrumbs.php');
+        require base_path('routes/breadcrumbs.php');
     }
 }

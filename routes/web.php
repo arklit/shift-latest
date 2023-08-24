@@ -27,23 +27,6 @@ Route::group(['as' => 'web.'], function () {
         Route::get('/', 'index')->name('page');
     });
 
-    // Страницы каталога
-    Route::controller(CatalogController::class)->as('catalog.')->prefix('catalog')->group(function () {
-        Route::get('/', 'getCatalogPage')->name('main');
-        Route::get('{groupCode}', 'getGroupPage')->name('group');
-        Route::get('{groupCode}/{categoryCode}', 'getCategoryPage')->name('category');
-        Route::get('good/{id}', 'getGoodPage')->name('good');
-    });
-
-    // Страницы авторизации
-    Route::controller(AuthController::class)->as('auth.')->prefix('cabinet')->group(function () {
-        Route::get('login', 'getLoginPage')->name('login');
-        Route::get('register', 'getRegistrationPage')->name('register');
-        Route::get('password/forgot', 'getPasswordForgotPage')->name('password.forgot');
-        Route::get('password/recover', 'getPasswordRecoverPage')->name('password.recover');
-    });
-
-    // Standard Pages
     Route::controller(BlogController::class)->as('articles.')->prefix('/articles')->group(function () {
         Route::get('/', 'getArticlesList')->name('list');
         Route::get('/{categoryCode}', 'getArticlesCategory')->name('category');
