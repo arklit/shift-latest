@@ -13,7 +13,7 @@ class StaticPagesService
         $codes = [];
         $currentNode = $page;
 
-        while(true) {
+        while (true) {
             $codes[] = $currentNode->code;
             if (!is_null($currentNode->getRelation('parent'))) {
                 $currentNode = $currentNode->parent;
@@ -45,7 +45,7 @@ class StaticPagesService
     {
         $codes = [];
         $currentNode = $page;
-        while(true) {
+        while (true) {
             $codes[] = $currentNode->code;
             if (!is_null($currentNode->getRelation('parent'))) {
                 $currentNode = $currentNode->parent;

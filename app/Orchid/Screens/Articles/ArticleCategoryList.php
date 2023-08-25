@@ -4,9 +4,9 @@ namespace App\Orchid\Screens\Articles;
 
 use App\Enums\OrchidRoutes;
 use App\Models\ArticleCategory;
+use App\Orchid\Abstractions\ListScreenPattern;
 use App\Orchid\Filters\DateCreatedFilter;
 use App\Orchid\Filters\IsActiveFilter;
-use App\Orchid\Abstractions\ListScreenPattern;
 use App\Orchid\Helpers\OrchidHelper;
 use App\Orchid\Traits\ActivitySignsTrait;
 use Orchid\Screen\Actions\Link;
@@ -17,13 +17,13 @@ use Orchid\Support\Facades\Layout;
 
 class ArticleCategoryList extends ListScreenPattern
 {
-    public string $name = 'Список Категорий Статей';
+    public string $name = 'Список категорий статей';
 
     use ActivitySignsTrait;
 
     public function __construct()
     {
-        $this->route = OrchidRoutes::art_cat;
+        $this->route = OrchidRoutes::ARTICLE_CATEGORIES;
     }
 
     public function query(): iterable
@@ -47,9 +47,9 @@ class ArticleCategoryList extends ListScreenPattern
                 TD::make('title', 'Название')->sort()->filter(),
                 TD::make('code', 'Код')->sort()->filter(),
 
-                TD::make('created_at', 'Дата')->width(100)->alignRight()->sort()
+                TD::make('created_at', 'Дата')->alignRight()->sort()
                     ->filter(DateTimer::make()->title('Фильтр по дате')->format('d-m-Y'))
-                    ->render(fn($item) => $item->created_at?->format('d-m-Y')),
+                    ->render(fn($item) => $item->created_at?->format('d.m.Y')),
                 TD::make()->width(10)->alignRight()->render(fn($item) => Link::make()
                     ->icon('wrench')->route($this->route->edit(), $item)),
             ]),

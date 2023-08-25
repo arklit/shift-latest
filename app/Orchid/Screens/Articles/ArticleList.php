@@ -12,6 +12,7 @@ use App\Orchid\Filters\IsActiveFilter;
 use App\Orchid\Helpers\OrchidHelper;
 use App\Orchid\Layouts\EmptyModal;
 use App\Orchid\Traits\ActivitySignsTrait;
+use Illuminate\Support\Str;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\DropDown;
 use Orchid\Screen\Actions\Link;
@@ -27,18 +28,8 @@ class ArticleList extends ListScreenPattern
 
     public function __construct()
     {
-        $this->route = OrchidRoutes::article;
+        $this->route = OrchidRoutes::ARTICLES;
         $this->name = $this->route->getTitle();
-    }
-
-    public function query(): iterable
-    {
-        $this->model = Article::query()->with('category')->filters([
-            IsActiveFilter::class,
-            DateCreatedFilter::class,
-            CategoryFilter::class,
-        ]);
-        return parent::query();
     }
 
     public function layout(): iterable
@@ -49,18 +40,18 @@ class ArticleList extends ListScreenPattern
                 TD::make('is_active', 'Активность')->sort()->filter(
                     Select::make()->options(OrchidHelper::getYesNoArray())->empty()->title('Фильтр активности')
                 )->render(fn($item) => $this->isActive($item)),
-                TD::make('title', 'Название')->sort()->filter(),
-                TD::make('slug', 'Код')->sort()->filter(),
-                TD::make('category_id', 'Категория')->render(fn($item) => $item->category?->title)
+                TD::make('title', 'Название')->sort()->filter()->render(fn ($item) => Str::limit($item->title, 35)),
+                TD::make('slug', 'Код')->sort()->filter()->render(fn ($item) => Str::limit($item->slug, 35)),
+                TD::make('category_id', 'Категория')->render(fn($item) => Str::limit($item->category?->title, 35))
                     ->sort()->filter(Select::make()->fromQuery(ArticleCategory::query()->active()->sorted(), 'title', 'title')
                         ->empty()->title('Фильтр категории')),
 
-                TD::make('created_at', 'Дата')->width(100)->alignRight()->sort()
+                TD::make('publication_date', 'Дата публикации')->alignRight()->sort()
                     ->filter(DateTimer::make()->title('Фильтр по дате')->format('d-m-Y'))
-                    ->render(fn($item) => $item->created_at?->format('d-m-Y')),
+                    ->render(fn($item) => $item->publication_date?->format('d.m.Y')),
 
                 TD::make()->width(10)->alignRight()->cantHide()->render(fn($item) => DropDown::make()->icon('options-vertical')->list([
-                    Link::make(__('Edit'))->icon('wrench')->route(OrchidRoutes::article->edit(), $item),
+                    Link::make(__('Edit'))->icon('wrench')->route(OrchidRoutes::ARTICLES->edit(), $item),
                     Button::make('Удалить')->icon('trash')->method('deleteItem', ['id' => $item->id, 'title' => $item->getTitle()])
                         ->confirm('Вы действительно хотите удалить публикацию №:' . $item->id . ' - ' . $item->getTitle() . '?'),
                 ])),
@@ -69,6 +60,16 @@ class ArticleList extends ListScreenPattern
             Layout::modal('deleteItem', EmptyModal::class)->title('Удалить статью??')
                 ->applyButton('Да')->closeButton('Нет')->async('asyncGetItem'),
         ];
+    }
+
+    public function query(): iterable
+    {
+        $this->model = Article::query()->with('category')->filters([
+            IsActiveFilter::class,
+            DateCreatedFilter::class,
+            CategoryFilter::class,
+        ]);
+        return parent::query();
     }
 
     public function asyncGetItem(Article $item)

@@ -4,6 +4,7 @@ namespace App\Mail;
 
 use App\Helpers\CommonHelper;
 use Illuminate\Support\Facades\Mail;
+use Throwable;
 
 class DebugMailService
 {
@@ -21,17 +22,7 @@ class DebugMailService
         $this->recipients = explode(',', $mails);
     }
 
-    protected function send(array $data): void
-    {
-        $mailer = new CommonMailer($data, $this->view);
-        $mailer->subject = $this->subject;
-
-        if (!CommonHelper::isEmpty($this->recipients)) {
-            Mail::to($this->recipients)->send($mailer);
-        }
-    }
-
-    public function sendErrorVerboseMessage(\Throwable $exception): void
+    public function sendErrorVerboseMessage(Throwable $exception): void
     {
         $this->view = 'mails.errors.error-occur';
         $data['url'] = url()->full();
@@ -40,6 +31,16 @@ class DebugMailService
         $data['file'] = $exception->getFile() . ':' . $exception->getLine();
         $data['trace'] = $exception->getTraceAsString();
         $this->send($data);
+    }
+
+    protected function send(array $data): void
+    {
+        $mailer = new CommonMailer($data, $this->view);
+        $mailer->subject = $this->subject;
+
+        if (!CommonHelper::isEmpty($this->recipients)) {
+            Mail::to($this->recipients)->send($mailer);
+        }
     }
 
     public function sendShortErrorMessage(string $message): void

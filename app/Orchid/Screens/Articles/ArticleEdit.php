@@ -10,6 +10,7 @@ use App\Orchid\Helpers\OrchidHelper;
 use App\Orchid\Layouts\EmptyModal;
 use App\Orchid\Traits\CommandBarDeletableTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Orchid\Screen\Fields\CheckBox;
 use Orchid\Screen\Fields\Cropper;
@@ -24,8 +25,8 @@ use Orchid\Support\Facades\Layout;
 
 class ArticleEdit extends EditScreenPattern
 {
-    protected string $createTitle = 'Создание Статьи';
-    protected string $updateTitle = 'Редактирование Статьи';
+    protected string $createTitle = 'Создание статьи';
+    protected string $updateTitle = 'Редактирование статьи';
     protected string $deleteMessage = 'Запись успешно удалена';
     protected string $createMessage = 'Запись успешно добавлена';
     protected string $titleColumnName = 'title';
@@ -34,7 +35,7 @@ class ArticleEdit extends EditScreenPattern
 
     public function __construct()
     {
-        $this->route = OrchidRoutes::article;
+        $this->route = OrchidRoutes::ARTICLES;
     }
 
     public function layout(): iterable
@@ -48,20 +49,20 @@ class ArticleEdit extends EditScreenPattern
                     ]),
                     Input::make('item.title')->title('Заголовок')->required()->maxlength(120)->help('Не более 120 символов'),
                     TextArea::make('item.description')->title('Анонс')->rows(5)->maxlength(1024)->required(),
-                    Input::make('item.seo_title')->title('Title ')->required()->maxlength(160)->help('Заголовок для SEO. Не более 160 символов'),
-                    TextArea::make('item.seo_description')->title('Description ')->maxlength(1024)->rows(5)->help('Описание для SEO. Не более 1024 символов'),
+                    Input::make('item.seo_title')->title('SEO title')->maxlength(160)->help('Заголовок для SEO. Не более 160 символов'),
+                    TextArea::make('item.seo_description')->title('SEO description')->maxlength(1024)->rows(5)->help('Описание для SEO. Не более 1024 символов'),
                     Cropper::make('item.image_outer')->title('Изображение для страницы')->targetRelativeUrl()->help('Загрузка изображения обязательна'),
                 ]),
                 Layout::rows([
                     Select::make('item.category_id')->title('Категория')->empty('Категория не выбрана')
                         ->fromQuery(ArticleCategory::query()->active()->sorted(), 'title', 'id')->required(),
-                    DateTimer::make('item.publication_date')->title('Дата публикации')->format24hr()->required(),
+                    DateTimer::make('item.publication_date')->title('Дата публикации')->format24hr()->required()->value(Carbon::today()),
                     Quill::make('item.text')->title('Текст публикации')->required(),
                     Cropper::make('item.image_inner')->title('Изображение для списка')->targetRelativeUrl()->help('Загрузка изображения обязательна'),
                 ]),
-                Layout::modal('deleteArticle', EmptyModal::class)->title('Удалить статью??')
-                    ->applyButton('Да')->closeButton('Нет')->async('asyncGetArticle'),
             ]),
+            Layout::modal('deleteArticle', EmptyModal::class)->title('Удалить статью??')
+                ->applyButton('Да')->closeButton('Нет')->async('asyncGetArticle'),
         ];
     }
 
@@ -73,13 +74,8 @@ class ArticleEdit extends EditScreenPattern
     public function save(Article $item, Request $request)
     {
         $data = $request->input('item');
-        $data['slug'] = Str::slug($data['title']);
 
-        $presets = OrchidHelper::getValidationStructure($this->route->value);
-        $presets = OrchidHelper::setUniqueRule($presets, $item, 'slug', 'slug', 'заголовок');
-        $result = OrchidHelper::validate($item, $this->route, $data, $presets);
-
-        if (!is_null($result)) {
+        if ($result = $this->validation($item, $data, 'slug')) {
             return $result;
         }
 

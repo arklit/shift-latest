@@ -86,16 +86,6 @@ class ExampleScreen extends Screen
     }
 
     /**
-     * Display header description.
-     *
-     * @return string|null
-     */
-    public function description(): ?string
-    {
-        return 'Sample Screen Components';
-    }
-
-    /**
      * The screen's action buttons.
      *
      * @return Action[]
@@ -196,6 +186,16 @@ class ExampleScreen extends Screen
                     ->required(),
             ]))->title('Create your own toast message'),
         ];
+    }
+
+    /**
+     * Display header description.
+     *
+     * @return string|null
+     */
+    public function description(): ?string
+    {
+        return 'Sample Screen Components';
     }
 
     /**

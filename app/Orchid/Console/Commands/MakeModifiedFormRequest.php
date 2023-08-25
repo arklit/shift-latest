@@ -21,11 +21,6 @@ class MakeModifiedFormRequest extends GeneratorCommand
      */
     protected $description = 'Create pattern of modified FormRequest';
 
-    protected function getStub()
-    {
-        return app_path() . '/Orchid/Console/Stubs/form-request.stub';
-    }
-
     public function getDefaultNamespace($rootNamespace): string
     {
         return $rootNamespace . '\Http\Requests';
@@ -40,5 +35,10 @@ class MakeModifiedFormRequest extends GeneratorCommand
         $stub = parent::replaceClass($stub, $name);
 
         return str_replace("RocontFormRequest", $name, $stub);
+    }
+
+    protected function getStub()
+    {
+        return app_path() . '/Orchid/Console/Stubs/form-request.stub';
     }
 }

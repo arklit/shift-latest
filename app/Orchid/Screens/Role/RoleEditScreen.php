@@ -50,16 +50,6 @@ class RoleEditScreen extends Screen
     }
 
     /**
-     * Display header description.
-     *
-     * @return string|null
-     */
-    public function description(): ?string
-    {
-        return 'Access rights';
-    }
-
-    /**
      * @return iterable|null
      */
     public function permission(): ?iterable
@@ -108,6 +98,16 @@ class RoleEditScreen extends Screen
                 ->title('Permission/Privilege')
                 ->description('A privilege is necessary to perform certain tasks and operations in an area.'),
         ];
+    }
+
+    /**
+     * Display header description.
+     *
+     * @return string|null
+     */
+    public function description(): ?string
+    {
+        return 'Access rights';
     }
 
     /**

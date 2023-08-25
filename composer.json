@@ -7,6 +7,7 @@
     "require": {
         "php": "^8.1",
         "barryvdh/laravel-debugbar": "^3.8",
+        "doctrine/dbal": "^3.6",
         "guzzlehttp/guzzle": "7.7.0",
         "laravel/framework": "v9.52.9",
         "laravel/sanctum": "3.2.5",

@@ -3,7 +3,6 @@
 namespace App\Orchid\Screens\StaticPages;
 
 use App\Enums\OrchidRoutes;
-use App\Models\Seo;
 use App\Models\StaticPage;
 use App\Orchid\Abstractions\ListScreenPattern;
 use App\Orchid\Filters\DateCreatedFilter;
@@ -26,7 +25,7 @@ class StaticPageList extends ListScreenPattern
 
     public function __construct()
     {
-        $this->route = OrchidRoutes::static;
+        $this->route = OrchidRoutes::STATIC_PAGES;
         $this->name = $this->route->getTitle();
     }
 
@@ -36,11 +35,11 @@ class StaticPageList extends ListScreenPattern
             ->without(['parent'])
 //            ->with('parent')
             ->select(['static_pages.*', 'parent.code AS daddy'])->leftJoin(
-            'static_pages AS parent', 'static_pages.parent_id','=','parent.id')->orderBy('id')
+                'static_pages AS parent', 'static_pages.parent_id', '=', 'parent.id')->orderBy('id')
             ->filters([
                 IsActiveFilter::class,
                 DateCreatedFilter::class,
-        ]);
+            ]);
         return parent::query();
     }
 
@@ -63,7 +62,7 @@ class StaticPageList extends ListScreenPattern
                     ->render(fn($item) => $item->created_at?->format('d-m-Y')),
 
                 TD::make()->width(10)->alignRight()->cantHide()->render(fn($item) => DropDown::make()->icon('options-vertical')->list([
-                    Link::make(__('Edit'))->icon('wrench')->route(OrchidRoutes::static->edit(), $item->id),
+                    Link::make(__('Edit'))->icon('wrench')->route(OrchidRoutes::STATIC_PAGES->edit(), $item->id),
                     Button::make('Удалить')->icon('trash')->method('deleteItem', ['id' => $item->id, 'title' => $item->getTitle()])
                         ->confirm('Вы действительно хотите удалить запись №:' . $item->id . ' - ' . $item->getTitle() . '?'),
                 ])),

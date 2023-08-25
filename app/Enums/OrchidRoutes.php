@@ -2,15 +2,17 @@
 
 namespace App\Enums;
 
+use Exception;
+
 enum OrchidRoutes: string
 {
-    case article = 'article';
-    case art_cat = 'article-category';
-    case seo = 'seo';
-    case robot = 'robot';
-    case sitemap = 'sitemap';
-    case static = 'static-page';
-    case conf = 'configurator';
+    case ARTICLES = 'article';
+    case ARTICLE_CATEGORIES = 'article-category';
+    case SEO = 'seo';
+    case ROBOTS = 'robot';
+    case SITEMAP = 'sitemap';
+    case STATIC_PAGES = 'static-page';
+    case CONFIGURATOR = 'configurator';
 
     public function list(): string
     {
@@ -32,31 +34,37 @@ enum OrchidRoutes: string
         return 'platform.' . $this->value;
     }
 
-    public function getTitle()
+    /**
+     * @throws Exception
+     */
+    public function getTitle(): string
     {
         return match ($this->value) {
-            self::article->value => 'Список статей',
-            self::art_cat->value => 'Список категорий статей',
-            self::static->value => 'Список статических страниц',
-            self::seo->value => 'SEO-страницы',
-            self::conf->value => 'Конфигуратор',
-            self::robot->value => 'Robots.txt',
-            self::sitemap->value => 'Карта сайта',
-            default => throw new \Exception('Unexpected match value'),
+            self::ARTICLES->value => 'Список статей',
+            self::ARTICLE_CATEGORIES->value => 'Список категорий статей',
+            self::STATIC_PAGES->value => 'Список статических страниц',
+            self::SEO->value => 'SEO-страницы',
+            self::CONFIGURATOR->value => 'Конфигуратор',
+            self::ROBOTS->value => 'Robots.txt',
+            self::SITEMAP->value => 'Карта сайта',
+            default => throw new Exception('Unexpected match value'),
         };
     }
 
+    /**
+     * @throws Exception
+     */
     public function isSingle(): bool
     {
         return match ($this->value) {
-            self::article->value,
-            self::art_cat->value,
-            self::static->value,
-            self::seo->value => false,
-            self::conf->value,
-            self::sitemap->value,
-            self::robot->value => true,
-            default => throw new \Exception('Unexpected match value'),
+            self::ARTICLES->value,
+            self::ARTICLE_CATEGORIES->value,
+            self::STATIC_PAGES->value,
+            self::SEO->value => false,
+            self::CONFIGURATOR->value,
+            self::SITEMAP->value,
+            self::ROBOTS->value => true,
+            default => throw new Exception('Unexpected match value'),
         };
     }
 }

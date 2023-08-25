@@ -9,7 +9,6 @@ use Orchid\Platform\Dashboard;
 use Orchid\Platform\ItemPermission;
 use Orchid\Platform\OrchidServiceProvider;
 use Orchid\Screen\Actions\Menu;
-use Orchid\Support\Color;
 
 class PlatformProvider extends OrchidServiceProvider
 {
@@ -31,17 +30,17 @@ class PlatformProvider extends OrchidServiceProvider
         return [
 
             Menu::make('Публикации')->icon('feed')->list([
-                Menu::make('Статьи')->route(OrchidRoutes::article->list())->icon('book-open'),
-                Menu::make('Категории статей')->route(OrchidRoutes::art_cat->list())->icon('list'),
+                Menu::make('Статьи')->route(OrchidRoutes::ARTICLES->list())->icon('book-open'),
+                Menu::make('Категории статей')->route(OrchidRoutes::ARTICLE_CATEGORIES->list())->icon('list'),
             ]),
 
-            Menu::make('Статические страницы')->icon('docs')->route(OrchidRoutes::static->list()),
+            Menu::make('Статические страницы')->icon('docs')->route(OrchidRoutes::STATIC_PAGES->list()),
             Menu::make('SEO')->icon('globe')->list([
-                Menu::make('SEO страницы')->route(OrchidRoutes::seo->list())->icon('docs'),
-                Menu::make('Robots.txt')->route(OrchidRoutes::robot->base())->icon('android'),
-                Menu::make('Карта')->route(OrchidRoutes::sitemap->base())->icon('map'),
+                Menu::make('SEO страницы')->route(OrchidRoutes::SEO->base())->icon('docs'),
+                Menu::make('Robots.txt')->route(OrchidRoutes::ROBOTS->base())->icon('android'),
+                Menu::make('Карта')->route(OrchidRoutes::SITEMAP->base())->icon('map'),
             ]),
-            Menu::make('Конфигуратор')->route(OrchidRoutes::conf->base())->icon('settings'),
+            Menu::make('Конфигуратор')->route(OrchidRoutes::CONFIGURATOR->base())->icon('settings'),
 
             Menu::make(__('Users'))->icon('user')->route('platform.systems.users')
                 ->permission('platform.systems.users')->title(__('Access rights')),

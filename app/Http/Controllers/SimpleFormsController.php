@@ -33,6 +33,12 @@ class SimpleFormsController
         return view($this->params['form_view']);
     }
 
+    protected function prepare(string $code): void
+    {
+        $this->params = CommonHelper::getPreset('forms.' . $code);
+        abort_if(!$this->params, 404);
+    }
+
     /**
      * Метод отправки стандартных форм
      * @param Request $request
@@ -56,17 +62,11 @@ class SimpleFormsController
             $method = $this->params['mail_method'];
             $mailer->$method($payload, $this->params['subject'], $this->params['letter_view']);
         } catch (Exception $e) {
-            LoggerHelper::debug(json_encode($payload, JSON_UNESCAPED_UNICODE));
+            LoggerHelper::debug(json_encode($validator->validated(), JSON_UNESCAPED_UNICODE));
             LoggerHelper::commonErrorVerbose($e);
             DebugNotificationHelper::sendVerboseErrorEmail($e);
             abort(Response::HTTP_INTERNAL_SERVER_ERROR);
         }
         return $this->responseOk();
-    }
-
-    protected function prepare(string $code): void
-    {
-        $this->params = CommonHelper::getPreset('forms.' . $code);
-        abort_if(!$this->params, 404);
     }
 }

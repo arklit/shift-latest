@@ -18,7 +18,7 @@ class SitemapScreen extends EditScreenPattern
 
     public function __construct()
     {
-        $this->route = OrchidRoutes::sitemap;
+        $this->route = OrchidRoutes::SITEMAP;
         $this->redirectTo = $this->route->base();
     }
 

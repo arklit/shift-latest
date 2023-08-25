@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\DTO\CrumbDTO;
-use App\Models\StaticPage;
 use Illuminate\Support\Collection;
 use JsonSerializable;
 
@@ -18,15 +17,6 @@ class Crumbchain implements JsonSerializable
         $this->storage = collect();
     }
 
-    /**
-     * Create self or get existed instance
-     * @return static
-     */
-    public static function cs(): static
-    {
-        return static::$instance ?? (static::$instance = new static());
-    }
-
     public static function makeCrumb(string $title, string $url, bool $isActive = true): static
     {
         static::cs()->addCrumb(CrumbDTO::make($title, $url, $isActive));
@@ -37,6 +27,15 @@ class Crumbchain implements JsonSerializable
     {
         $this->storage->add($crumb);
         return $this;
+    }
+
+    /**
+     * Create self or get existed instance
+     * @return static
+     */
+    public static function cs(): static
+    {
+        return static::$instance ?? (static::$instance = new static());
     }
 
     public function getCrumbs()
