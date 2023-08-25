@@ -31,16 +31,6 @@ class ExampleLayoutsScreen extends Screen
     }
 
     /**
-     * Display header description.
-     *
-     * @return string|null
-     */
-    public function description(): ?string
-    {
-        return 'Components for laying out your project';
-    }
-
-    /**
      * The screen's action buttons.
      *
      * @return Action[]
@@ -87,5 +77,15 @@ class ExampleLayoutsScreen extends Screen
             ]),
 
         ];
+    }
+
+    /**
+     * Display header description.
+     *
+     * @return string|null
+     */
+    public function description(): ?string
+    {
+        return 'Components for laying out your project';
     }
 }

@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Str;
 use Imagick;
 use League\Flysystem\FilesystemException;
 use Orchid\Attachment\File;
@@ -13,7 +14,6 @@ use Orchid\Attachment\Models\Attachment;
 use Orchid\Platform\Dashboard;
 use Orchid\Platform\Events\UploadedFileEvent;
 use Orchid\Platform\Http\Controllers\Controller;
-use Illuminate\Support\Str;
 
 class FilesController extends Controller
 {
@@ -80,6 +80,32 @@ class FilesController extends Controller
     }
 
     /**
+     * @param UploadedFile $file
+     * @param Request $request
+     * @return mixed
+     * @throws FilesystemException
+     */
+    private function createModel(UploadedFile $file, Request $request)
+    {
+        $file = resolve(File::class, [
+            'file' => $file,
+            'disk' => $request->get('storage'),
+            'group' => $request->get('group'),
+        ]);
+
+        if ($request->has('path')) {
+            $file->path($request->get('path'));
+        }
+
+        $model = $file->load();
+        $model->url = $model->url();
+
+        event(new UploadedFileEvent($model));
+
+        return $model;
+    }
+
+    /**
      * @param Request $request
      */
     public function sort(Request $request): void
@@ -118,32 +144,6 @@ class FilesController extends Controller
         $attachment->save();
 
         return response()->json($attachment);
-    }
-
-    /**
-     * @param UploadedFile $file
-     * @param Request $request
-     * @return mixed
-     * @throws FilesystemException
-     */
-    private function createModel(UploadedFile $file, Request $request)
-    {
-        $file = resolve(File::class, [
-            'file' => $file,
-            'disk' => $request->get('storage'),
-            'group' => $request->get('group'),
-        ]);
-
-        if ($request->has('path')) {
-            $file->path($request->get('path'));
-        }
-
-        $model = $file->load();
-        $model->url = $model->url();
-
-        event(new UploadedFileEvent($model));
-
-        return $model;
     }
 
     /**

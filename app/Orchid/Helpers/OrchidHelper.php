@@ -28,17 +28,6 @@ class OrchidHelper
         }
     }
 
-    public static function getPreset(string $title, ?string $block = null)
-    {
-        $path = 'presets.orchid.' . $title;
-        if (!is_null($block)) {
-            $path = $path . '.' . $block;
-        }
-
-        $data = config($path);
-        return $data ?? [];
-    }
-
     public static function getValidationStructure(string $name, array $defaults = []): array
     {
         $defaultRules = [];
@@ -49,7 +38,7 @@ class OrchidHelper
             return $modelRules;
         }
         $defaultsPresets = self::getPreset('validators', 'defaults');
-        //        dd($defaultsPresets);
+
         if (empty($defaultsPresets)) {
             return $modelRules;
         }
@@ -77,22 +66,46 @@ class OrchidHelper
         return array_merge_recursive($defaultRules, $modelRules);
     }
 
+    public static function getPreset(string $title, ?string $block = null)
+    {
+        $path = 'presets.orchid.' . $title;
+        if (!is_null($block)) {
+            $path = $path . '.' . $block;
+        }
+
+        $data = config($path);
+        return $data ?? [];
+    }
+
     public static function setUniqueRule(array $presets, ProtoModel $item, string $fieldName, string $columnName, string $messageName): array
     {
         $presets['rules'][$fieldName][] = Rule::unique($item->getTable(), $columnName)->ignore($item->id);
-        $presets['messages'][$fieldName  . '.unique'] = "Такой $messageName уже используется";
+        $presets['messages'][$fieldName . '.unique'] = "Такой $messageName уже используется";
         return $presets;
     }
 
     public static function validate(ProtoModel $item, OrchidRoutes $route, array $data, array $presets)
     {
         $validator = Validator::make($data, $presets['rules'], $presets['messages']);
-        $route = ($item->exists) ? $route->edit() : $route->create();
 
         if ($validator->fails()) {
+            $route = ($item->exists) ? $route->edit() : $route->create();
             return redirect()->route($route, $item->id)->withErrors($validator)->withInput();
         }
         return null;
+    }
+
+    public static function getValidator($data, $code, ?string $uniqueField = null, string $uniqueIdField = 'id'): \Illuminate\Validation\Validator
+    {
+        $presets = self::getPreset('validators', $code);
+        if (!empty($uniqueField) && !empty($data[$uniqueIdField])) {
+            foreach ($presets['rules'][$uniqueField] as &$fieldValidation) {
+                if (Str::startsWith($fieldValidation, 'unique')) {
+                    $fieldValidation .= ",{$uniqueIdField},{$data[$uniqueIdField]}";
+                }
+            }
+        }
+        return Validator::make($data, $presets['rules'], $presets['messages']);
     }
 
     public static function saveForSlug(ProtoModel $item, array &$data)

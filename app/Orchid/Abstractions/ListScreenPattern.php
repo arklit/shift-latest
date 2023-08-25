@@ -19,7 +19,7 @@ abstract class ListScreenPattern extends Screen
     /** Количество экземпляров модели, выводимое на страницу
      * @var int
      */
-    protected int $paginate = 10;
+    protected int $paginate = 20;
 
     /** Параметры для редиректа к списку моделей (номер страницы)
      * @var array
@@ -32,7 +32,8 @@ abstract class ListScreenPattern extends Screen
     protected OrchidRoutes $route;
 
     /** Список отношений для синхронизации с текущей моделью
-     * @var array */
+     * @var array
+     */
     protected array $relations = [];
 
     public function query(): iterable
@@ -46,17 +47,17 @@ abstract class ListScreenPattern extends Screen
         ];
     }
 
+    protected function setRedirect(string $uri = null): void
+    {
+        session()->put('listRedirect', $this->route->edit());
+        session()->put('redirectParams', $this->redirectParams);
+    }
+
     public function commandBar(): iterable
     {
         return [
             Link::make('Добавить запись')->icon('plus')->route($this->route->create()),
         ];
-    }
-
-    protected function setRedirect(string $uri = null): void
-    {
-        session()->put('listRedirect', $this->route->edit());
-        session()->put('redirectParams', $this->redirectParams);
     }
 
     public function detachRelations(ProtoModel $item)

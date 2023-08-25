@@ -2,78 +2,86 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\Constants;
+use App\Enums\ClientRoutes;
 use App\Models\Article;
 use App\Models\ArticleCategory;
+use App\Services\ArticlesService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Tabuna\Breadcrumbs\Breadcrumbs;
-use Tabuna\Breadcrumbs\Trail;
 
 class BlogController extends Controller
 {
-    protected int $perPage = Constants::DEFAULT_ITEMS_PER_PAGE;
-    protected string $list = 'web.articles.list';
-    protected string $category = 'web.articles.category';
-    protected string $page = 'web.articles.page';
-
     /**
      * Страница со списком категорий и статей
      * @route /articles
      * @method GET
-     * @param Request $request
-     * @return JsonResponse
+     * @param ArticlesService $articlesService
+     * @param int|null $page
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function getArticlesList(Request $request)
+    public function getArticlesList(ArticlesService $articlesService, ?int $page = null)
     {
-        $page = $this->getPage($request);
-        $categories = ArticleCategory::query()->active()->sorted('asc')->whereHas('articles', fn($q) => $q->active()->publicated())->get();
-        $articles = Article::query()->whereHas('category', fn($q) => $q->active())->select('*')->active()->publicated()->publicationSorted()->paginate($this->perPage, $page);
+        $page = $page ?: 1;
 
-        return $this->responseData(compact('categories', 'articles'));
+        $categories = $articlesService->getCategoriesWithCurrent();
+        $articles = $articlesService->getArticlesList($page);
+        $paginator = $articles->linkCollection()->paginizate();
+
+        $articlesService->setBreadCrumbs(
+            ClientRoutes::BLOG_LIST_PAGE, ClientRoutes::BLOG_LIST, "Страница " . $page, [$page]);
+
+        return view('modules.blog.list', compact('articles', 'categories', 'paginator'));
     }
 
     /**
      * Страница со статьями из выбранной категории
      * @route /articles/{categoryCode}
      * @method GET
-     * @return JsonResponse
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function getArticlesCategory(Request $request, string $categoryCode)
+    public function getArticlesCategory(ArticlesService $articlesService, string $categoryCode, ?int $page = null)
     {
-        $page = $this->getPage($request);
+        $page = $page ?: 1;
+
         $currentCategory = ArticleCategory::query()->active()->code($categoryCode)->firstOrFail();
-        $categories = ArticleCategory::query()->active()->sorted('asc')->whereHas('articles', fn($q) => $q->active()->publicated())->get();
-        $articles = Article::query()->select('*')->active()->publicated()->publicationSorted()
-            ->whereHas('category', fn($q) => $q->active()->code($categoryCode))->paginate($this->perPage, $page);
+
+        $categories = $articlesService->getCategoriesWithCurrent($currentCategory);
+
+        $articles = $articlesService->getArticlesList($page, $categoryCode);
+
         abort_if($articles->isEmpty(), 404);
+        $paginator = $articles->linkCollection()->paginizate();
 
-        Breadcrumbs::for($this->category, fn(Trail $t) => $t->parent($this->list)->push($currentCategory->getTitle(), route($this->category, [$categoryCode])));
-        dd(Breadcrumbs::current());
+        $articlesService->setBreadCrumbs(
+            ClientRoutes::BLOG_CATEGORY, ClientRoutes::BLOG_LIST, $currentCategory->getTitle(), [$categoryCode]);
 
-        return $this->responseData(compact('articles'));
+        if ($page > 1) {
+            $articlesService->setBreadCrumbs(
+                ClientRoutes::BLOG_CATEGORY_PAGE, ClientRoutes::BLOG_CATEGORY, "Страница $page", [$categoryCode, $page]);
+        }
+
+        return view('modules.blog.list', compact('articles', 'categories', 'currentCategory', 'paginator'));
     }
 
     /**
      * Подробная страница конкретной статьи
      * @route /articles/{categoryCode}/{articleCode}
      * @method GET
-     * @return JsonResponse
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function getArticlePage(string $categoryCode, string $articleSlug)
+    public function getArticlePage(ArticlesService $articlesService, string $categoryCode, string $articleSlug)
     {
-        $article = Article::query()->active()->publicated()->where('slug', '=', $articleSlug)
+        $article = Article::query()->with('category')->active()->publicated()->where('slug', '=', $articleSlug)
             ->whereHas('category', fn($q) => $q->active()->code($categoryCode))->firstOrFail();
 
-        Breadcrumbs::for($this->category, fn(Trail $t) => $t->parent($this->list)->push($category->getTitle(), route($this->category, [$categoryCode])));
-        Breadcrumbs::for($this->page, fn(Trail $t) => $t->parent($this->category)->push($article->getTitle(), route($this->page, [$categoryCode, $articleSlug])));
+        $otherArticles = Article::query()->whereHas('category', fn($q) => $q->active()->code($categoryCode))
+            ->active()->publicated()->publicationSorted()->where('slug', '!=', $articleSlug)
+            ->with('category')->limit(4)->get();
 
-        return $this->responseData(compact('article'));
-    }
+        $articlesService->setBreadCrumbs(
+            ClientRoutes::BLOG_CATEGORY, ClientRoutes::BLOG_LIST, $article->category->getTitle(), [$categoryCode]);
+        $articlesService->setBreadCrumbs(
+            ClientRoutes::BLOG_ARTICLE, ClientRoutes::BLOG_CATEGORY, $article->getTitle(), [$categoryCode, $articleSlug]);
 
-    protected function getPage(Request $request)
-    {
-        $page = $request->query('page');
-        return !is_numeric($page) ? 1 : $page;
+        return view('modules.blog.item', compact('article', 'otherArticles'));
     }
 }

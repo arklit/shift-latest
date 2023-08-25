@@ -8,9 +8,9 @@ use Illuminate\Queue\SerializesModels;
 
 class CommonMailer extends Mailable
 {
+    public $subject = '';
     protected array $data;
     protected string $viewName;
-    public $subject = '';
 
     use Queueable, SerializesModels;
 

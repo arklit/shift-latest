@@ -8,4 +8,5 @@ class Constants
     public const ADMIN_GUARD = 'web';
     public const PHONE_REGEX = 'regex:~\+[0-9]{1}\s{1}\([0-9]{3}\)\s[0-9]{3}\-{1}[0-9]{2}\-{1}[0-9]{2}~';
     public const QUILL_TOOLS = ["text", "color", "header", "list", "format"];
+    public const REGEX_ID = '[1-9]{1}[0-9]*';
 }

@@ -7,8 +7,6 @@ use App\Services\Crumbchain;
 use App\Services\StaticPagesService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
-use Tabuna\Breadcrumbs\Breadcrumbs;
-use Tabuna\Breadcrumbs\Trail;
 
 class TestController extends Controller
 {
@@ -23,7 +21,7 @@ class TestController extends Controller
         $data =
 
 
-        abort_if(!auth($this->managersGuard)->check(), 404);
+            abort_if(!auth($this->managersGuard)->check(), 404);
         $sp = StaticPage::query()->with('children')->find(5);
         StaticPagesService::makeCrumbsChainWithNesting($sp);
 
@@ -32,7 +30,6 @@ class TestController extends Controller
 //            $sp,
             Crumbchain::cs()->getCrumbs()
         );
-
 
 
     }

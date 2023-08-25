@@ -10,7 +10,7 @@ class PagesController extends Controller
 {
     public function getStaticPage(string $code)
     {
-        $sequence =  array_reverse(explode('/', $code));
+        $sequence = array_reverse(explode('/', $code));
         $code = $sequence[0];
         $page = StaticPage::query()->code($code)->with('children')->active()->firstOrFail();
 
@@ -26,7 +26,7 @@ class PagesController extends Controller
         }
 
         $crumbs = Crumbchain::cs()->getCrumbs();
-            $crumbs->first->deactivate();
+        $crumbs->first->deactivate();
 //        dd(
 //        );
 

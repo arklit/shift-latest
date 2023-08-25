@@ -44,16 +44,6 @@ class UserProfileScreen extends Screen
     }
 
     /**
-     * Display header description.
-     *
-     * @return string|null
-     */
-    public function description(): ?string
-    {
-        return 'Update your account details such as name, email address and password';
-    }
-
-    /**
      * The screen's action buttons.
      *
      * @return Action[]
@@ -92,23 +82,13 @@ class UserProfileScreen extends Screen
     }
 
     /**
-     * @param Request $request
+     * Display header description.
+     *
+     * @return string|null
      */
-    public function save(Request $request): void
+    public function description(): ?string
     {
-        $request->validate([
-            'user.name' => 'required|string',
-            'user.email' => [
-                'required',
-                Rule::unique(User::class, 'email')->ignore($request->user()),
-            ],
-        ]);
-
-        $request->user()
-            ->fill($request->get('user'))
-            ->save();
-
-        Toast::info(__('Profile updated.'));
+        return 'Update your account details such as name, email address and password';
     }
 
     /**
@@ -127,5 +107,25 @@ class UserProfileScreen extends Screen
         })->save();
 
         Toast::info(__('Password changed.'));
+    }
+
+    /**
+     * @param Request $request
+     */
+    public function save(Request $request): void
+    {
+        $request->validate([
+            'user.name' => 'required|string',
+            'user.email' => [
+                'required',
+                Rule::unique(User::class, 'email')->ignore($request->user()),
+            ],
+        ]);
+
+        $request->user()
+            ->fill($request->get('user'))
+            ->save();
+
+        Toast::info(__('Profile updated.'));
     }
 }

@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Helpers\LoggerHelper;
 use App\Models\Article;
+use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -42,7 +43,7 @@ class CommonRepository extends AbstractRepository
 //        dd($sql);
         try {
             return self::execute($sql);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             LoggerHelper::commonErrorVerbose($e);
             return false;
         }

@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use App\Traits\CodeScopeTrait;
 use App\Traits\IsActiveScopeTrait;
 use App\Traits\SortedScopeTrait;
-use App\Traits\CodeScopeTrait;
 
 class StaticPage extends ProtoModel
 {

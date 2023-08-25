@@ -15,7 +15,7 @@ use App\Orchid\Screens\Role\RoleEditScreen;
 use App\Orchid\Screens\Role\RoleListScreen;
 use App\Orchid\Screens\Seo\RobotsScreen;
 use App\Orchid\Screens\Seo\SeoEdit;
-use App\Orchid\Screens\Seo\SeoList;
+use App\Orchid\Screens\Seo\SeoScreen;
 use App\Orchid\Screens\Seo\SitemapScreen;
 use App\Orchid\Screens\StaticPages\StaticPageEdit;
 use App\Orchid\Screens\StaticPages\StaticPageList;
@@ -31,14 +31,14 @@ Route::prefix('systems')->group(function () {
 
 // Main
 Route::screen('/home', PlatformScreen::class)->name('platform.main');
-Route::screen('/robots', RobotsScreen::class)->name(OrchidRoutes::robot->base());
-Route::screen('/sitemap', SitemapScreen::class)->name(OrchidRoutes::sitemap->base());
-Route::screen('/configurator', ConfiguratorEdit::class)->name(OrchidRoutes::conf->base());
+Route::screen('/robots', RobotsScreen::class)->name(OrchidRoutes::ROBOTS->base());
+Route::screen('/sitemap', SitemapScreen::class)->name(OrchidRoutes::SITEMAP->base());
+Route::screen('/seo', SeoScreen::class)->name(OrchidRoutes::SEO->base());
+Route::screen('/configurator', ConfiguratorEdit::class)->name(OrchidRoutes::CONFIGURATOR->base());
 
-OrchidHelper::setAdminRoutes(OrchidRoutes::seo->value, SeoList::class, SeoEdit::class);
-OrchidHelper::setAdminRoutes(OrchidRoutes::static->value, StaticPageList::class, StaticPageEdit::class);
-OrchidHelper::setAdminRoutes(OrchidRoutes::art_cat->value, ArticleCategoryList::class, ArticleCategoryEdit::class);
-OrchidHelper::setAdminRoutes(OrchidRoutes::article->value, ArticleList::class, ArticleEdit::class);
+OrchidHelper::setAdminRoutes(OrchidRoutes::STATIC_PAGES->value, StaticPageList::class, StaticPageEdit::class);
+OrchidHelper::setAdminRoutes(OrchidRoutes::ARTICLE_CATEGORIES->value, ArticleCategoryList::class, ArticleCategoryEdit::class);
+OrchidHelper::setAdminRoutes(OrchidRoutes::ARTICLES->value, ArticleList::class, ArticleEdit::class);
 
 // Platform > Profile
 Route::screen('profile', UserProfileScreen::class)->name('platform.profile')->breadcrumbs(fn (Trail $trail) => $trail

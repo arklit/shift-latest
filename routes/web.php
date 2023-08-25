@@ -1,9 +1,7 @@
 <?php
 
-use App\Http\Controllers\AuthController;
+use App\Helpers\Constants;
 use App\Http\Controllers\BlogController;
-use App\Http\Controllers\CabinetController;
-use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\MainPageController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\RobotsTxtController;
@@ -29,15 +27,16 @@ Route::group(['as' => 'web.'], function () {
 
     Route::controller(BlogController::class)->as('articles.')->prefix('/articles')->group(function () {
         Route::get('/', 'getArticlesList')->name('list');
+        Route::get('/p{page}', 'getArticlesList')->name('list.page')->where(['page' => Constants::REGEX_ID]);
         Route::get('/{categoryCode}', 'getArticlesCategory')->name('category');
-        Route::get('/{categoryCode}/{articleSlug}', 'getArticlePage')->name('page');
+        Route::get('/{categoryCode}/p{page}', 'getArticlesCategory')->name('category.page')->where(['page' => Constants::REGEX_ID]);
+        Route::get('/{categoryCode}/{articleSlug}', 'getArticlePage')->name('card');
     });
 
     Route::controller(PagesController::class)->as('pages.')->prefix('/')->group(function () {
         Route::get('/{staticPageCode}', 'getStaticPage')->name('static')
             ->where('staticPageCode', '.*');;
     });
-
 
 
 });

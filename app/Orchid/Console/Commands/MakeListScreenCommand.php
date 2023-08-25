@@ -21,11 +21,6 @@ class MakeListScreenCommand extends GeneratorCommand
      */
     protected $description = 'Create pattern of SomethingEditScreen for Orchid';
 
-    protected function getStub()
-    {
-        return app_path() . '/Orchid/Console/Stubs/list-screen.stub';
-    }
-
     public function getDefaultNamespace($rootNamespace): string
     {
         return $rootNamespace . '\Orchid\Screens';
@@ -40,5 +35,10 @@ class MakeListScreenCommand extends GeneratorCommand
         $stub = parent::replaceClass($stub, $name);
 
         return str_replace("StubListScreen", $name, $stub);
+    }
+
+    protected function getStub()
+    {
+        return app_path() . '/Orchid/Console/Stubs/list-screen.stub';
     }
 }

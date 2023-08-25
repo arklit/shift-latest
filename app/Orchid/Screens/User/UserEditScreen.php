@@ -58,16 +58,6 @@ class UserEditScreen extends Screen
     }
 
     /**
-     * Display header description.
-     *
-     * @return string|null
-     */
-    public function description(): ?string
-    {
-        return 'Details such as name, email and password';
-    }
-
-    /**
      * @return iterable|null
      */
     public function permission(): ?iterable
@@ -155,6 +145,16 @@ class UserEditScreen extends Screen
                 ),
 
         ];
+    }
+
+    /**
+     * Display header description.
+     *
+     * @return string|null
+     */
+    public function description(): ?string
+    {
+        return 'Details such as name, email and password';
     }
 
     /**

@@ -3,7 +3,6 @@
 namespace App\DTO;
 
 use JsonSerializable;
-use function Symfony\Component\Translation\t;
 
 class CrumbDTO implements JsonSerializable
 {
