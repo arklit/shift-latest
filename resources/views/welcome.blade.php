@@ -35,6 +35,37 @@
     <body>
         <div class="page">
             @include('components.header')
+
+            <div class="container">
+                <div class="grid">
+                    <div class="box"></div>
+                    <div class="box"></div>
+                    <div class="box"></div>
+                    <div class="box"></div>
+                    <div class="box"></div>
+                    <div class="box"></div>
+                    <div class="box"></div>
+                </div>
+            </div>
+
+            <form action="" class="form">
+                <div class="item">
+                    <label for="">asdas</label>
+                    <input class="input" type="text" id="input-1" name="name"/>
+                    <span id="name_error" class="error"></span>
+                </div>
+                <div class="item">
+                    <label for="">asdas</label>
+                    <input class="input" type="text" id="input-2" name="phone"/>
+                    <span id="phone_error" class="error"></span>
+                </div>
+                <div class="item">
+                    <label for="">asdas</label>
+                    <input class="input" type="text" id="input-3" name="msg"/>
+                    <span id="msg_error" class="error"></span>
+                </div>
+                <button type="submit">отправить</button>
+            </form>
             @yield('content')
             @if(!empty($seo) && !empty($seo->seo_description))
                 @include('components.seo.seo', ['seo_title' => $seo->seo_title, 'seo_text' => $seo->seo_description, 'image' => $seo->image])
