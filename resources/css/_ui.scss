@@ -120,17 +120,13 @@
         margin: 10px 0 5px;
     }
 }
+.input {
+    border: 1px solid black;
+}
 .error {
     color: red;
     font-size: 14px;
 }
-.grid {
-    margin: 100px auto;
-    @include grid(4);
-    width: 100%;
-    gap: 20px;
-}
-.box {
-    height: 200px;
-    border: 5px solid red;
+.error-input {
+    border: 1px solid red;
 }

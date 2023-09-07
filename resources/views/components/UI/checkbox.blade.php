@@ -1,7 +1,7 @@
 <div class="ui @if(!empty($class)){{$class}}@endif">
     <span class="span-1">
         <span class="span-2">
-            <input type="checkbox" class="input"/>
+            <input type="checkbox" class="input" name="checkbox"/>
             <span class="tick">
                 <span class="icon">
                     <svg width="14" height="10" viewBox="0 0 14 10">

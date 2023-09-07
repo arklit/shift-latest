@@ -1,184 +1,110 @@
-import $ from 'jquery';
+export default function FormsUsageWithValidation(data) {
+    const form = document.querySelector('.form')
+    const reg = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/
 
-const form = document.querySelector('.form')
-
-let data = {
-    errors: {
-        name: {
-            name: 'name',
-            rules: [
-                {
-                    type: "required",
-                    value: true,
-                    message: "Поле обязательно для заполнения"
-                },
-                {
-                    type: "min",
-                    value: 4,
-                    message: "Символов должно быть больше 2"
-                },
-                {
-                    type: "max",
-                    value: 30,
-                    message: "Символов должно быть больше 2"
-                },
-                {
-                    type: "email",
-                    value: true,
-                    message: "Тут должен быть электронный адрес"
-                }
-            ]
-        },
-        phone: {
-            name: 'phone',
-            msg: '123123asdasd',
-            rules: [
-                {
-                    type: "required",
-                    value: true,
-                    message: "Поле обязательно для заполнения"
-                },
-                {
-                    type: "min",
-                    value: 4,
-                    message: "Символов должно быть больше 2"
-                },
-                {
-                    type: "max",
-                    value: 30,
-                    message: "Символов должно быть больше 2"
-                }
-            ]
-        },
-        msg: {
-            name: 'msg',
-            msg: 'asd12312dasfafdasd',
-            rules: [
-                {
-                    type: "required",
-                    value: true,
-                    message: "Поле обязательно для заполнения"
-                },
-                {
-                    type: "min",
-                    value: 4,
-                    message: "Символов должно быть больше 2"
-                },
-                {
-                    type: "max",
-                    value: 30,
-                    message: "Символов должно быть больше 2"
-                }
-            ]
-        }
-    }
-}
-
-function showErr(err) {
-    err.css('display', 'block')
-}
-
-function hideErrors(err) {
-    err.each(function () {
-        $(this).css('display', 'none')
-    })
-}
-
-let inputs = $('.input')
-let errs = data.errors
-/*inputs.each( function () {
-    const err = $(this).next()
-    hideErrors(err)
-    let inputName = $(this).attr('name')
-    let rules
-    /!*errs.forEach(item => {
-        if(item.name === inputName) {
-            rules = item.rules
-        }
-    })*!/
-    if(rules.required) {
-        $(this).attr('data-req', true)
-    }
-    if(rules.min) {
-        $(this).attr('data-min', rules.min.value)
-    }
-    if(rules.max) {
-        $(this).attr('data-max', rules.max.value)
-    }
-    if(rules.email) {
-        $(this).attr('data-email', rules.email.value)
-    }
-})*/
-
-
-function checkForRequired(val, errors, rule) {
-    if(val === '') {
-        errors.push(rule.message)
-    }
-}
-function checkForMin(val, errors, rule) {
-    if(val.length < rule.value) {
-        errors.push(rule.message)
-    }
-}
-function checkForMax(val, errors, rule) {
-    if(val.length > rule.value) {
-        errors.push(rule.message)
-    }
-}
-function checkForEmail(val, errors, rule) {
-    if(!reg.test(val)) {
-        errors.push(rule.message)
-    }
-}
-let reg = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/
-form.addEventListener('submit', (e) => {
-    e.preventDefault()
-    const formData = new FormData(e.target);
-    const formProps = Object.fromEntries(formData);
-    let errors = [];
-    inputs.each(function () {
-        let validationRules = data.errors[$(this).attr('name')].rules
-        console.log(validationRules)
-        let val = $(this).val()
+    function checkValidation(fieldName, value) {
+        let validationRules = data[fieldName].rules
+        let error = null;
+        let errorFound = false;
         validationRules.forEach(rule => {
+            if (errorFound) {
+                return;
+            }
             switch (rule.type) {
                 case 'required':
-                    checkForRequired(val, errors, rule)
-                    break;
+                    error = validateCheckMethods.checkForRequire(value, rule)
+                    break
                 case 'min':
-                    checkForMin(val, errors, rule)
-                    break;
+                    error = validateCheckMethods.checkForMin(value, rule)
+                    break
                 case 'max':
-                    checkForMax(val, errors, rule)
-                    break;
+                    error = validateCheckMethods.checkForMax(value, rule)
+                    break
                 case 'email':
-                    checkForEmail(val, errors, rule)
+                    error = validateCheckMethods.checkForEmail(value, rule)
                     break;
             }
+            if (error !== null) {
+                errorFound = true;
+            }
         })
-        /*let val = $(this).val()
-        let err = $(this).next()
-        if ($(this).data('req') && val === '') {
-            showErr(err)
-            err.text('Поле не должно быть пустым')
-            isValid = false
-        } else if ($(this).data('min') && val.length < $(this).data('min')) {
-            showErr(err)
-            err.text(`В поле должно быть не меньше ${$(this).data('min')} символов`)
-            isValid = false
-        } else if ($(this).data('max') && val.length > $(this).data('max')) {
-            showErr(err)
-            err.text(`В поле должно быть не больше ${$(this).data('max')} символов`)
-            isValid = false
-        } else if ($(this).data('email') && !reg.test(val)) {
-            showErr(err)
-            err.text(`Это должен быть email`)
-            isValid = false
+        console.log(error)
+        return error;
+    }
+
+    function setErrorForField(input, error) {
+        let next = input.nextElementSibling
+        if (error) {
+            next.textContent = error
+            input.classList.add('error-input')
         } else {
-            hideErrors(err)
-        }*/
+            next.textContent = ''
+            input.classList.remove('error-input')
+        }
+    }
+
+    function checkValidationOnInput(input) {
+        input.addEventListener('input', () => {
+            let error = checkValidation(input.getAttribute('name'), input.value)
+            setErrorForField(input, error)
+        })
+    }
+    function checkValidationOnCheckbox(check) {
+        check.addEventListener('change', () => {
+            let error = checkValidation(check.getAttribute('name'), check.checked)
+            setErrorForField(check, error)
+        })
+    }
+    function checkValidForTextInputs(item) {
+        let val = item.value
+        let error = checkValidation(item.getAttribute('name'), val)
+        setErrorForField(item, error)
+        checkValidationOnInput(item)
+    }
+    function checkValidForCheckbox(item) {
+        let val = item.checked
+        let error = checkValidation(item.getAttribute('name'), val)
+        setErrorForField(item, error)
+        checkValidationOnCheckbox(item)
+    }
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault()
+        // const formData = new FormData(e.target);
+        // const formProps = Object.fromEntries(formData);
+        let inputs = form.querySelectorAll('.input[type="text"]')
+        inputs.forEach(item => {
+            checkValidForTextInputs(item)
+        })
+        let checkbox = form.querySelectorAll('.input[type="checkbox"]')
+        checkbox.forEach(item => {
+            checkValidForCheckbox(item)
+        })
     })
-    console.log(errors);
-    // console.log(formProps)
-})
+    const validateCheckMethods = {
+        checkForRequire: function(val, rule) {
+            if (val === '' || val === false) {
+                return rule.message
+            }
+            return null;
+        },
+        checkForMin: function(val, rule) {
+            if (val.length < rule.value) {
+                return rule.message
+            }
+            return null;
+        },
+        checkForMax: function(val, rule) {
+            if (val.length > rule.value) {
+                return rule.message
+            }
+            return null;
+        },
+        checkForEmail: function(val, rule) {
+            if (!reg.test(val)) {
+                return rule.message
+            }
+            return null;
+        },
+    }
+}
