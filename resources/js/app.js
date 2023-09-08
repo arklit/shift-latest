@@ -67,12 +67,21 @@ let data = {
         },
         checkbox: {
             rules: [
-            {
-                type: "required",
-                value: true,
-                message: "Поле обязательно для заполнения"
-            },
-        ]
-    }
+                {
+                    type: "required",
+                    value: true,
+                    message: "Поле обязательно для заполнения"
+                },
+            ]
+        },
+        select: {
+            rules: [
+                {
+                    type: "required",
+                    value: true,
+                    message: 'Поле обязательно для заполнения'
+                }
+            ]
+        }
 }
 FormsUsageWithValidation(data)

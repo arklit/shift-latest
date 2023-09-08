@@ -53,8 +53,17 @@
                     <span id="msg_error" class="error"></span>
                 </div>
                 <div class="item">
+                    <select class="select input" name="select" id="">
+                        <option value="">Выбрать опцию</option>
+                        <option value="Воркута">Воркута</option>
+                        <option value="Воронеж">воронеж</option>
+                        <option value="Калининград">Калиниград</option>
+                    </select>
+                    <span class="error"></span>
+                </div>
+                <div class="item">
                     <input class="input" type="checkbox" name="checkbox"/>
-                    <span id="checkbox_error" class="error"></span>
+                    <span class="error" id="checkbox_error" ></span>
                 </div>
                 <button type="submit">отправить</button>
             </form>

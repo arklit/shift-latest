@@ -28,7 +28,6 @@ export default function FormsUsageWithValidation(data) {
                 errorFound = true;
             }
         })
-        console.log(error)
         return error;
     }
 
@@ -55,7 +54,7 @@ export default function FormsUsageWithValidation(data) {
             setErrorForField(check, error)
         })
     }
-    function checkValidForTextInputs(item) {
+    function checkValidForInputsAndSelects(item) {
         let val = item.value
         let error = checkValidation(item.getAttribute('name'), val)
         setErrorForField(item, error)
@@ -67,6 +66,16 @@ export default function FormsUsageWithValidation(data) {
         setErrorForField(item, error)
         checkValidationOnCheckbox(item)
     }
+    function checkValidity(form) {
+        let allInputs = form.querySelectorAll('.input')
+        let valid = true
+        allInputs.forEach(item => {
+            if(item.classList.contains('error-input')) {
+                valid = false
+            }
+        })
+        return valid
+    }
 
     form.addEventListener('submit', (e) => {
         e.preventDefault()
@@ -74,12 +83,23 @@ export default function FormsUsageWithValidation(data) {
         // const formProps = Object.fromEntries(formData);
         let inputs = form.querySelectorAll('.input[type="text"]')
         inputs.forEach(item => {
-            checkValidForTextInputs(item)
+            checkValidForInputsAndSelects(item)
         })
         let checkbox = form.querySelectorAll('.input[type="checkbox"]')
         checkbox.forEach(item => {
             checkValidForCheckbox(item)
         })
+        let selects = form.querySelectorAll('.select')
+        selects.forEach(item => {
+            checkValidForInputsAndSelects(item)
+        })
+        let valid = checkValidity(form)
+
+        if(valid) {
+            console.log('win')
+        } else {
+            console.log('lose')
+        }
     })
     const validateCheckMethods = {
         checkForRequire: function(val, rule) {
