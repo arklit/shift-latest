@@ -1,8 +1,5 @@
 import { defineConfig, loadEnv } from 'vite';
 import laravel from 'laravel-vite-plugin';
-import vue from '@vitejs/plugin-vue'
-import path from "path";
-
 export default ({ mode }) => {
     process.env = {...process.env, ...loadEnv(mode, process.cwd())};
 
@@ -18,9 +15,8 @@ export default ({ mode }) => {
             },
         },
         plugins: [
-            vue(),
             laravel({
-                input: ['resources/css/app.scss', 'resources/js/app.js', 'resources/js/initialization.js'],
+                input: ['resources/css/app.scss', 'resources/js/app.js'],
                 refresh: true,
             }),
         ],
