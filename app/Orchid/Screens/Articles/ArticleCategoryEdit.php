@@ -33,9 +33,11 @@ class ArticleCategoryEdit extends EditScreenPattern
         $this->routeName = $this->route->list();
     }
 
-    public function query(ArticleCategory $item)
+    public function query(ArticleCategory $item, $id)
     {
-        return $this->queryMake($item);
+        return [
+            'item' => $item->whereId($id)->first(),
+        ];
     }
 
     public function layout(): iterable

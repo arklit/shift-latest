@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
-
+use App\Orchid\Filters\CategoryFilter;
+use App\Orchid\Filters\DateCreatedFilter;
+use App\Orchid\Filters\IsActiveFilter;
 use App\Traits\IsActiveScopeTrait;
 use App\Traits\ReadyToPublicationScopeTrait;
 use App\Traits\SortedByPublicationScopeTrait;
@@ -21,7 +23,15 @@ class Article extends ProtoModel
 
     protected $table = self::TABLE_NAME;
     protected array $allowedSorts = ['id', 'is_active', 'category_id', 'sort', 'title', 'slug', 'created_at', 'publication_date'];
-    protected array $allowedFilters = ['id', 'title', 'slug', 'created_at', 'publication_date'];
+    protected array $allowedFilters = [
+        'id',
+        'title',
+        'slug',
+        'created_at' => DateCreatedFilter::class,
+        'publication_date',
+        'is_active' => IsActiveFilter::class,
+        'category_id' => CategoryFilter::class
+    ];
 
     protected $casts = [
         'publication_date' => 'datetime'

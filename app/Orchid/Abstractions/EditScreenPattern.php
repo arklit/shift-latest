@@ -21,7 +21,7 @@ abstract class EditScreenPattern extends Screen
     /** Название страницы редактирования. Задаётся вручную или же автоматически подставляется как Updated/Created
      * @var string
      */
-    public string $name = '';
+    protected string $name = '';
 
     /** Переменная определяющая редактируется ли уже существующая запись или создаётся новая
      * @var bool

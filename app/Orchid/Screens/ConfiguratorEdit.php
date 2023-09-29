@@ -14,7 +14,7 @@ use Orchid\Support\Facades\Layout;
 
 class ConfiguratorEdit extends EditScreenPattern
 {
-    public string $name = 'Конфигуратор';
+    protected string $name = 'Конфигуратор';
     protected string $createTitle = 'Создание конфигурации';
     protected string $updateTitle = 'Редактирование конфигурации';
     protected array $fields = [];

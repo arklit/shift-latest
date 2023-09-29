@@ -28,10 +28,7 @@ class ArticleCategoryList extends ListScreenPattern
 
     public function query(): iterable
     {
-        $this->model = ArticleCategory::query()->filters([
-            IsActiveFilter::class,
-            DateCreatedFilter::class,
-        ]);
+        $this->model = ArticleCategory::query();
         return parent::query();
     }
 

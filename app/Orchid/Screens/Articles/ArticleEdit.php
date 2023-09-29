@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Orchid\Screen\Fields\CheckBox;
-use Orchid\Screen\Fields\Cropper;
+use App\Orchid\Fields\Cropper;
 use Orchid\Screen\Fields\DateTimer;
 use Orchid\Screen\Fields\Group;
 use Orchid\Screen\Fields\Input;
