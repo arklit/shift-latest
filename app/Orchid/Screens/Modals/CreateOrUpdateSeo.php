@@ -3,7 +3,7 @@
 namespace App\Orchid\Screens\Modals;
 
 use Orchid\Screen\Fields\CheckBox;
-use Orchid\Screen\Fields\Cropper;
+use App\Orchid\Fields\Cropper;
 use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Fields\Quill;
 use Orchid\Screen\Fields\TextArea;

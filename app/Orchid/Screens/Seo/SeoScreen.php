@@ -3,12 +3,12 @@
 namespace App\Orchid\Screens\Seo;
 
 use App\Enums\OrchidRoutes;
-use App\Enums\Permissions;
 use App\Models\Seo;
 use App\Orchid\Abstractions\ListScreenPattern;
 use App\Orchid\Filters\DateCreatedFilter;
 use App\Orchid\Filters\IsActiveFilter;
 use App\Orchid\Helpers\OrchidHelper;
+use App\Orchid\Helpers\OrchidValidator;
 use App\Orchid\Layouts\EmptyModal;
 use App\Orchid\Screens\Modals\CreateOrUpdateSeo;
 use App\Orchid\Traits\ActivitySignsTrait;
@@ -24,7 +24,7 @@ use Orchid\Support\Facades\Layout;
 
 class SeoScreen extends ListScreenPattern
 {
-    public string $name = 'Список SEO страниц';
+    protected string $name = 'Список SEO страниц';
 
     protected int $paginate = 50;
 
@@ -45,11 +45,7 @@ class SeoScreen extends ListScreenPattern
 
     public function query(): iterable
     {
-        $this->model = Seo::query()->filters([
-            IsActiveFilter::class,
-            DateCreatedFilter::class,
-        ]);
-
+        $this->model = Seo::query();
         return parent::query();
     }
 
@@ -91,8 +87,13 @@ class SeoScreen extends ListScreenPattern
         $data = $request->input('item');
         $data['url'] = Str::finish(Str::start($data['url'], '/'), '/');
 
-        $validator = OrchidHelper::getValidator($data, 'seo', 'url');
-        if (!$validator->fails()) {
+
+        $validator = (new OrchidValidator($data, ['title']))->setIndividualRules($this->getRules(), $this->getMessages())
+            ->setUniqueFields($item, ['url' => 'Такой URL уже используется'])
+            ->clearQuillTags(['text'])
+            ->validate();
+
+        if (!$validator->isFail()) {
             if ($data['id']) {
                 $item = $item->whereId($data['id'])->first();
             }
@@ -100,15 +101,35 @@ class SeoScreen extends ListScreenPattern
             Alert::success('Новый проект успешно добавлен');
         }
 
-
-        return redirect()->route($this->route->base())->withErrors($validator);
+        return $validator->showErrors($this->route->base(), $data['id']);
     }
 
-    public function deleteItem(Seo $item)
+    public function deleteItem(Seo $item, $id)
     {
-        $id = $item->id;
+        $item = $item->whereId($id)->first();
         $title = $item->getTitle();
         $item->delete() ? Alert::success("Запись №:$id - '$title'  успешно удалена!")
             : Alert::error("Произошла ошибка при попытке удалить запись");
+    }
+
+    public function getRules(): array
+    {
+        return [
+            'title' => ['bail', 'required', 'max:160'],
+            'url' => ['bail', 'required', 'unique:seos'],
+            'description' => ['bail'],
+        ];
+    }
+
+    public function getMessages(): array
+    {
+        return [
+            'title.required' => 'Введите заголовок',
+            'title.max' => 'Заголовок не может быть длиннее 160 символов',
+            'url.required' => 'Введите URL',
+            'url.max' => 'URL не может быть длиннее 60 символов',
+            'url.unique' => 'Страница с таким URL уже добавлена',
+            'description.required' => 'Введите описание',
+        ];
     }
 }

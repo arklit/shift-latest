@@ -7,6 +7,7 @@ use App\Models\Article;
 use App\Models\ArticleCategory;
 use App\Orchid\Abstractions\EditScreenPattern;
 use App\Orchid\Helpers\OrchidHelper;
+use App\Orchid\Helpers\OrchidValidator;
 use App\Orchid\Layouts\EmptyModal;
 use App\Orchid\Traits\CommandBarDeletableTrait;
 use Illuminate\Http\Request;
@@ -66,18 +67,23 @@ class ArticleEdit extends EditScreenPattern
         ];
     }
 
-    public function query(Article $item)
+    public function query(Article $item, ?int $id = null)
     {
-        return $this->queryMake($item);
+        return $this->queryMake($item, $id);
     }
 
-    public function save(Article $item, Request $request)
+    public function save(Article $item, Request $request, ?int $id = null)
     {
+        if ($id){
+            $this->id = $id;
+            $item = $item->whereId($id)->first();
+        }
+
         $data = $request->input('item');
 
-        if ($result = $this->validation($item, $data, 'slug')) {
-            return $result;
-        }
+        $validator = (new OrchidValidator($data, []))->setIndividualRules($this->getRules(), $this->getMessages())
+            ->clearQuillTags(['text'])
+            ->validate();
 
         if ($item->exists) {
             $data['slug'] = $item->getIdentifier();
@@ -87,7 +93,7 @@ class ArticleEdit extends EditScreenPattern
             $data['slug'] = Str::slug($item->id . '-' . $data['title']);
         }
 
-        return $this->saveItem($item, $data);
+        return $validator->isFail() ? $validator->showErrors($this->route, $id) : $this->saveItem($item, $data);
     }
 
     public function asyncGetArticle(Article $item)
@@ -97,8 +103,38 @@ class ArticleEdit extends EditScreenPattern
         ];
     }
 
-    public function remove(Article $item)
+    public function remove(Article $item, $id)
     {
-        return $this->removeItem($item);
+        return $this->removeItem($item, $id);
+    }
+
+    public function getRules(): array
+    {
+        return [
+            'title' => ['bail', 'required', 'max:120'],
+            'category_id' => ['bail', 'required',],
+            'description' => ['bail', 'required', 'max:1024'],
+            'text' => ['bail', 'required',],
+            'image_inner' => ['bail', 'required',],
+            'image_outer' => ['bail', 'required',],
+            'publication_date' => ['bail', 'required',],
+            'seo_description' => ['bail', 'nullable', 'max:1024'],
+        ];
+    }
+
+    public function getMessages(): array
+    {
+        return [
+            'title.required' => 'Введите заголовок статьи',
+            'title.max' => 'Заголовок статьи не может быть длиннее 120 символов',
+            'category_id.required' => 'Выберите категорию статьи',
+            'description.required' => 'Введите анонс статьи',
+            'description.max' => 'Анонс не может быть длиннее 1024 символов',
+            'text.required' => 'Введите текст статьи',
+            'image_inner.required' => 'Загрузите изображение для страницы',
+            'image_outer.required' => 'Загрузите изображение для списка',
+            'publication_date.required' => 'Выберите дату публикации',
+            'seo_description.max' => 'SEO Description не может быть длиннее 1024 символов',
+        ];
     }
 }

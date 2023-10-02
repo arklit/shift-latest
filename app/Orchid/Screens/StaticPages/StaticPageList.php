@@ -80,9 +80,9 @@ class StaticPageList extends ListScreenPattern
         ];
     }
 
-    public function deleteItem(StaticPage $item)
+    public function deleteItem(StaticPage $item, $id)
     {
-        $id = $item->id;
+        $item = $item->whereId($id)->first();
         $title = $item->getTitle();
         $item->delete() ? Alert::success("Запись №:$id - '$title'  успешно удалена!")
             : Alert::error("Произошла ошибка при попытке удалить запись");

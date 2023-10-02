@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('static_pages', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('parent_id');
+            $table->unsignedBigInteger('parent_id')->nullable();
             $table->boolean('is_active');
             $table->boolean('indexation')->default(0);
             $table->string('title');

@@ -16,7 +16,7 @@ export default ({ mode }) => {
         },
         plugins: [
             laravel({
-                input: ['resources/css/app.scss', 'resources/js/app.js', 'resources/js/dashboard.js'],
+                input: ['resources/css/app.scss', 'resources/js/app.js'],
                 refresh: true,
             }),
         ],

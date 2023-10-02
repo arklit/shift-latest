@@ -13,7 +13,7 @@ use Orchid\Support\Facades\Layout;
 
 class RobotsScreen extends EditScreenPattern
 {
-    public string $name = 'Редактирование файла robots.txt';
+    protected string $name = 'Редактирование файла robots.txt';
     protected string $file = '/robots.txt';
 
     public function __construct()

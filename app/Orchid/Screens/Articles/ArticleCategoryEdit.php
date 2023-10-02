@@ -6,6 +6,7 @@ use App\Enums\OrchidRoutes;
 use App\Models\ArticleCategory;
 use App\Orchid\Abstractions\EditScreenPattern;
 use App\Orchid\Helpers\OrchidHelper;
+use App\Orchid\Helpers\OrchidValidator;
 use App\Orchid\Traits\CommandBarDeletableTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,6 +17,7 @@ use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Fields\TextArea;
 use Orchid\Support\Facades\Alert;
 use Orchid\Support\Facades\Layout;
+use function Laravel\Prompts\search;
 
 class ArticleCategoryEdit extends EditScreenPattern
 {
@@ -33,11 +35,9 @@ class ArticleCategoryEdit extends EditScreenPattern
         $this->routeName = $this->route->list();
     }
 
-    public function query(ArticleCategory $item, $id)
+    public function query(ArticleCategory $item, ?int $id = null): array
     {
-        return [
-            'item' => $item->whereId($id)->first(),
-        ];
+        return $this->queryMake($item, $id);
     }
 
     public function layout(): iterable
@@ -56,27 +56,54 @@ class ArticleCategoryEdit extends EditScreenPattern
         ];
     }
 
-    public function save(ArticleCategory $item, Request $request)
+    public function save(ArticleCategory $item, Request $request, ?int $id = null)
     {
+        if ($id){
+            $this->id = $id;
+            $item = $item->whereId($id)->first();
+        }
+
         $data = $request->input('item');
         $data['code'] = Str::slug($data['code']);
         $data['sort'] = $data['sort'] ?? 0;
-        $data['id'] = $item->id;
+        $data['id'] = $id;
 
-        if ($result = $this->validation($item, $data, 'code')) {
-            return $result;
-        }
+        $validator = (new OrchidValidator($data, ['title', 'sort']))->setIndividualRules($this->getRules(), $this->getMessages())
+            ->setUniqueFields($item, ['code' => 'Такой код уже используется'])
+            ->validate();
 
-        return $this->saveItem($item, $data);
+        return $validator->isFail() ? $validator->showErrors($this->route, $id) : $this->saveItem($item, $data);
     }
 
-    public function remove(ArticleCategory $item): RedirectResponse
+    public function remove(ArticleCategory $item, $id): RedirectResponse
     {
         if ($item->articles()->count() !== 0) {
             Alert::error('Эта категория не является пустой. Её нельзя удалить');
-            return redirect()->route($this->route->edit(), ['id' => $item->id]);
+            return redirect()->route($this->route->edit(), ['id' => $id]);
         }
 
-        return $this->removeItem($item);
+        return $this->removeItem($item, $id);
+    }
+
+    public function getRules(): array
+    {
+        return [
+            'code' => ['bail', 'required', 'max:160'],
+            'description' => ['bail', 'nullable', 'max:1024'],
+            'seo_title' => ['bail', 'nullable', 'max:169'],
+            'seo_description' => ['bail', 'nullable'],
+        ];
+    }
+
+    public function getMessages(): array
+    {
+        return [
+            'code.required' => 'Введите код категории',
+            'code.max' => 'Заголовок не может быть длиннее 160 символов',
+            'description.required' => 'Введите описание категории',
+            'description.max' => 'Описание не может быть длиннее 160 символов',
+            'seo_title.required' => 'Введите SEO заголовок',
+            'seo_description.required' => 'Введите SEO описание',
+        ];
     }
 }

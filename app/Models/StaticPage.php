@@ -9,6 +9,10 @@ use App\Traits\SortedScopeTrait;
 class StaticPage extends ProtoModel
 {
     public const TABLE_NAME = 'static_pages';
+    public const CODE_ABOUT = 'about';
+    public const CODE_DELIVERY = 'delivery';
+    public const CODE_CONTACTS = 'contacts';
+    public const CODE_COOPERATION = 'cooperation';
     protected $table = self::TABLE_NAME;
     protected $with = ['parent'];
     protected $allowedSorts = ['id', 'is_active', 'sort', 'title', 'code', 'created_at'];

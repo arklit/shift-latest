@@ -1,5 +1,5 @@
 import Cropper from 'cropperjs';
-import {Modal} from "bootstrap";
+import Modal from "bootstrap/js/dist/modal";
 class CropperRocont extends window.Controller {
 
     static targets = [
@@ -11,6 +11,7 @@ class CropperRocont extends window.Controller {
      *
      */
     connect() {
+        console.log(1)
         let image = this.data.get('url') ? this.data.get('url') : this.data.get(`value`);
 
         if (image) {
@@ -38,6 +39,7 @@ class CropperRocont extends window.Controller {
      */
     getModal()
     {
+        console.log(2)
         if (!this.modal) {
             this.modal = new Modal(this.element.querySelector('.modal'), {backdrop: 'static', keyboard: false});
         }
@@ -51,7 +53,7 @@ class CropperRocont extends window.Controller {
      * @param event
      */
     upload(event) {
-
+        console.log(3)
         let maxFileSize = this.data.get('max-file-size');
         if (maxFileSize !== null && event.target.files[0].size / 1024 / 1024 > maxFileSize) {
             this.alert('Validation error', `The download file is too large. Max size: ${maxFileSize} MB`);
@@ -79,6 +81,7 @@ class CropperRocont extends window.Controller {
      */
     openModal(event)
     {
+        console.log(4)
         if (!event.target.files[0]) {
             return;
         }
@@ -90,6 +93,7 @@ class CropperRocont extends window.Controller {
      * Action on click button "Crop"
      */
     crop() {
+        console.log(5)
         let data = this.cropper.getData();
 
         this.cropper.getCroppedCanvas().toBlob((blob) => {
@@ -130,6 +134,7 @@ class CropperRocont extends window.Controller {
      *
      */
     clear() {
+        console.log(6)
         this.element.querySelector('.cropper-path').value = '';
         this.element.querySelector('.cropper-preview').src = '';
         this.element.querySelector('.cropper-preview').classList.add('none');
