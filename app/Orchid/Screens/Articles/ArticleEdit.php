@@ -67,18 +67,13 @@ class ArticleEdit extends EditScreenPattern
         ];
     }
 
-    public function query(Article $item, ?int $id = null)
+    public function query(Article $item)
     {
-        return $this->queryMake($item, $id);
+        return $this->queryMake($item);
     }
 
-    public function save(Article $item, Request $request, ?int $id = null)
+    public function save(Article $item, Request $request)
     {
-        if ($id){
-            $this->id = $id;
-            $item = $item->whereId($id)->first();
-        }
-
         $data = $request->input('item');
 
         $validator = (new OrchidValidator($data, []))->setIndividualRules($this->getRules(), $this->getMessages())
@@ -93,7 +88,7 @@ class ArticleEdit extends EditScreenPattern
             $data['slug'] = Str::slug($item->id . '-' . $data['title']);
         }
 
-        return $validator->isFail() ? $validator->showErrors($this->route, $id) : $this->saveItem($item, $data);
+        return $validator->isFail() ? $validator->showErrors($this->route, $item->id) : $this->saveItem($item, $data);
     }
 
     public function asyncGetArticle(Article $item)
@@ -103,9 +98,9 @@ class ArticleEdit extends EditScreenPattern
         ];
     }
 
-    public function remove(Article $item, $id)
+    public function remove(Article $item)
     {
-        return $this->removeItem($item, $id);
+        return $this->removeItem($item);
     }
 
     public function getRules(): array

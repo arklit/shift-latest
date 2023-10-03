@@ -75,10 +75,10 @@ class SeoScreen extends ListScreenPattern
         ];
     }
 
-    public function asyncGetItem(Seo $item)
+    public function asyncGetItem(Seo $item, $id)
     {
         return [
-            'item' => $item,
+            'item' => $item->whereId($id)->first(),
         ];
     }
 

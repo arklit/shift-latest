@@ -35,9 +35,9 @@ class ArticleCategoryEdit extends EditScreenPattern
         $this->routeName = $this->route->list();
     }
 
-    public function query(ArticleCategory $item, ?int $id = null): array
+    public function query(ArticleCategory $item): array
     {
-        return $this->queryMake($item, $id);
+        return $this->queryMake($item);
     }
 
     public function layout(): iterable
@@ -56,33 +56,28 @@ class ArticleCategoryEdit extends EditScreenPattern
         ];
     }
 
-    public function save(ArticleCategory $item, Request $request, ?int $id = null)
+    public function save(ArticleCategory $item, Request $request)
     {
-        if ($id){
-            $this->id = $id;
-            $item = $item->whereId($id)->first();
-        }
-
         $data = $request->input('item');
         $data['code'] = Str::slug($data['code']);
         $data['sort'] = $data['sort'] ?? 0;
-        $data['id'] = $id;
+        $data['id'] = $item->id;
 
         $validator = (new OrchidValidator($data, ['title', 'sort']))->setIndividualRules($this->getRules(), $this->getMessages())
             ->setUniqueFields($item, ['code' => 'Такой код уже используется'])
             ->validate();
 
-        return $validator->isFail() ? $validator->showErrors($this->route, $id) : $this->saveItem($item, $data);
+        return $validator->isFail() ? $validator->showErrors($this->route, $item->id) : $this->saveItem($item, $data);
     }
 
-    public function remove(ArticleCategory $item, $id): RedirectResponse
+    public function remove(ArticleCategory $item): RedirectResponse
     {
         if ($item->articles()->count() !== 0) {
             Alert::error('Эта категория не является пустой. Её нельзя удалить');
-            return redirect()->route($this->route->edit(), ['id' => $id]);
+            return redirect()->route($this->route->edit(), ['item' => $item->id]);
         }
 
-        return $this->removeItem($item, $id);
+        return $this->removeItem($item);
     }
 
     public function getRules(): array

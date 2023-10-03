@@ -53,21 +53,14 @@ class StaticPageEdit extends EditScreenPattern
         ];
     }
 
-    public function query(StaticPage $item, ?int $id = null)
+    public function query(StaticPage $item)
     {
-
-        if ($id) {
-            $this->item = $item->whereId($id)->first();
-        }
         $this->item = $item;
-        return $this->queryMake($item, $id);
+        return $this->queryMake($item);
     }
 
-    public function save(StaticPage $item, Request $request , ?int $id = null)
+    public function save(StaticPage $item, Request $request)
     {
-        if($id){
-            $item = $item->whereId($id)->first();
-        }
         $data = $request->input('item');
 //        $payload = $data['data'];
         $code = $data['code'];
@@ -102,9 +95,9 @@ class StaticPageEdit extends EditScreenPattern
         return $this->saveItem($item, $data);
     }
 
-    public function remove(StaticPage $item, $id)
+    public function remove(StaticPage $item)
     {
-        return $this->removeItem($item, $id);
+        return $this->removeItem($item);
     }
 
     public function getRules(string $code): array

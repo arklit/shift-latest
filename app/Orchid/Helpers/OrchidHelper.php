@@ -24,7 +24,7 @@ class OrchidHelper
         Route::screen("/$code", $listScreenClass)->name("platform.$code.list");
         if (!is_null($editScreenClass)) {
             Route::screen("/$code/create", $editScreenClass)->name("platform.$code.create");
-            Route::screen("/$code/{id}/edit", $editScreenClass)->name("platform.$code.edit");
+            Route::screen("/$code/{item}/edit", $editScreenClass)->name("platform.$code.edit");
         }
     }
 

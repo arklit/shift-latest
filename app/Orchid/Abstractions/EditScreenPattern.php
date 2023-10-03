@@ -96,12 +96,8 @@ abstract class EditScreenPattern extends Screen
     protected bool $makeBreadcrumbs = true;
 
 
-    protected function queryMake(ProtoInterface $item, ?int $id): array
+    protected function queryMake(ProtoInterface $item): array
     {
-        if ($id) {
-            $item = $item->whereId($id)->first();
-        }
-
         $this->redirectAfterQuery();
         $this->exists = $item->exists;
         $name = $this->exists ? $this->updateTitle : $this->createTitle;
@@ -163,11 +159,11 @@ abstract class EditScreenPattern extends Screen
     {
         if ($this->redirectAfterUpdate) {
             $this->redirectTo = $this->route->edit();
-            $this->redirectParams = ['id' => $item->id];
+            $this->redirectParams = ['item' => $item->id];
         }
     }
 
-    protected function removeItem(ProtoInterface $item, $id): RedirectResponse
+    protected function removeItem(ProtoInterface $item): RedirectResponse
     {
         // TODO настройка динамического сообщения об удалении
         if (!empty($this->relations)) {
@@ -177,9 +173,9 @@ abstract class EditScreenPattern extends Screen
         }
 
         $title = !is_null($item->{$this->titleColumnName});
-        $this->deleteMessage = $this->deleteMessage ?: "Запись [$id : $title] успешно удалена";
+        $this->deleteMessage = $this->deleteMessage ?: "Запись [$item->id : $title] успешно удалена";
 
-        $item->whereId($id)->delete();
+        $item->delete();
         $this->redirectAfterDelete();
         Alert::warning($this->deleteMessage);
         return redirect()->route($this->redirectTo);
