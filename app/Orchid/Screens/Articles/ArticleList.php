@@ -55,7 +55,7 @@ class ArticleList extends ListScreenPattern
                     DropDown::make()->icon('options-vertical')->list([
                         Link::make(__('Edit'))->icon('wrench')->route(OrchidRoutes::ARTICLES->edit(), $item),
                         Button::make('Удалить')->icon('trash')
-                            ->method('deleteItem', ['id' => $item->id, 'title' => $item->getTitle()])
+                            ->method('deleteItem', ['item' => $item->id, 'title' => $item->getTitle()])
                             ->confirm('Вы действительно хотите удалить публикацию №:' . $item->id . ' - ' . $item->getTitle() . '?'),
                 ])),
             ]),
@@ -79,9 +79,9 @@ class ArticleList extends ListScreenPattern
         ];
     }
 
-    public function deleteItem(Article $item, $id)
+    public function deleteItem(Article $item)
     {
-        $item = $item->whereId($id)->first();
+        $id = $item->id;
         $title = $item->getTitle();
         $item->delete() ? Alert::success("Публикация №:$id - '$title'  успешно удалена!")
             : Alert::error("Произошла ошибка при попытке удалить публикацию");

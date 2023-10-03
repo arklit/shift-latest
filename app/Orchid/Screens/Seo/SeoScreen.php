@@ -63,8 +63,8 @@ class SeoScreen extends ListScreenPattern
 
                 TD::make()->width(10)->alignRight()->cantHide()->render(fn($item) => DropDown::make()->icon('options-vertical')->list([
                     ModalToggle::make('Редактировать')->icon('wrench')->method('save')
-                        ->modal('createOrUpdateSeoPage')->asyncParameters(['id' => $item->id]),
-                    Button::make('Удалить')->icon('trash')->method('deleteItem', ['id' => $item->id, 'title' => $item->getTitle()])
+                        ->modal('createOrUpdateSeoPage')->asyncParameters(['item' => $item->id]),
+                    Button::make('Удалить')->icon('trash')->method('deleteItem', ['item' => $item->id, 'title' => $item->getTitle()])
                         ->confirm('Вы действительно хотите удалить запись №' . $item->id . '<br><strong>' . $item->getTitle() . '</strong> <code>(' . $item->url . ')</code>?'),
                 ])),
             ]),
@@ -75,10 +75,10 @@ class SeoScreen extends ListScreenPattern
         ];
     }
 
-    public function asyncGetItem(Seo $item, $id)
+    public function asyncGetItem(Seo $item)
     {
         return [
-            'item' => $item->whereId($id)->first(),
+            'item' => $item,
         ];
     }
 
@@ -94,14 +94,11 @@ class SeoScreen extends ListScreenPattern
             ->validate();
 
         if (!$validator->isFail()) {
-            if ($data['id']) {
-                $item = $item->whereId($data['id'])->first();
-            }
             $item->fill($data)->save();
             Alert::success('Новый проект успешно добавлен');
         }
 
-        return $validator->showErrors($this->route->base(), $data['id']);
+        return $validator->showErrors($this->route->base());
     }
 
     public function deleteItem(Seo $item, $id)
