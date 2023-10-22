@@ -2,9 +2,13 @@
 
 namespace App\Models;
 
+use App\Orchid\Filters\DateCreatedFilter;
+use App\Orchid\Filters\IsActiveFilter;
 use App\Traits\CodeScopeTrait;
 use App\Traits\IsActiveScopeTrait;
 use App\Traits\SortedScopeTrait;
+use Orchid\Filters\Types\Like;
+use Termwind\Components\Li;
 
 class StaticPage extends ProtoModel
 {
@@ -15,7 +19,14 @@ class StaticPage extends ProtoModel
     public const CODE_COOPERATION = 'cooperation';
     protected $table = self::TABLE_NAME;
     protected $with = ['parent'];
-    protected $allowedSorts = ['id', 'is_active', 'sort', 'title', 'code', 'created_at'];
+    protected $allowedSorts = ['is_active', 'sort', 'title', 'code', 'created_at'];
+    protected $allowedFilters = [
+        'is_active' => IsActiveFilter::class,
+        'sort' => Like::class,
+        'title' => Like::class,
+        'code' => Like::class,
+        'created_at' => DateCreatedFilter::class
+    ];
 
     use IsActiveScopeTrait;
     use SortedScopeTrait;

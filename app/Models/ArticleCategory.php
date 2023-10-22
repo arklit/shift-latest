@@ -8,6 +8,7 @@ use App\Traits\CodeScopeTrait;
 use App\Traits\IsActiveScopeTrait;
 use App\Traits\SortedScopeTrait;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Orchid\Filters\Types\Like;
 
 class ArticleCategory extends ProtoModel
 {
@@ -17,11 +18,10 @@ class ArticleCategory extends ProtoModel
 
     public const TABLE_NAME = 'article_categories';
     protected $table = self::TABLE_NAME;
-    protected $allowedSorts = ['id', 'is_active', 'sort', 'title', 'code', 'created_at'];
+    protected $allowedSorts = ['is_active', 'sort', 'title', 'code', 'created_at'];
     protected $allowedFilters = [
-        'id',
-        'title',
-        'code',
+        'title' => Like::class,
+        'code' => Like::class,
         'is_active' => IsActiveFilter::class,
         'created_at' => DateCreatedFilter::class
     ];

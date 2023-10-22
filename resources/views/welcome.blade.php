@@ -30,7 +30,7 @@
         <title>{{$commonTitle}}</title>
         <meta name="description" content="{{$commonDescription}}">
 
-        @vite('resources/css/app.scss')
+        @vite('resources/scss/app.scss')
     </head>
     <body>
         <div class="page">

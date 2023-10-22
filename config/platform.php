@@ -109,17 +109,22 @@ return [
     | Automatically connect the stored links for stylesheets and scripts in your
     | dashboard. These can be local files or external URLs.
     |
-    | Example: '/css/styles.css', 'https://example.com/scripts.js'
+    | Example: '/scss/styles.scss', 'https://example.com/scripts.js'
     |
     */
 
     'resource'      => [
         'stylesheets' => [],
-        'scripts'     => [],
+        'scripts'     => [
+            '/js/tinymce/tinymce.min.js',
+            '/js/tinymce/langs/ru.js',
+        ],
     ],
 
     'vite' => [
-        'resources/js/dashboard.js'
+        'resources/scss/admin/admin.scss',
+        'resources/js/admin/controllers/cropper.js',
+        'resources/js/admin/dashboard.js'
     ],
 
     /*
@@ -181,6 +186,7 @@ return [
 
     'icons'         => [
         'orc' => \Orchid\IconPack\Path::getFolder(),
+        'bs' => \Orchid\Support\BootstrapIconsPath::getFolder(),
     ],
 
     /*

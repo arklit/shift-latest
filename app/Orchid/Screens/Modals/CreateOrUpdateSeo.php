@@ -2,6 +2,7 @@
 
 namespace App\Orchid\Screens\Modals;
 
+use App\Orchid\Fields\TinyMce;
 use Orchid\Screen\Fields\CheckBox;
 use App\Orchid\Fields\Cropper;
 use Orchid\Screen\Fields\Input;
@@ -21,7 +22,7 @@ class CreateOrUpdateSeo
             Input::make('item.title')->title('Title ')->required()->maxlength(160)->help('Не более 160 символов'),
             TextArea::make('item.description')->title('Описание')->rows(5),
             Cropper::make('item.image')->title('Изображение к тексту')->targetRelativeUrl(),
-            Quill::make('item.text')->title('Текст внизу страницы')
+            TinyMce::make('item.text')->title('Текст внизу страницы')
 
         ]);
     }
