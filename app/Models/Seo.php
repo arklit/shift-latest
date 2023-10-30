@@ -23,5 +23,15 @@ class Seo extends ProtoModel
 
     use IsActiveScopeTrait;
     use SortedScopeTrait;
+
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    public function getDescription()
+    {
+        return $this->text;
+    }
 }
 

@@ -8,27 +8,30 @@
         <meta name="csrf-token" content="{{ csrf_token() }}" />
 
         @php
-             $commonTitle = 'template';
-             $commonDescription = 'descr';
+            use Illuminate\Support\Facades\View;
+            /** @var  $seo \App\Models\Seo */
 
-                 if (!empty($seo) && !empty($seo->getTitle())) {
-                      $commonTitle = $seo->getTitle();
-                  } elseif (View::hasSection('title')) {
-                      $commonTitle = trim(View::yieldContent('title')) . " | WANNGO - интернет-магазин обуви оптом";
-                  }
-                  if (!empty($titlePage) && $titlePage !== 1) {
-                      $commonTitle .= ' | Страница ' . $titlePage;
-                  }
+                 $commonTitle = 'template';
+                 $commonDescription = 'descr';
 
-                  if(!empty($seo) && !empty($seo->getDescription())) {
-                      $commonDescription = $seo->getDescription();
-                  } elseif (View::hasSection('description')) {
-                      $commonDescription = trim(View::yieldContent('description'));
-                  }
+                     if (!empty($seo) && !empty($seo->getTitle())) {
+                          $commonTitle = $seo->getTitle();
+                      } elseif (View::hasSection('title')) {
+                          $commonTitle = trim(View::yieldContent('title')) . " | WANNGO - интернет-магазин обуви оптом";
+                      }
+                      if (!empty($titlePage) && $titlePage !== 1) {
+                          $commonTitle .= ' | Страница ' . $titlePage;
+                      }
+
+                      if(!empty($seo) && !empty($seo->getDescription())) {
+                          $commonDescription = $seo->getDescription();
+                      } elseif (View::hasSection('description')) {
+                          $commonDescription = trim(View::yieldContent('description'));
+                      }
 
         @endphp
-        <title>{{$commonTitle}}</title>
-        <meta name="description" content="{{$commonDescription}}">
+        <title>{{strip_tags($commonTitle)}}</title>
+        <meta name="description" content="{{strip_tags($commonDescription)}}}">
 
         @vite('resources/scss/client/app.scss')
     </head>
@@ -69,7 +72,7 @@
             </form>
             @yield('content')
             @if(!empty($seo) && !empty($seo->seo_description))
-                @include('components.seo.seo', ['seo_title' => $seo->seo_title, 'seo_text' => $seo->seo_description, 'image' => $seo->image])
+                @include('components.seo.seo', ['seo_title' => $seo->seo_title, 'seo_description' => $seo->text, 'image' => $seo->image])
             @endif
             @include('components.footer')
         </div>
