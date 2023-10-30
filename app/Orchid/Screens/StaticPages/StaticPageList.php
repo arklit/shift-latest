@@ -36,10 +36,7 @@ class StaticPageList extends ListScreenPattern
 //            ->with('parent')
             ->select(['static_pages.*', 'parent.code AS daddy'])->leftJoin(
                 'static_pages AS parent', 'static_pages.parent_id', '=', 'parent.id')->orderBy('id')
-            ->filters([
-                IsActiveFilter::class,
-                DateCreatedFilter::class,
-            ]);
+            ->filters();
         return parent::query();
     }
 
@@ -47,7 +44,7 @@ class StaticPageList extends ListScreenPattern
     {
         return [
             Layout::table('items', [
-                TD::make('id', 'ID')->sort()->filter(TD::FILTER_NUMERIC),
+                TD::make('id', 'ID'),
                 TD::make('is_active', 'Активность')->sort()->filter(
                     Select::make()->options(OrchidHelper::getYesNoArray())->empty()->title('Фильтр активности')
                 )->render(fn($item) => $this->isActive($item)),
@@ -56,7 +53,7 @@ class StaticPageList extends ListScreenPattern
 //                TD::make('parent_id', 'Родитель')->render(fn($item) => $item->parent?->code),
                 TD::make('parent_id', 'Родитель')->render(fn($item) => $item->daddy),
 
-                TD::make('sort', 'Сортировка')->sort()->filter(TD::FILTER_NUMBER_RANGE),
+                TD::make('sort', 'Сортировка')->sort()->filter(),
                 TD::make('created_at', 'Дата')->width(100)->alignRight()->sort()
                     ->filter(DateTimer::make()->title('Фильтр по дате')->format('d-m-Y'))
                     ->render(fn($item) => $item->created_at?->format('d-m-Y')),

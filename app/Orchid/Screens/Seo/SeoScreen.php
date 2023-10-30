@@ -50,7 +50,7 @@ class SeoScreen extends ListScreenPattern
     {
         return [
             Layout::table('items', [
-                TD::make('id', 'ID')->sort()->filter(TD::FILTER_NUMERIC),
+                TD::make('id', 'ID'),
                 TD::make('title', 'Название')->sort()->filter(),
                 TD::make('url', 'Url')->sort()->filter(),
 

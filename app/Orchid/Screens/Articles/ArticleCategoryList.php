@@ -28,7 +28,7 @@ class ArticleCategoryList extends ListScreenPattern
 
     public function query(): iterable
     {
-        $this->model = ArticleCategory::query();
+        $this->model = ArticleCategory::query()->filters();
         return parent::query();
     }
 
@@ -36,11 +36,11 @@ class ArticleCategoryList extends ListScreenPattern
     {
         return [
             Layout::table('items', [
-                TD::make('id', 'ID')->sort()->filter(TD::FILTER_NUMERIC),
+                TD::make('id', 'ID'),
                 TD::make('is_active', 'Активность')->sort()->filter(
                     Select::make()->options(OrchidHelper::getYesNoArray())->empty()->title('Фильтр активности')
                 )->render(fn($item) => $item->is_active ? $this->activeSign : $this->inactiveSign),
-                TD::make('sort', 'Сортировка')->sort()->filter(TD::FILTER_NUMBER_RANGE),
+                TD::make('sort', 'Сортировка')->sort()->filter(),
                 TD::make('title', 'Название')->sort()->filter(),
                 TD::make('code', 'Код')->sort()->filter(),
 

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Orchid\Filters\CategoryFilter;
 use App\Orchid\Filters\DateCreatedFilter;
+use App\Orchid\Filters\DatePublishFilter;
 use App\Orchid\Filters\IsActiveFilter;
 use App\Traits\IsActiveScopeTrait;
 use App\Traits\ReadyToPublicationScopeTrait;
@@ -11,6 +12,7 @@ use App\Traits\SortedByPublicationScopeTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use Orchid\Filters\Types\Like;
 
 class Article extends ProtoModel
 {
@@ -22,13 +24,12 @@ class Article extends ProtoModel
     public const PER_PAGE = 10;
 
     protected $table = self::TABLE_NAME;
-    protected array $allowedSorts = ['id', 'is_active', 'category_id', 'sort', 'title', 'slug', 'created_at', 'publication_date'];
+    protected array $allowedSorts = ['is_active', 'category_id', 'sort', 'title', 'slug', 'created_at', 'publication_date'];
     protected array $allowedFilters = [
-        'id',
-        'title',
-        'slug',
+        'title' => Like::class,
+        'slug' => Like::class,
         'created_at' => DateCreatedFilter::class,
-        'publication_date',
+        'publication_date' => DatePublishFilter::class,
         'is_active' => IsActiveFilter::class,
         'category_id' => CategoryFilter::class
     ];

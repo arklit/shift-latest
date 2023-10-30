@@ -6,7 +6,7 @@ use App\Enums\OrchidRoutes;
 use App\Models\Article;
 use App\Models\ArticleCategory;
 use App\Orchid\Abstractions\EditScreenPattern;
-use App\Orchid\Helpers\OrchidHelper;
+use App\Orchid\Fields\TinyMce;
 use App\Orchid\Helpers\OrchidValidator;
 use App\Orchid\Layouts\EmptyModal;
 use App\Orchid\Traits\CommandBarDeletableTrait;
@@ -19,7 +19,6 @@ use Orchid\Screen\Fields\DateTimer;
 use Orchid\Screen\Fields\Group;
 use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Fields\Label;
-use Orchid\Screen\Fields\Quill;
 use Orchid\Screen\Fields\Select;
 use Orchid\Screen\Fields\TextArea;
 use Orchid\Support\Facades\Layout;
@@ -58,7 +57,7 @@ class ArticleEdit extends EditScreenPattern
                     Select::make('item.category_id')->title('Категория')->empty('Категория не выбрана')
                         ->fromQuery(ArticleCategory::query()->active()->sorted(), 'title', 'id')->required(),
                     DateTimer::make('item.publication_date')->title('Дата публикации')->format24hr()->required()->value(Carbon::today()),
-                    Quill::make('item.text')->title('Текст публикации')->required(),
+                    TinyMce::make('item.text')->title('Текст публикации')->required(),
                     Cropper::make('item.image_inner')->title('Изображение для списка')->targetRelativeUrl()->help('Загрузка изображения обязательна'),
                 ]),
             ]),
