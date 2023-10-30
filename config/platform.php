@@ -115,7 +115,10 @@ return [
 
     'resource'      => [
         'stylesheets' => [],
-        'scripts'     => [],
+        'scripts'     => [
+            '/js/tinymce/tinymce.min.js',
+            '/js/tinymce/langs/ru.js',
+        ],
     ],
 
     'vite' => [
