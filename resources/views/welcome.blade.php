@@ -30,7 +30,7 @@
         <title>{{$commonTitle}}</title>
         <meta name="description" content="{{$commonDescription}}">
 
-        @vite('resources/css/app.scss')
+        @vite('resources/scss/client/app.scss')
     </head>
     <body>
         <div class="page">
@@ -73,7 +73,7 @@
             @endif
             @include('components.footer')
         </div>
-        @vite(['resources/js/app.js'])
+        @vite(['resources/js/client/app.js'])
     </body>
 
 </html>

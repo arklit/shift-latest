@@ -5,9 +5,6 @@ namespace App\Orchid\Screens\Seo;
 use App\Enums\OrchidRoutes;
 use App\Models\Seo;
 use App\Orchid\Abstractions\ListScreenPattern;
-use App\Orchid\Filters\DateCreatedFilter;
-use App\Orchid\Filters\IsActiveFilter;
-use App\Orchid\Helpers\OrchidHelper;
 use App\Orchid\Helpers\OrchidValidator;
 use App\Orchid\Layouts\EmptyModal;
 use App\Orchid\Screens\Modals\CreateOrUpdateSeo;
@@ -101,9 +98,9 @@ class SeoScreen extends ListScreenPattern
         return $validator->showErrors($this->route->base());
     }
 
-    public function deleteItem(Seo $item, $id)
+    public function deleteItem(Seo $item)
     {
-        $item = $item->whereId($id)->first();
+        $id = $item->id;
         $title = $item->getTitle();
         $item->delete() ? Alert::success("Запись №:$id - '$title'  успешно удалена!")
             : Alert::error("Произошла ошибка при попытке удалить запись");

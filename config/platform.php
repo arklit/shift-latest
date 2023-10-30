@@ -119,7 +119,8 @@ return [
     ],
 
     'vite' => [
-        'resources/js/dashboard.js'
+        'resources/scss/admin/app.scss',
+        'resources/js/admin/dashboard.js'
     ],
 
     /*

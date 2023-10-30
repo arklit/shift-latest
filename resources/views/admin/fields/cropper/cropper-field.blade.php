@@ -14,6 +14,7 @@
          data-cropperrocont-max-file-size="{{ $maxFileSize }}"
          data-cropperrocont-groups="{{ $attributes['groups'] }}"
          data-cropperrocont-path="{{ $attributes['path'] ?? '' }}"
+         class="cropper-parent"
     >
         <div class="border-dashed text-end p-3 cropper-actions">
 
@@ -31,7 +32,7 @@
                     <input type="file"
                            accept="image/*"
                            data-cropperrocont-target="upload"
-                           data-action="change->cropperrocont#upload click->cropperrocont#openModal"
+                           data-action="change->cropperrocont#upload"
                            class="d-none">
                 </label>
 
@@ -48,36 +49,6 @@
         <input class="cropper-path d-none"
                type="text"
                data-cropperrocont-target="source"
-            {{ $attributes }}
-        >
-
-        <div class="modal" role="dialog" {{$staticBackdrop ? "data-bs-backdrop=static" : ''}}>
-            <div class="modal-dialog modal-fullscreen-md-down modal-lg">
-                <div class="modal-content-wrapper">
-                    <div class="modal-content">
-                        <div class="position-relative">
-                            <img class="upload-panel">
-                        </div>
-
-                        <div class="modal-footer">
-
-                            <button type="button"
-                                    class="btn btn-link"
-                                    data-bs-dismiss="modal">
-                                {{ __('Close') }}
-                            </button>
-
-                            <button type="button"
-                                    class="btn btn-default"
-                                    data-action="cropperrocont#crop">
-                                {{ __('Crop') }}
-                            </button>
-
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
+            {{ $attributes }}>
     </div>
 @endcomponent
