@@ -14,7 +14,7 @@ use Orchid\Support\Facades\Layout;
 
 class SitemapScreen extends EditScreenPattern
 {
-    protected string $name = 'Карта сайта';
+    public string $name = 'Карта сайта';
 
     public function __construct()
     {

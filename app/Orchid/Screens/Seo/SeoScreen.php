@@ -21,7 +21,7 @@ use Orchid\Support\Facades\Layout;
 
 class SeoScreen extends ListScreenPattern
 {
-    protected string $name = 'Список SEO страниц';
+    public string $name = 'Список SEO страниц';
 
     protected int $paginate = 50;
 

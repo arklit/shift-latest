@@ -10,6 +10,10 @@ use App\Orchid\Screens\Articles\ArticleCategoryList;
 use App\Orchid\Screens\Articles\ArticleEdit;
 use App\Orchid\Screens\Articles\ArticleList;
 use App\Orchid\Screens\ConfiguratorEdit;
+use App\Orchid\Screens\Pages\InformationLinkEdit;
+use App\Orchid\Screens\Pages\InformationPageEdit;
+use App\Orchid\Screens\Pages\InformationPageList;
+use App\Orchid\Screens\Pages\InformationSampleEdit;
 use App\Orchid\Screens\PlatformScreen;
 use App\Orchid\Screens\Role\RoleEditScreen;
 use App\Orchid\Screens\Role\RoleListScreen;
@@ -36,7 +40,11 @@ Route::screen('/sitemap', SitemapScreen::class)->name(OrchidRoutes::SITEMAP->bas
 Route::screen('/seo', SeoScreen::class)->name(OrchidRoutes::SEO->base());
 Route::screen('/configurator', ConfiguratorEdit::class)->name(OrchidRoutes::CONFIGURATOR->base());
 
-OrchidHelper::setAdminRoutes(OrchidRoutes::STATIC_PAGES->value, StaticPageList::class, StaticPageEdit::class);
+Route::screen('/information-pages', InformationPageList::class)->name('platform.information.list');
+Route::screen('/information-page/{id?}', InformationPageEdit::class)->name('platform.information-page.edit');
+Route::screen('/information-link/{id?}', InformationLinkEdit::class)->name('platform.information-link.edit');
+Route::screen('/information-sample/{id?}', InformationSampleEdit::class)->name('platform.information-sample.edit');
+
 OrchidHelper::setAdminRoutes(OrchidRoutes::ARTICLE_CATEGORIES->value, ArticleCategoryList::class, ArticleCategoryEdit::class);
 OrchidHelper::setAdminRoutes(OrchidRoutes::ARTICLES->value, ArticleList::class, ArticleEdit::class);
 
