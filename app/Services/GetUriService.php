@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Services;
-use App\Models\InformationPage;
+use App\Models\Page;
 
 class GetUriService
 {
@@ -25,7 +25,7 @@ class GetUriService
 
     public function getRecursive($uri, $item): string
     {
-        $parent = InformationPage::query()->where('id', $item->parent_id)->first();
+        $parent = Page::query()->where('id', $item->parent_id)->first();
         $this->arr->parent_id = $parent->parent_id;
         return '/'.$parent->code.$uri;
     }

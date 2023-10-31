@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Orchid\Layouts;
+namespace App\Orchid\Layouts\Listeners;
 
-use App\Enums\StaticPages;
-use App\Models\InformationPage;
+use App\Enums\PagesTypes;
+use App\Models\Page;
 use Illuminate\Http\Request;
 use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Fields\Select;
@@ -23,7 +23,7 @@ class SelectListener extends Listener
     {
         return [
             Layout::rows([
-                Input::make('item.title')
+                Input::make('item.name')
                     ->type('text')
                     ->max(255)
                     ->required()
@@ -43,19 +43,19 @@ class SelectListener extends Listener
                     ->options([
                         'link' => 'Ссылка',
                         'page' => 'Страница',
-                        'sample' => 'Шаблон'
+                        'template' => 'Шаблон'
                     ]),
 
-                Select::make('template')
+                Select::make('item.template')
                     ->title('Выбор шаблона')
-                    ->options(StaticPages::getOptions())
+                    ->options(PagesTypes::getOptions())
                     ->required()
-                    ->canSee($this->query->get('item.type') === 'sample'),
+                    ->canSee($this->query->get('item.type') === 'template'),
 
                 Select::make('item.parent_id')
                     ->title('Родительская страница')
                     ->empty('Выберите родителя')
-                    ->fromQuery(InformationPage::query()->active(), 'title', 'id'),
+                    ->fromQuery(Page::query()->active(), 'title', 'id'),
             ])
         ];
     }
@@ -63,12 +63,11 @@ class SelectListener extends Listener
     public function handle(Repository $repository, Request $request): Repository
     {
         $data = $request->input('item');
-        $data['type'] === 'sample' ? $template = $data['template'] : $template = '';
+
         return $repository
-            ->set('item.title', $data['title'])
+            ->set('item.name', $data['name'])
             ->set('item.code', $data['code'])
             ->set('item.type', $data['type'])
-            ->set('item.template', $template)
             ->set('item.parent_id', $data['parent_id']);
     }
 }

@@ -2,7 +2,6 @@
 
     namespace App\Orchid\Abstractions;
 
-    use App\Orchid\Interfaces\ProtoInterface;
     use Orchid\Screen\Screen;
     use Orchid\Support\Facades\Alert;
     use function redirect;
@@ -14,7 +13,7 @@
          * Название страницы редактирования. Задаётся вручную или же автоматически подставляется как Updated/Created
          * @var string
          */
-        public string $name = '';
+        protected string $name = '';
 
         /**
          * Переменная определяющая редактируется ли уже существующая запись или создаётся новая
@@ -91,7 +90,7 @@
             ];
         }
 
-        protected function saveItem(ProtoInterface $item, $data)
+        protected function saveItem($item, $data)
         {
             $this->redirectTo();
 
@@ -111,7 +110,7 @@
             return redirect()->route($this->listRedirect, $this->redirectParams);
         }
 
-        protected function removeItem(ProtoInterface $item)
+        protected function removeItem($item)
         {
             // TODO настройка динамического сообщения об удалении
             $item->delete();

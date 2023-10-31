@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\StaticPages;
+use App\Enums\PagesTypes;
 use App\Services\Crumbchain;
 use App\Services\StaticPagesService;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -15,7 +15,7 @@ class TestController extends Controller
 
     public function __invoke(Request $request)
     {
-        $suits = array_column(StaticPages::cases(), 'value');
+        $suits = array_column(PagesTypes::cases(), 'value');
         dd($suits);
 //        $url = request()->path();
 //

@@ -2,33 +2,42 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\Crumbchain;
-use App\Services\StaticPagesService;
+use App\Models\Brand;
+use App\Models\Page;
+use App\Repositories\CatalogRepository;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 
 class PagesController extends Controller
 {
-    public function getStaticPage(string $code)
+    public string $menuTitle;
+    public array $breadcrumbs;
+
+    public function prepareMenu($code)
     {
-//        $sequence = array_reverse(explode('/', $code));
-//        $code = $sequence[0];
-//        $page = StaticPage::query()->code($code)->with('children')->active()->firstOrFail();
-//
-//        abort_if(!StaticPagesService::isSequenceCorrect($page, $sequence), 404);
-//
-//        Crumbchain::makeCrumb('Главная', route('web.main.page'));
-//        StaticPagesService::makeCrumbsChainWithNesting($page);
-//
-//        if (!$page->children->isEmpty()) {
-//            foreach ($page->children as $child) {
-//                $child->fullPath = StaticPagesService::makeLinkForChildren($child);
-//            }
-//        }
-//
-//        $crumbs = Crumbchain::cs()->getCrumbs();
-//        $crumbs->first->deactivate();
-////        dd(
-////        );
-//
-//        dump(Crumbchain::cs()->getCrumbs(), $page->children);
+        $page = Page::query()->active()->where('code', $code)->first();
+        $this->menuTitle = $page->title;
+
+        return Page::query()->active()->where('parent_id', $page->id)->get()->each(
+            function ($item) use ($page) {
+                $item->active_menu = $item->uri === $page->uri;
+            });
+    }
+
+    public function getPage($params = null)
+    {
+        $page = Page::query()->active()->with(['children'])->where('uri', '/' . $params)->firstOrFail();
+
+        $page->setBreadCrumbs();
+
+        $parent = null;
+        if ($page->parent_id) {
+            $parent = Page::query()->where('parent_id', $page->parent->id)->with('children')->firstOrFail();
+        }
+
+        return view("pages.default", compact('page', 'parent'));
     }
 }

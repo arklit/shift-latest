@@ -10,9 +10,9 @@
         public function commandBar(): array
         {
             return [
-                Link::make(__('orchid.go-back'))->icon('arrow-left-circle')->route($this->listRedirect, $this->redirectParams),
+                Link::make(__('orchid.go-back'))->icon('arrow-left-circle')->route($this->route->list(), $this->redirectParams),
                 Button::make('Save')->icon('note')->method('save'),
-                Button::make('Delete')->icon('trash')->method('remove')->canSee($this->exists),
+                Button::make('Delete')->icon('trash')->method('remove')->canSee($this->exists)->rawClick(),
             ];
         }
     }

@@ -13,11 +13,8 @@ Route::get('/super-test', TestController::class)->name('test-get');
 Route::get('/sitemap.xml', SitemapController::class)->name('xml-map');
 Route::get('/robots.txt', RobotsTxtController::class)->name('robots-txt');
 
-
 Route::group(['prefix' => 'ajax'], function () {
     // Методы для AJAX-запросов
-
-
 });
 
 Route::group(['as' => 'web.'], function () {
@@ -34,11 +31,8 @@ Route::group(['as' => 'web.'], function () {
     });
 
     Route::controller(PagesController::class)->as('pages.')->prefix('/')->group(function () {
-        Route::get('/{staticPageCode}', 'getStaticPage')->name('static')
-            ->where('staticPageCode', '.*');;
+        Route::get('/{params?}', 'getPage')->name('list')->where('params', '.*');
     });
-
-
 });
 
 

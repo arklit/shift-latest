@@ -14,7 +14,7 @@ class GetSeoData
         $seo = Seo::query()->where('url', $url)->first();
 //        dump($url, $seo);
 
-        view()->composer(['welcome'],
+        view()->composer(['layout'],
             function ($view) use ($seo) {
                 $view->with(compact('seo'));
             }
