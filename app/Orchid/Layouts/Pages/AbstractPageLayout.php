@@ -34,7 +34,7 @@ abstract class AbstractPageLayout extends Rows
                 Input::make('item.code')->title('Код страницы')->help('Участвует в построении URL-адреса страницы'),
                 Select::make('item.parent_id')->title('Родитель')
                     ->empty('Выберите родителя')
-                    ->fromQuery(Page::query()->where('id','!=', $item->id), 'name', 'id'),
+                    ->fromQuery(Page::query()->where('id', '!=', $item->id), 'name', 'id'),
 
             ]),
             Group::make([
@@ -68,8 +68,9 @@ abstract class AbstractPageLayout extends Rows
         return array_merge($this->validationMessages, $defaultValidationMessages);
     }
 
-    abstract function setValidationRules():void;
-    abstract function setValidationMessages():void;
+    abstract function setValidationRules(): void;
+
+    abstract function setValidationMessages(): void;
 
 
 }

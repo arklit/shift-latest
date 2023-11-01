@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "678f874e1c8c1ce1c382daf345c141a7",
+    "content-hash": "9d9a261c9866f20d243d797ac6011a94",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1527,6 +1527,69 @@
                 }
             ],
             "time": "2023-08-27T10:19:19+00:00"
+        },
+        {
+            "name": "kalnoy/nestedset",
+            "version": "v6.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/lazychaser/laravel-nestedset.git",
+                "reference": "2d5c99fe1bfbaa4004f8d6fb24475f7ff88bb526"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/lazychaser/laravel-nestedset/zipball/2d5c99fe1bfbaa4004f8d6fb24475f7ff88bb526",
+                "reference": "2d5c99fe1bfbaa4004f8d6fb24475f7ff88bb526",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "^7.0|^8.0|^9.0|^10.0",
+                "illuminate/events": "^7.0|^8.0|^9.0|^10.0",
+                "illuminate/support": "^7.0|^8.0|^9.0|^10.0",
+                "php": "^7.2.5|^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "7.*|8.*|9.*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "v5.0.x-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "Kalnoy\\Nestedset\\NestedSetServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Kalnoy\\Nestedset\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alexander Kalnoy",
+                    "email": "lazychaser@gmail.com"
+                }
+            ],
+            "description": "Nested Set Model for Laravel 5.7 and up",
+            "keywords": [
+                "database",
+                "hierarchy",
+                "laravel",
+                "nested sets",
+                "nsm"
+            ],
+            "support": {
+                "issues": "https://github.com/lazychaser/laravel-nestedset/issues",
+                "source": "https://github.com/lazychaser/laravel-nestedset/tree/v6.0.2"
+            },
+            "time": "2023-02-16T14:41:24+00:00"
         },
         {
             "name": "laravel/framework",
@@ -3148,6 +3211,61 @@
                 }
             ],
             "time": "2023-06-21T08:46:11+00:00"
+        },
+        {
+            "name": "nakukryskin/orchid-repeater-field",
+            "version": "v13.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Rocont/orchid-repeater-field.git",
+                "reference": "f06f2415e8bd618615ce5983b01006369a1d96c5"
+            },
+            "require": {
+                "laravel/framework": "^9.21|^v10.0.0",
+                "orchid/platform": "^13.0.1|^14.10.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.8",
+                "mockery/mockery": "^1.1",
+                "phpunit/phpunit": "^9.0",
+                "sempro/phpunit-pretty-print": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Nakukryskin\\OrchidRepeaterField\\Providers\\ServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Nakukryskin\\OrchidRepeaterField\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Nakukryskin\\OrchidRepeaterField\\Tests\\": "tests"
+                }
+            },
+            "license": [
+                "wtfpl"
+            ],
+            "authors": [
+                {
+                    "name": "Vladislav Zhdanov",
+                    "email": "v.jdanov@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Adding support of repeater field to the Orchid RAD platform.",
+            "homepage": "https://github.com/nakukryskin/orchid-repeater-field",
+            "keywords": [
+                "Laravel",
+                "Orchid Repeater Field",
+                "Repeater Field"
+            ],
+            "time": "2023-10-05T13:12:07+00:00"
         },
         {
             "name": "nesbot/carbon",

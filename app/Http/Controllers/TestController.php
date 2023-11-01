@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\PagesTypes;
+use App\Models\Page;
 use App\Services\Crumbchain;
 use App\Services\StaticPagesService;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -15,8 +16,8 @@ class TestController extends Controller
 
     public function __invoke(Request $request)
     {
-        $suits = array_column(PagesTypes::cases(), 'value');
-        dd($suits);
+        $pages = Page::query()->with('ancestors')->get()->toTree();
+        return view('admin.page-tree', compact('pages'));
 //        $url = request()->path();
 //
 //        dd($url);

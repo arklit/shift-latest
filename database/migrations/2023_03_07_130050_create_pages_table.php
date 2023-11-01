@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Kalnoy\Nestedset\NestedSet;
 
 return new class extends Migration
 {
@@ -22,7 +23,7 @@ return new class extends Migration
             $table->string('code')->nullable();
             $table->text('text')->nullable();
             $table->text('announce')->nullable();
-            $table->unsignedBigInteger('parent_id')->nullable();
+            NestedSet::columns($table);
             $table->text('image_outer')->nullable();
             $table->text('image_inner')->nullable();
             $table->text('uri');

@@ -1,0 +1,17 @@
+.page-tree-container{
+    padding: 20px;
+    .main-list{
+        list-style: none;
+        padding: 0;
+        li,ul{
+            list-style: none;
+            padding-left: 0;
+        }
+        .list{
+            display: none;
+            padding-left: 15px;
+        }
+    }
+}
+
+

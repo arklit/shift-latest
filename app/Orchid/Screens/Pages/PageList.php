@@ -49,6 +49,7 @@ class PageList extends ListScreenPattern
 
     public function layout(): iterable
     {
+        $pages = Page::query()->withDepth()->with('ancestors')->get()->toTree();
         return [
             Layout::table('items', [
                 TD::make('id', 'ID'),
@@ -69,6 +70,7 @@ class PageList extends ListScreenPattern
                         return Link::make()->icon('wrench')->route($this->updateRoute, $item);
                     }),
             ]),
+            Layout::view('admin.page-tree', compact('pages')),
 
             Layout::modal('choosePageType', [SelectListener::class])->async('asyncType'),
         ];
@@ -99,6 +101,10 @@ class PageList extends ListScreenPattern
         $data['uri'] = (new GetUriService())->getUri($data);
         $page = new Page();
         $page->fill($data)->save();
+        if (isset($data['parent_id'])){
+            $parent = Page::query()->where('id', $data['parent_id'])->first();
+            $parent->appendNode($page);
+        }
 
         return redirect()->route($this->updateRoute, [$page->id])->withInput();
     }
