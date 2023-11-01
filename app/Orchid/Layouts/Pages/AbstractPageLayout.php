@@ -34,7 +34,7 @@ abstract class AbstractPageLayout extends Rows
                 Input::make('item.code')->title('Код страницы')->help('Участвует в построении URL-адреса страницы'),
                 Select::make('item.parent_id')->title('Родитель')
                     ->empty('Выберите родителя')
-                    ->fromQuery(Page::query()->active(), 'name', 'id'),
+                    ->fromQuery(Page::query()->where('id','!=', $item->id), 'name', 'id'),
 
             ]),
             Group::make([

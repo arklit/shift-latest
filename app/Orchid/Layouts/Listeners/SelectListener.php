@@ -55,7 +55,7 @@ class SelectListener extends Listener
                 Select::make('item.parent_id')
                     ->title('Родительская страница')
                     ->empty('Выберите родителя')
-                    ->fromQuery(Page::query()->active(), 'title', 'id'),
+                    ->fromQuery(Page::query(), 'name', 'id'),
             ])
         ];
     }

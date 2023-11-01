@@ -58,6 +58,7 @@ class PageList extends ListScreenPattern
                 TD::make('name', 'Название')->sort()->filter(),
                 TD::make('type', 'Тип')->sort()->render(fn($item) => PagesTypes::from($item->type)->getTitle()),
                 TD::make('parent_id', 'Родитель')->render(fn($item) => $item->parent?->name)->sort()->filter(Select::make()->fromModel(Page::class, 'name', 'id'))
+
                     ->filterValue(fn($item) => Page::find($item)->code),
                 TD::make('uri', 'URI')->sort()->filter(),
                 TD::make('created_at', 'Дата')->width(100)->alignRight()->sort()
