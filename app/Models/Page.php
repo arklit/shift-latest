@@ -12,10 +12,8 @@ class Page extends ProtoModel
 {
     use ActiveScopeTrait;
 
-    public const TABLE_NAME = 'information_pages';
+    public const TABLE_NAME = 'pages';
     protected $table = self::TABLE_NAME;
-    protected $allowedSorts     = ['is_active', 'type', 'parent_id', 'uri', 'created_at'];
-    protected $allowedFilters   = ['is_active', 'type', 'parent_id', 'uri', 'created_at'];
 
     protected $casts = [
         'data' => 'array'
@@ -46,21 +44,7 @@ class Page extends ProtoModel
         return $this->is_active ? 'Да' : 'Нет';
     }
 
-    public function getImage()
-    {
-//        return->$this->attachment()
-    }
-
-    public function getUpdateRoute($item): string
-    {
-        return match ($item) {
-            'link' => 'platform.information-link.edit',
-            'page' => 'platform.information-page.edit',
-            'sample' => 'platform.information-sample.edit',
-        };
-    }
-
-    private function getParentsList(array &$list, ?Page $parentPage)
+    private function getParentsList(array &$list, ?Page $parentPage): void
     {
         if (is_null($parentPage)) {
             return;
@@ -70,7 +54,7 @@ class Page extends ProtoModel
         $this->getParentsList($list, $parentPage->parentRecursive);
     }
 
-    private function setDataForBreadCrumbs(Page $page)
+    private function setDataForBreadCrumbs(Page $page): array
     {
         return [
             'title' => $page->name,
@@ -79,7 +63,7 @@ class Page extends ProtoModel
         ];
     }
 
-    public function setBreadCrumbs()
+    public function setBreadCrumbs(): void
     {
         $crumbs = [];
         $this->getParentsList($crumbs, $this->parentRecursive()->first());
@@ -90,7 +74,7 @@ class Page extends ProtoModel
         $this->setCrumbs($crumbs);
     }
 
-    public function getBreadCrumbsTest(Trail $t, array $crumbs)
+    public function getBreadCrumbsTest(Trail $t, array $crumbs): Trail
     {
         $t->parent('web.main.page');
         foreach ($crumbs as $crumb) {

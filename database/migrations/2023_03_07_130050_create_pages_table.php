@@ -12,22 +12,22 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('information_pages', function (Blueprint $table) {
+        Schema::create('pages', function (Blueprint $table) {
             $table->id();
             $table->boolean('is_active')->default(0);
             $table->integer('sort')->default(0);
             $table->string('type');
             $table->string('name');
-            $table->string('title');
-            $table->string('code');
-            $table->text('text');
-            $table->text('announce');
+            $table->string('title')->nullable();
+            $table->string('code')->nullable();
+            $table->text('text')->nullable();
+            $table->text('announce')->nullable();
             $table->unsignedBigInteger('parent_id')->nullable();
-            $table->text('image_outer');
-            $table->text('image_inner');
+            $table->text('image_outer')->nullable();
+            $table->text('image_inner')->nullable();
             $table->text('uri');
-            $table->string('template');
-            $table->json('data');
+            $table->string('template')->nullable();
+            $table->json('data')->nullable();
             $table->timestamps();
         });
     }
@@ -38,6 +38,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('information_pages');
+        Schema::dropIfExists('pages');
     }
 };
