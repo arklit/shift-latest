@@ -51,25 +51,25 @@ class PageList extends ListScreenPattern
     {
         $pages = Page::query()->withDepth()->with('ancestors')->get()->toTree();
         return [
-            Layout::table('items', [
-                TD::make('id', 'ID'),
-                TD::make('is_active', 'Активность')->sort()->filter(
-                    Select::make()->options(OrchidHelper::getYesNoArray())->empty()->title('Фильтр активности')
-                )->render(fn($item) => $item->is_active ? $this->activeSign : $this->inactiveSign),
-                TD::make('name', 'Название')->sort()->filter(),
-                TD::make('type', 'Тип')->sort()->render(fn($item) => PagesTypes::from($item->type)->getTitle()),
-                TD::make('parent_id', 'Родитель')->render(fn($item) => $item->parent?->name)->sort()->filter(Select::make()->fromModel(Page::class, 'name', 'id'))
-
-                    ->filterValue(fn($item) => Page::find($item)->code),
-                TD::make('uri', 'URI')->sort()->filter(),
-                TD::make('created_at', 'Дата')->width(100)->alignRight()->sort()
-                    ->filter(DateTimer::make()->title('Фильтр по дате')->format('d-m-Y'))
-                    ->render(fn($item) => $item->created_at?->format('d-m-Y')),
-                TD::make()->width(10)->alignRight()->cantHide()
-                    ->render(function ($item) {
-                        return Link::make()->icon('wrench')->route($this->updateRoute, $item);
-                    }),
-            ]),
+//            Layout::table('items', [
+//                TD::make('id', 'ID'),
+//                TD::make('is_active', 'Активность')->sort()->filter(
+//                    Select::make()->options(OrchidHelper::getYesNoArray())->empty()->title('Фильтр активности')
+//                )->render(fn($item) => $item->is_active ? $this->activeSign : $this->inactiveSign),
+//                TD::make('name', 'Название')->sort()->filter(),
+//                TD::make('type', 'Тип')->sort()->render(fn($item) => PagesTypes::from($item->type)->getTitle()),
+//                TD::make('parent_id', 'Родитель')->render(fn($item) => $item->parent?->name)->sort()->filter(Select::make()->fromModel(Page::class, 'name', 'id'))
+//
+//                    ->filterValue(fn($item) => Page::find($item)->code),
+//                TD::make('uri', 'URI')->sort()->filter(),
+//                TD::make('created_at', 'Дата')->width(100)->alignRight()->sort()
+//                    ->filter(DateTimer::make()->title('Фильтр по дате')->format('d-m-Y'))
+//                    ->render(fn($item) => $item->created_at?->format('d-m-Y')),
+//                TD::make()->width(10)->alignRight()->cantHide()
+//                    ->render(function ($item) {
+//                        return Link::make()->icon('wrench')->route($this->updateRoute, $item);
+//                    }),
+//            ]),
             Layout::view('admin.page-tree', compact('pages')),
 
             Layout::modal('choosePageType', [SelectListener::class])->async('asyncType'),

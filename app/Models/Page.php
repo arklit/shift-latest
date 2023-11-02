@@ -46,6 +46,14 @@ class Page extends ProtoModel
         return $this->is_active ? 'Да' : 'Нет';
     }
 
+    public function getPageType(): string
+    {
+        return match ($this->type){
+            'page' => 'page',
+            'link' => 'link',
+            default => 'template',
+        };
+    }
     private function getParentsList(array &$list, ?Page $parentPage): void
     {
         if (is_null($parentPage)) {
