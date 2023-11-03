@@ -16,7 +16,7 @@ Route::get('/sitemap.xml', SitemapController::class)->name('xml-map');
 Route::get('/robots.txt', RobotsTxtController::class)->name('robots-txt');
 
 Route::group(['prefix' => 'ajax'], function () {
-    // Методы для AJAX-запросов
+    Route::post('/search-tree', [PagesController::class, 'search'])->name('search');
 });
 
 Route::group(['as' => 'web.'], function () {

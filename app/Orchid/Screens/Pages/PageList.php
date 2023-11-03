@@ -11,8 +11,10 @@ use App\Orchid\Traits\ActivitySignsTrait;
 use App\Services\GetUriService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Actions\ModalToggle;
 use Orchid\Screen\Fields\DateTimer;
@@ -43,7 +45,8 @@ class PageList extends ListScreenPattern
                 ->icon('plus')
                 ->modalTitle('Выберите тип страницы')
                 ->asyncParameters()
-                ->method('chosePageType')
+                ->method('chosePageType'),
+            Button::make('Поиск')->method('search')
         ];
     }
 
@@ -51,27 +54,7 @@ class PageList extends ListScreenPattern
     {
         $pages = Page::query()->withDepth()->with('ancestors')->get()->toTree();
         return [
-//            Layout::table('items', [
-//                TD::make('id', 'ID'),
-//                TD::make('is_active', 'Активность')->sort()->filter(
-//                    Select::make()->options(OrchidHelper::getYesNoArray())->empty()->title('Фильтр активности')
-//                )->render(fn($item) => $item->is_active ? $this->activeSign : $this->inactiveSign),
-//                TD::make('name', 'Название')->sort()->filter(),
-//                TD::make('type', 'Тип')->sort()->render(fn($item) => PagesTypes::from($item->type)->getTitle()),
-//                TD::make('parent_id', 'Родитель')->render(fn($item) => $item->parent?->name)->sort()->filter(Select::make()->fromModel(Page::class, 'name', 'id'))
-//
-//                    ->filterValue(fn($item) => Page::find($item)->code),
-//                TD::make('uri', 'URI')->sort()->filter(),
-//                TD::make('created_at', 'Дата')->width(100)->alignRight()->sort()
-//                    ->filter(DateTimer::make()->title('Фильтр по дате')->format('d-m-Y'))
-//                    ->render(fn($item) => $item->created_at?->format('d-m-Y')),
-//                TD::make()->width(10)->alignRight()->cantHide()
-//                    ->render(function ($item) {
-//                        return Link::make()->icon('wrench')->route($this->updateRoute, $item);
-//                    }),
-//            ]),
-            Layout::view('admin.page-tree', compact('pages')),
-
+            Layout::view('admin.page-tree.layout', compact('pages')),
             Layout::modal('choosePageType', [SelectListener::class])->async('asyncType'),
         ];
     }
@@ -81,6 +64,34 @@ class PageList extends ListScreenPattern
         return [
             'type' => $type,
         ];
+    }
+
+    public function search()
+    {
+        $searchName = 'Технологии';
+        $item = Page::where('name', $searchName)->first();
+        $tree = $item->newNestedSetQuery()->defaultOrder()->ancestorsAndSelf($item->id)->reverse();
+
+        function buildTree($array)
+        {
+            $parent = null;
+
+            foreach ($array as $item) {
+                if ($parent) {
+                    $item->children = $parent;
+                    $parent = $item;
+                } else {
+                    $parent = $item;
+                }
+            }
+
+            return $parent;
+        }
+
+        $nestedTree = collect([buildTree($tree)]);
+
+        dd($nestedTree);
+
     }
 
     public function chosePageType(Page $item, Request $request): RedirectResponse
@@ -101,7 +112,7 @@ class PageList extends ListScreenPattern
         $data['uri'] = (new GetUriService())->getUri($data);
         $page = new Page();
         $page->fill($data)->save();
-        if (isset($data['parent_id'])){
+        if (isset($data['parent_id'])) {
             $parent = Page::query()->where('id', $data['parent_id'])->first();
             $parent->appendNode($page);
         }

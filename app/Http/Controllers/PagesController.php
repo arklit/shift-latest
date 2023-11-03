@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Page;
-use App\Services\PagesService;
 use Illuminate\Http\Request;
+use function App\Orchid\Screens\Pages\buildTree;
 
 class PagesController extends Controller
 {
@@ -20,5 +20,30 @@ class PagesController extends Controller
         }
 
         return view("pages.default", compact('page'));
+    }
+
+    public function search(Request $request)
+    {
+        $name = $request->input('name');
+        $item = Page::where('name', $name)->first();
+        $tree = $item->ancestorsAndSelf($item->id)->reverse();
+        $pages = collect([$this->buildSearchTree($tree)]);
+        dd($pages);
+        return view('admin.page-tree.container', compact('pages'));
+    }
+
+    public function buildSearchTree($array)
+    {
+        $parent = null;
+        foreach ($array as $item) {
+            if ($parent) {
+                $item->children = collect([$parent]);
+                $parent = $item;
+            } else {
+                $parent = $item;
+            }
+        }
+
+        return $parent;
     }
 }

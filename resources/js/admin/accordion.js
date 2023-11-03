@@ -4,6 +4,31 @@ let parentList = $('.parent').children('.list')
 parentList.each(function () {
     $(this).addClass('childrenList')
 })
+
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+
+$('#search-tree').on('keyup', function () {
+    $.ajax({
+        method: 'post',
+        url: '/ajax/search-tree',
+        data: $(this).serialize(),
+        success: function (data) {
+            $('.list-container').html(data)
+            $('.has-children').each(function () {
+                $(this).addClass('is-open')
+            })
+
+            $('.closed-img').each(function () {
+                $(this).addClass('open')
+            })
+        }
+    })
+})
+
 $('.closed-img').click(function (event) {
     var label = $(this).parent('.label');
     var parent = label.parent('.has-children');

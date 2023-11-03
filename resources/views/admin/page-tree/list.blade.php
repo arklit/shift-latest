@@ -10,7 +10,7 @@
                     <span class="page-name">{{$child->name}}</span> <span href="{{ route('platform.pages.edit', [$child->id]) }}" class="uri">{{$child->uri}}</span>
                 </div>
                 @if($child->children->isNotEmpty())
-                    @include('admin.page-tree-element',['children' => $child->children])
+                    @include('admin.page-tree.list',['children' => $child->children])
                 @endif
             </li>
         @endforeach
