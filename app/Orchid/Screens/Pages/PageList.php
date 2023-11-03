@@ -75,10 +75,9 @@ class PageList extends ListScreenPattern
         function buildTree($array)
         {
             $parent = null;
-
             foreach ($array as $item) {
                 if ($parent) {
-                    $item->children = $parent;
+                    $item->children = collect([$parent]);
                     $parent = $item;
                 } else {
                     $parent = $item;
@@ -91,7 +90,6 @@ class PageList extends ListScreenPattern
         $nestedTree = collect([buildTree($tree)]);
 
         dd($nestedTree);
-
     }
 
     public function chosePageType(Page $item, Request $request): RedirectResponse
