@@ -28,7 +28,7 @@ class PagesController extends Controller
         $item = Page::where('name', $name)->first();
         $tree = $item->ancestorsAndSelf($item->id)->reverse();
         $pages = collect([$this->buildSearchTree($tree)]);
-        dd($pages);
+
         return view('admin.page-tree.container', compact('pages'));
     }
 
@@ -37,7 +37,7 @@ class PagesController extends Controller
         $parent = null;
         foreach ($array as $item) {
             if ($parent) {
-                $item->children = collect([$parent]);
+                $item->newChildren = collect([$parent]);
                 $parent = $item;
             } else {
                 $parent = $item;

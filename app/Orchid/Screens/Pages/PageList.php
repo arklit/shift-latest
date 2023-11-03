@@ -78,8 +78,10 @@ class PageList extends ListScreenPattern
             foreach ($array as $item) {
                 if ($parent) {
                     $item->children = collect([$parent]);
+                    $item->isLast = false;
                     $parent = $item;
                 } else {
+                    $item->isLast = true;
                     $parent = $item;
                 }
             }
