@@ -1,17 +1,19 @@
 <ul class="main-list">
-    @if($pages->isNotEmpty())
+    @if(!empty($pages))
         @forelse($pages as $page)
             <li class="has-children parent">
-                <div class="label" @if($page->children->isEmpty()) style="padding-left: 18px" @endif>
-                    @if($page->children->isNotEmpty())
+                <div class="label" @if(!isset($page['children'])) style="padding-left: 18px" @endif>
+                    @if(isset($page['children']))
                         <span class="closed-img"></span>
                     @endif
-                    <img class="type-img" src="/assets/img/admin/tree/{{$page->getPageType()}}.svg" alt="">
-                    <a href="{{ route('platform.pages.edit', [$page->id]) }}"
-                       class="page-name">{{ $page->name }} {{ $page->isLast }}</a>
-                    <span class="uri">{{ $page->uri }}</span>
+                    <img class="type-img" src="/assets/img/admin/tree/page.svg" alt="">
+                    <a href="{{ route('platform.pages.edit', [$page['id']]) }}"
+                       class="page-name">{{ $page['name'] }}</a>
+                    <span class="uri">{{ $page['uri'] }}</span>
                 </div>
-                @include('admin.page-tree.list', ['children' => $page->children])
+                @if(isset($page['children']))
+                    @include('admin.page-tree.list', ['children' => $page['children']])
+                @endif
             </li>
         @empty
         @endforelse

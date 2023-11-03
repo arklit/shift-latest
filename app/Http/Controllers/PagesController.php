@@ -27,7 +27,14 @@ class PagesController extends Controller
         $name = $request->input('name');
         $item = Page::where('name', $name)->first();
         $tree = $item->ancestorsAndSelf($item->id)->reverse();
-        $pages = collect([$this->buildSearchTree($tree)]);
+        $pages = collect([$this->buildSearchTree($tree)])->toArray();
+
+        return view('admin.page-tree.container', compact('pages'));
+    }
+
+    public function getTree()
+    {
+        $pages = Page::query()->withDepth()->with('ancestors')->get()->toTree()->toArray();
 
         return view('admin.page-tree.container', compact('pages'));
     }
@@ -37,10 +44,10 @@ class PagesController extends Controller
         $parent = null;
         foreach ($array as $item) {
             if ($parent) {
-                $item->newChildren = collect([$parent]);
-                $parent = $item;
+                $item['children'] = [$parent];
+                $parent = $item->toArray();
             } else {
-                $parent = $item;
+                $parent = $item->toArray();
             }
         }
 

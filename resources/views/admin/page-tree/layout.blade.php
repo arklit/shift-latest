@@ -8,7 +8,7 @@
     </div>
 
     <div class="list-container">
-        @include('admin.page-tree.container')
+
     </div>
 </div>
 

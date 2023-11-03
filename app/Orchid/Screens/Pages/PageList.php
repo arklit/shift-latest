@@ -52,9 +52,8 @@ class PageList extends ListScreenPattern
 
     public function layout(): iterable
     {
-        $pages = Page::query()->withDepth()->with('ancestors')->get()->toTree();
         return [
-            Layout::view('admin.page-tree.layout', compact('pages')),
+            Layout::view('admin.page-tree.layout'),
             Layout::modal('choosePageType', [SelectListener::class])->async('asyncType'),
         ];
     }
