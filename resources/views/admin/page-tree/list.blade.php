@@ -1,16 +1,18 @@
 <ul class="list">
-    @if(!empty($children))
-        @foreach($children as $child)
-            <li @if(isset($child['children'])) class="has-children" @endif>
-                <div class="label" @if(empty($child['children'])) style="padding-left: 18px" @endif>
-                    @if(isset($child['children']) && !empty($child['children']))
+    @if($children->isNotEmpty())
+        @foreach($children as $key => $child)
+            <li class="parent @if($child->children->isNotEmpty()) has-children @endif" data-branch="{{$parentKey.'-'.$key}}">
+                <div class="label" @if($child->children->isEmpty()) style="padding-left: 18px" @endif>
+                    @if($child->children->isNotEmpty())
                         <span class="closed-img"></span>
                     @endif
-                    <img class="type-img" src="/assets/img/admin/tree/template.svg" alt="">
-                    <span class="page-name">{{$child['name']}}</span> <span href="{{ route('platform.pages.edit', [$child['id']]) }}" class="uri">{{$child['uri']}}</span>
+                    <img class="type-img" src="/assets/img/admin/tree/{{$child->getPageType()}}.svg" alt="">
+                    <a href="{{ route('platform.pages.edit', [$child->id]) }}"
+                       class="page-name">{{$child->name}}</a>
+                    <span class="uri">{{$child->uri}}</span>
                 </div>
-                @if(isset($child['children']))
-                    @include('admin.page-tree.list',['children' => $child['children']])
+                @if($child->children->isNotEmpty())
+                    @include('admin.page-tree.list',['children' => $child->children, 'parentKey' => $parentKey.'-'.$key])
                 @endif
             </li>
         @endforeach

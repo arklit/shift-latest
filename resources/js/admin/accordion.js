@@ -1,97 +1,124 @@
+function showPageAndParents(page) {
+    page.style.display = 'block';
+    let parent = page.parentElement.closest('.list');
+    if (parent) {
+        let parentIndex = parent.parentElement.dataset.branch;
+        let currentPageIndex = page.dataset.branch;
 
-
-$.ajaxSetup({
-    headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        // Отображаем родителя только если он соответствует части индекса текущей страницы
+        if (currentPageIndex.startsWith(parentIndex)) {
+            showPageAndParents(parent.parentElement);
+        }
     }
-});
+}
 
-$('#search-tree').on('keyup', function () {
-    $.ajax({
-        method: 'post',
-        url: '/ajax/search-tree',
-        data: $(this).serialize(),
-        success: function (data) {
-            $('.list-container').html(data)
-            accordion()
-            setTimeout(()=>{
-                uncollapse()
-            }, 300)
-        }
-    })
-})
+function showPageAndChildren(page) {
+    page.style.display = 'block';
+    let children = page.querySelectorAll('.list > li');
+    children.forEach(function (child) {
+        let childIndex = child.dataset.branch;
+        let currentPageIndex = page.dataset.branch;
 
-$(document).ready(function () {
-    $.ajax({
-        method: 'get',
-        url: '/ajax/get-tree',
-        success: function (data) {
-            $('.list-container').html(data)
-            accordion()
-        }
-    })
-})
-
-function accordion() {
-
-
-    $('.closed-img').click(function (event) {
-        var label = $(this).parent('.label');
-        var parent = label.parent('.has-children');
-        var list = label.siblings('.list');
-
-        if (parent.hasClass('is-open')) {
-            list.slideUp('fast');
-            parent.removeClass('is-open');
-            label.find('.closed-img').removeClass('open')
-        } else {
-            list.slideDown('fast');
-            parent.addClass('is-open');
-            label.find('.closed-img').addClass('open')
+        // Отображаем ребенка только если его индекс начинается с индекса текущей страницы
+        if (childIndex.startsWith(currentPageIndex)) {
+            showPageAndChildren(child);
         }
     });
-
-    $('.uncollapse-all').click(function () {
-        uncollapse()
-    })
-
-    $('.collapse-all').click(function () {
-        $('.list').each(function () {
-            $(this).parent('.has-children').removeClass('is-open')
-            $(this).slideUp()
-        })
-        $('.has-children').each(function () {
-            $(this).removeClass('is-open')
-        })
-        $('.closed-img').each(function () {
-            $(this).removeClass('open')
-        })
-    })
-
 }
 
+function searchTree(query) {
+    let tree = document.querySelectorAll('.main-list li');
+
+    // Скрываем все элементы списка перед выполнением поиска
+    tree.forEach(function (page) {
+        page.style.display = 'none';
+    });
+
+    // Проходим по каждому элементу списка
+    tree.forEach(function (page) {
+        let pageName = page.querySelector('.label .page-name').textContent;
+        let isMatch = pageName.toLowerCase().includes(query.toLowerCase());
+
+        // Если найдено совпадение, отображаем страницу и ее родителей
+        if (isMatch) {
+            showPageAndParents(page);
+            showPageAndChildren(page);
+            uncollapse()
+        }
+    });
+}
+
+// Создаем функцию debounce
+function debounce(func, delay) {
+    let timeoutId;
+    return function (...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => func.apply(this, args), delay);
+    };
+}
+
+// Обработчик события ввода текста в поле поиска
+let searchInput = document.getElementById('search-tree');
+searchInput.addEventListener('input', debounce(function () {
+    let query = searchInput.value;
+    searchTree(query);
+}, 500)); // Задержка в 500 миллисекунд
+
+
+
+function accordion() {
+    document.querySelectorAll('.closed-img').forEach(function (closedImg) {
+        closedImg.addEventListener('click', function (event) {
+            let label = this.parentNode;
+            let parent = label.parentNode;
+            let list = label.nextElementSibling;
+
+            if (parent.classList.contains('is-open')) {
+                list.style.display = 'none';
+                parent.classList.remove('is-open');
+                label.querySelector('.closed-img').classList.remove('open');
+            } else {
+                list.style.display = 'block';
+                parent.classList.add('is-open');
+                label.querySelector('.closed-img').classList.add('open');
+            }
+        });
+    });
+}
+
+function collapse() {
+    document.querySelectorAll('.list').forEach(function (list) {
+        let parent = list.parentNode;
+        parent.classList.remove('is-open');
+        list.style.display = 'none';
+    });
+
+    document.querySelectorAll('.has-children').forEach(function (parent) {
+        parent.classList.remove('is-open');
+    });
+
+    document.querySelectorAll('.closed-img').forEach(function (closedImg) {
+        closedImg.classList.remove('open');
+    });
+}
 
 function uncollapse() {
-    let parentList = $('.parent').children('.list')
+    let parentList = document.querySelectorAll('.parent > .list');
 
-    parentList.each(function () {
-        $(this).addClass('childrenList')
-    })
+    parentList.forEach(function (list) {
+        list.style.display = 'block';
+    });
 
-    $('.list:not(.childrenList)').each(function () {
-        $(this).slideDown(50)
-    })
-    setTimeout(() => {
-        parentList.each(function () {
-            $(this).slideDown('slow')
-        })
-    }, 100)
+    document.querySelectorAll('.has-children').forEach(function (parent) {
+        parent.classList.add('is-open');
+    });
 
-    $('.has-children').each(function () {
-        $(this).addClass('is-open')
-    })
-
-    $('.closed-img').each(function () {
-        $(this).addClass('open')
-    })
+    document.querySelectorAll('.closed-img').forEach(function (closedImg) {
+        closedImg.classList.add('open');
+    });
 }
+
+
+accordion()
+document.querySelector('.uncollapse-all').addEventListener('click', uncollapse);
+document.querySelector('.collapse-all').addEventListener('click', collapse);

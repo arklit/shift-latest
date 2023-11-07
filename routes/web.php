@@ -17,7 +17,6 @@ Route::get('/robots.txt', RobotsTxtController::class)->name('robots-txt');
 
 Route::group(['prefix' => 'ajax'], function () {
     Route::post('/search-tree', [PagesController::class, 'search'])->name('search');
-    Route::get('/get-tree', [PagesController::class, 'getTree'])->name('get.tree');
 });
 
 Route::group(['as' => 'web.'], function () {
