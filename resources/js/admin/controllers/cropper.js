@@ -70,7 +70,7 @@ export default class CropperRocont extends window.Controller {
             }
         });
 
-        this.modal.addFooterBtn('Закрыть', 'btn btn-link', ()=> {
+        this.modal.addFooterBtn('Закрыть', 'btn btn-link', () => {
             this.modal.close()
         });
 
@@ -152,11 +152,16 @@ export default class CropperRocont extends window.Controller {
     /**
      *
      */
-    clear() {
-        document.querySelector('.cropper-path').value = '';
-        document.querySelector('.cropper-preview').src = '';
-        document.querySelector('.cropper-preview').classList.add('none');
-        document.querySelector('.cropper-remove').classList.add('none');
+    clear(event) {
+        event.target.classList.add('selectedCropper')
+        let parent = document.querySelector('.selectedCropper').closest('.cropper-parent');
+
+        parent.querySelector('.cropper-path').value = '';
+        parent.querySelector('.cropper-preview').src = '';
+        parent.querySelector('.cropper-preview').classList.add('none');
+        parent.querySelector('.cropper-remove').classList.add('none');
+
+        event.target.classList.remove('selectedCropper')
     }
 
     /**
