@@ -8,7 +8,7 @@
                     @endif
                     <img class="type-img" src="/assets/img/admin/tree/{{$child->getPageType()}}.svg" alt="">
                     <a href="{{ route('platform.pages.edit', [$child->id]) }}"
-                       class="page-name">{{$child->name}}</a>
+                       class="page-name @if($child->is_active) active @endif">{{$child->name}}</a>
                     <span class="uri">{{$child->uri}}</span>
                 </div>
                 @if($child->children->isNotEmpty())

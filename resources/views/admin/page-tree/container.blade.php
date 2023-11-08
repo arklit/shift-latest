@@ -8,7 +8,7 @@
                     @endif
                     <img class="type-img" src="/assets/img/admin/tree/{{$page->getPageType()}}.svg" alt="">
                     <a href="{{ route('platform.pages.edit', [$page->id]) }}"
-                       class="page-name">{{ $page->name }} {{ $page->isLast }}</a>
+                       class="page-name @if($page->is_active) active @endif">{{ $page->name }} {{ $page->isLast }}</a>
                     <span class="uri">{{ $page->uri }}</span>
                 </div>
                 @include('admin.page-tree.list', ['children' => $page->children, 'parentKey' => $key])

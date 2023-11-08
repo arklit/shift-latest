@@ -1,3 +1,10 @@
+// application.needPreventsFormAbandonmentValue = false;
+console.log(application);
+
+// Обработчик события ввода текста в поле поиска
+let searchInput = document.getElementById('search-tree');
+
+// Метод для поиска родителей страницы
 function showPageAndParents(page) {
     page.style.display = 'block';
     let parent = page.parentElement.closest('.list');
@@ -12,6 +19,7 @@ function showPageAndParents(page) {
     }
 }
 
+// Метод для поиска детей страницы
 function showPageAndChildren(page) {
     page.style.display = 'block';
     let children = page.querySelectorAll('.list > li');
@@ -26,6 +34,7 @@ function showPageAndChildren(page) {
     });
 }
 
+// Метод для вывода дерева по искомому названию страницы
 function searchTree(query) {
     let tree = document.querySelectorAll('.main-list li');
 
@@ -48,24 +57,7 @@ function searchTree(query) {
     });
 }
 
-// Создаем функцию debounce
-function debounce(func, delay) {
-    let timeoutId;
-    return function (...args) {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => func.apply(this, args), delay);
-    };
-}
-
-// Обработчик события ввода текста в поле поиска
-let searchInput = document.getElementById('search-tree');
-searchInput.addEventListener('input', debounce(function () {
-    let query = searchInput.value;
-    searchTree(query);
-}, 500)); // Задержка в 500 миллисекунд
-
-
-
+// Скрипт аккордиона
 function accordion() {
     document.querySelectorAll('.closed-img').forEach(function (closedImg) {
         closedImg.addEventListener('click', function (event) {
@@ -86,6 +78,7 @@ function accordion() {
     });
 }
 
+// Событие скрытия всех страниц в аккордеоне
 function collapse() {
     document.querySelectorAll('.list').forEach(function (list) {
         let parent = list.parentNode;
@@ -102,6 +95,7 @@ function collapse() {
     });
 }
 
+// Событие раскрытия всех страниц в аккордеоне
 function uncollapse() {
     let parentList = document.querySelectorAll('.parent > .list');
 
@@ -118,7 +112,25 @@ function uncollapse() {
     });
 }
 
+// Создаем функцию debounce
+function debounce(func, delay) {
+    let timeoutId;
+    return function (...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => func.apply(this, args), delay);
+    };
+}
 
+// document.querySelectorAll('.page-name').forEach(function (item) {
+//     this.addEventListener
+// });
+
+// инициализация методов
 accordion()
 document.querySelector('.uncollapse-all').addEventListener('click', uncollapse);
 document.querySelector('.collapse-all').addEventListener('click', collapse);
+
+searchInput.addEventListener('input', debounce(function () {
+    let query = searchInput.value;
+    searchTree(query);
+}, 500)); // Задержка в 500 миллисекунд

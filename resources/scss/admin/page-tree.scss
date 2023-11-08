@@ -80,6 +80,10 @@
             overflow: hidden;
             background: #fff;
             .page-name{
+                opacity: .6;
+                &.active{
+                    opacity: 1;
+                }
                 &:hover{
                     cursor: pointer;
                     text-decoration: underline;

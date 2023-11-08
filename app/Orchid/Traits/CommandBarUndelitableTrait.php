@@ -11,10 +11,10 @@ trait CommandBarUndelitableTrait
     {
         return [
             Link::make(__('orchid.go-back'))->icon('arrow-left-circle')
-                ->route($this->listRedirect, $this->redirectParams),
+                ->route($this->listRedirect, $this->redirectParams)->rawClick(),
 
             Button::make(__('orchid.save'))
-                ->icon('note')->method('save'),
+                ->icon('note')->method('save')->rawClick(),
         ];
     }
 }

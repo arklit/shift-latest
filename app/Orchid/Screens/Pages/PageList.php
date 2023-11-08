@@ -48,6 +48,12 @@ class PageList extends ListScreenPattern
                 ->method('chosePageType'),
             Button::make('Поиск')->method('search')
         ];
+
+    }
+
+    public function needPreventsAbandonment(): bool
+    {
+        return false;
     }
 
     public function layout(): iterable
