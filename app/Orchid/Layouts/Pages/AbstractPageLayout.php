@@ -43,7 +43,7 @@ abstract class AbstractPageLayout extends Rows
             ]),
             Group::make([
                 TextArea::make('item.announce')->title('Анонс')->rows(5)->help('Анонс, который выводится в описание карточки в списке элементов'),
-                Input::make('')->hidden()
+                Input::make('item.uri')->title('URI')->required()
             ])
         ];
     }

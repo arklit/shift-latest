@@ -8,13 +8,13 @@ use App\Models\Page;
 use App\Orchid\Abstractions\EditScreenPattern;
 use App\Orchid\Helpers\OrchidValidator;
 use App\Orchid\Traits\CommandBarDeletableTrait;
-use App\Services\GetUriService;
 use Illuminate\Http\Request;
 use Orchid\Screen\Layouts\Rows;
+use Orchid\Support\Facades\Alert;
 
 class PageEdit extends EditScreenPattern
 {
-    protected ?string $listRedirect = 'information.page.list';
+    protected ?string $listRedirect = 'platform.pages.list';
     protected string $deleteMessage = 'Запись успешно удалена';
     protected string $titleName = 'name';
     protected ?Rows $layout = null;
@@ -45,14 +45,11 @@ class PageEdit extends EditScreenPattern
     public function save(Page $item, Request $request)
     {
         $data = $request->input('item');
-        $payload = $data['data'] ?? [];
         $layout = PagesTypes::from($item->type)->getLayout();
 
         $validator = (new OrchidValidator($data, []))->setIndividualRules($layout->getRules(), $layout->getMessages())
             ->setUniqueFields($item, ['code' => 'Такой код уже используется'])
             ->validate();
-
-        $data['uri'] = (new GetUriService())->getUri($data);
 
         if ($validator->isFail()) {
             return $validator->showErrors($this->route, $item->id);
@@ -63,39 +60,11 @@ class PageEdit extends EditScreenPattern
 
     public function remove(Page $item)
     {
+        if ($item->removableChildren()->count() > 0)
+        {
+            Alert::error('Родительскую страницу нельзя удалить пока к ней привязаны дочерние!');
+            return redirect()->route($this->listRedirect, $this->redirectParams);
+        }
         return $this->removeItem($item);
-    }
-
-    public function getRules(string $code): array
-    {
-        $base = ['bail', 'required'];
-        return match ($code) {
-            PagesTypes::PAGE_ABOUT => [
-                'title' => $base,
-            ],
-            PagesTypes::PAGE_CONTACTS => [
-                'title' => $base,
-            ],
-            PagesTypes::PAGE_COOPERATION => [
-                'title' => $base,
-            ],
-            default => [],
-        };
-    }
-
-    public function getMessages(string $code): array
-    {
-        return match ($code) {
-            PagesTypes::PAGE_ABOUT => [
-                'title.required' => 'Введите название страницы',
-            ],
-            PagesTypes::PAGE_CONTACTS => [
-                'title.required' => 'Введите название страницы',
-            ],
-            PagesTypes::PAGE_COOPERATION => [
-                'title.required' => 'Введите название страницы',
-            ],
-            default => [],
-        };
     }
 }

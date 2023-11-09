@@ -1,5 +1,4 @@
-import './../bootstrap'
-import './accordion';
+import './tree';
 import CropperRocont from "./controllers/cropper.js";
 import TinyMceController from "./controllers/tinymce";
 

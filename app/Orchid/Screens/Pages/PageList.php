@@ -2,24 +2,18 @@
 
 namespace App\Orchid\Screens\Pages;
 
-use App\Enums\PagesTypes;
+use App\Enums\OrchidRoutes;
 use App\Models\Page;
 use App\Orchid\Abstractions\ListScreenPattern;
-use App\Orchid\Helpers\OrchidHelper;
 use App\Orchid\Layouts\Listeners\SelectListener;
 use App\Orchid\Traits\ActivitySignsTrait;
 use App\Services\GetUriService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Orchid\Screen\Actions\Button;
-use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Actions\ModalToggle;
-use Orchid\Screen\Fields\DateTimer;
-use Orchid\Screen\Fields\Select;
-use Orchid\Screen\TD;
 use Orchid\Support\Facades\Layout;
 
 class PageList extends ListScreenPattern
@@ -31,10 +25,15 @@ class PageList extends ListScreenPattern
 
     use ActivitySignsTrait;
 
+    public function __construct()
+    {
+        $this->route = OrchidRoutes::INFO_PAGES;
+    }
+
+
     public function query(): iterable
     {
         $this->model = Page::query()->with('parent');
-//        dd($this->model->get());
         return parent::query();
     }
 
@@ -46,7 +45,6 @@ class PageList extends ListScreenPattern
                 ->modalTitle('Выберите тип страницы')
                 ->asyncParameters()
                 ->method('chosePageType'),
-            Button::make('Поиск')->method('search')
         ];
 
     }
@@ -71,34 +69,6 @@ class PageList extends ListScreenPattern
         return [
             'type' => $type,
         ];
-    }
-
-    public function search()
-    {
-        $searchName = 'Технологии';
-        $item = Page::where('name', $searchName)->first();
-        $tree = $item->newNestedSetQuery()->defaultOrder()->ancestorsAndSelf($item->id)->reverse();
-
-        function buildTree($array)
-        {
-            $parent = null;
-            foreach ($array as $item) {
-                if ($parent) {
-                    $item->children = collect([$parent]);
-                    $item->isLast = false;
-                    $parent = $item;
-                } else {
-                    $item->isLast = true;
-                    $parent = $item;
-                }
-            }
-
-            return $parent;
-        }
-
-        $nestedTree = collect([buildTree($tree)]);
-
-        dd($nestedTree);
     }
 
     public function chosePageType(Page $item, Request $request): RedirectResponse
