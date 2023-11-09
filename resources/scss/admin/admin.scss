@@ -260,3 +260,13 @@
         width: 120px;
     }
 }
+
+.bg-dark .nav>li>a {
+    margin-bottom: 3px;
+}
+
+.bg-dark .nav>li.active>a {
+    background-color: #100f147a;
+    backdrop-filter: blur(10px);
+    color: #fff;
+}
