@@ -6,19 +6,19 @@ use App\Enums\OrchidRoutes;
 use App\Models\Article;
 use App\Models\ArticleCategory;
 use App\Orchid\Abstractions\EditScreenPattern;
-use App\Orchid\Helpers\OrchidHelper;
+use App\Orchid\Fields\TinyMce;
+use App\Orchid\Helpers\OrchidValidator;
 use App\Orchid\Layouts\EmptyModal;
 use App\Orchid\Traits\CommandBarDeletableTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Orchid\Screen\Fields\CheckBox;
-use Orchid\Screen\Fields\Cropper;
+use App\Orchid\Fields\Cropper;
 use Orchid\Screen\Fields\DateTimer;
 use Orchid\Screen\Fields\Group;
 use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Fields\Label;
-use Orchid\Screen\Fields\Quill;
 use Orchid\Screen\Fields\Select;
 use Orchid\Screen\Fields\TextArea;
 use Orchid\Support\Facades\Layout;
@@ -57,7 +57,7 @@ class ArticleEdit extends EditScreenPattern
                     Select::make('item.category_id')->title('Категория')->empty('Категория не выбрана')
                         ->fromQuery(ArticleCategory::query()->active()->sorted(), 'title', 'id')->required(),
                     DateTimer::make('item.publication_date')->title('Дата публикации')->format24hr()->required()->value(Carbon::today()),
-                    Quill::make('item.text')->title('Текст публикации')->required(),
+                    TinyMce::make('item.text')->title('Текст публикации')->required(),
                     Cropper::make('item.image_inner')->title('Изображение для списка')->targetRelativeUrl()->help('Загрузка изображения обязательна'),
                 ]),
             ]),
@@ -75,9 +75,9 @@ class ArticleEdit extends EditScreenPattern
     {
         $data = $request->input('item');
 
-        if ($result = $this->validation($item, $data, 'slug')) {
-            return $result;
-        }
+        $validator = (new OrchidValidator($data, []))->setIndividualRules($this->getRules(), $this->getMessages())
+            ->clearQuillTags(['text'])
+            ->validate();
 
         if ($item->exists) {
             $data['slug'] = $item->getIdentifier();
@@ -87,7 +87,7 @@ class ArticleEdit extends EditScreenPattern
             $data['slug'] = Str::slug($item->id . '-' . $data['title']);
         }
 
-        return $this->saveItem($item, $data);
+        return $validator->isFail() ? $validator->showErrors($this->route, $item->id) : $this->saveItem($item, $data);
     }
 
     public function asyncGetArticle(Article $item)
@@ -100,5 +100,35 @@ class ArticleEdit extends EditScreenPattern
     public function remove(Article $item)
     {
         return $this->removeItem($item);
+    }
+
+    public function getRules(): array
+    {
+        return [
+            'title' => ['bail', 'required', 'max:120'],
+            'category_id' => ['bail', 'required',],
+            'description' => ['bail', 'required', 'max:1024'],
+            'text' => ['bail', 'required',],
+            'image_inner' => ['bail', 'required',],
+            'image_outer' => ['bail', 'required',],
+            'publication_date' => ['bail', 'required',],
+            'seo_description' => ['bail', 'nullable', 'max:1024'],
+        ];
+    }
+
+    public function getMessages(): array
+    {
+        return [
+            'title.required' => 'Введите заголовок статьи',
+            'title.max' => 'Заголовок статьи не может быть длиннее 120 символов',
+            'category_id.required' => 'Выберите категорию статьи',
+            'description.required' => 'Введите анонс статьи',
+            'description.max' => 'Анонс не может быть длиннее 1024 символов',
+            'text.required' => 'Введите текст статьи',
+            'image_inner.required' => 'Загрузите изображение для страницы',
+            'image_outer.required' => 'Загрузите изображение для списка',
+            'publication_date.required' => 'Выберите дату публикации',
+            'seo_description.max' => 'SEO Description не может быть длиннее 1024 символов',
+        ];
     }
 }

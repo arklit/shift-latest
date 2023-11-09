@@ -2,7 +2,11 @@
 
 namespace App\Helpers;
 
+use App\Models\Seo;
+use App\Repositories\CatalogRepository;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Str;
 
 class CommonHelper
 {

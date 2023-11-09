@@ -34,13 +34,14 @@ class PlatformProvider extends OrchidServiceProvider
                 Menu::make('Категории статей')->route(OrchidRoutes::ARTICLE_CATEGORIES->list())->icon('list'),
             ]),
 
-            Menu::make('Статические страницы')->icon('docs')->route(OrchidRoutes::STATIC_PAGES->list()),
-            Menu::make('SEO')->icon('globe')->list([
-                Menu::make('SEO страницы')->route(OrchidRoutes::SEO->base())->icon('docs'),
+            Menu::make('Страницы')->route(OrchidRoutes::INFO_PAGES->list())->icon('info'),
+
+            Menu::make('Настройки SEO')->icon('globe')->list([
+                Menu::make('SEO')->route(OrchidRoutes::SEO->base())->icon('docs'),
                 Menu::make('Robots.txt')->route(OrchidRoutes::ROBOTS->base())->icon('android'),
-                Menu::make('Карта')->route(OrchidRoutes::SITEMAP->base())->icon('map'),
+                Menu::make('Sitemap.xml')->route(OrchidRoutes::SITEMAP->base())->icon('map'),
             ]),
-            Menu::make('Конфигуратор')->route(OrchidRoutes::CONFIGURATOR->base())->icon('settings'),
+            Menu::make('Настройки сайта')->route(OrchidRoutes::CONFIGURATOR->base())->icon('settings'),
 
             Menu::make(__('Users'))->icon('user')->route('platform.systems.users')
                 ->permission('platform.systems.users')->title(__('Access rights')),

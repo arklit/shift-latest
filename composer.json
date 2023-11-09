@@ -4,15 +4,28 @@
     "description": "The Laravel Framework.",
     "keywords": ["framework", "laravel"],
     "license": "MIT",
+    "repositories": [
+        {
+            "url": "https://github.com/Rocont/orchid-repeater-field.git",
+            "type": "git"
+        }
+    ],
+
     "require": {
         "php": "^8.1",
         "barryvdh/laravel-debugbar": "^3.8",
         "doctrine/dbal": "^3.6",
         "guzzlehttp/guzzle": "7.7.0",
-        "laravel/framework": "v9.52.9",
+        "kalnoy/nestedset": "^6.0",
+        "laravel/framework": "v10.25.0",
+        "laravel/passport": "^11.0",
         "laravel/sanctum": "3.2.5",
         "laravel/tinker": "^2.7",
-        "orchid/platform": "^13.10"
+        "nakukryskin/orchid-repeater-field": "^13.0.2",
+        "orchid/icons": "^2.0",
+        "orchid/platform": "^14.14.0",
+        "spatie/laravel-ignition": "^2.0",
+        "tijsverkoyen/css-to-inline-styles": "^2.2.5"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
@@ -20,8 +33,7 @@
         "laravel/sail": "^1.0.1",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^6.1",
-        "phpunit/phpunit": "^9.5.10",
-        "spatie/laravel-ignition": "^1.0"
+        "phpunit/phpunit": "^9.5.10"
     },
     "autoload": {
         "psr-4": {

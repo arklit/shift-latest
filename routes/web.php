@@ -6,18 +6,17 @@ use App\Http\Controllers\MainPageController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\RobotsTxtController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\TemplatesController;
 use App\Http\Controllers\TestController;
+use App\Http\Middleware\Pages;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/super-test', TestController::class)->name('test-get');
 Route::get('/sitemap.xml', SitemapController::class)->name('xml-map');
 Route::get('/robots.txt', RobotsTxtController::class)->name('robots-txt');
 
-
 Route::group(['prefix' => 'ajax'], function () {
-    // Методы для AJAX-запросов
-
-
+    Route::post('/search-tree', [PagesController::class, 'search'])->name('search');
 });
 
 Route::group(['as' => 'web.'], function () {
@@ -33,12 +32,13 @@ Route::group(['as' => 'web.'], function () {
         Route::get('/{categoryCode}/{articleSlug}', 'getArticlePage')->name('card');
     });
 
-    Route::controller(PagesController::class)->as('pages.')->prefix('/')->group(function () {
-        Route::get('/{staticPageCode}', 'getStaticPage')->name('static')
-            ->where('staticPageCode', '.*');;
+    Route::controller(TemplatesController::class)->middleware(Pages::class)->as('templates.')->prefix('/')->group(function () {
+        Route::get('/about/company', 'getCompanyPage')->name('about');
     });
 
-
+    Route::controller(PagesController::class)->middleware(Pages::class)->as('pages.')->prefix('/')->group(function () {
+        Route::get('/{params?}', 'getPage')->name('list')->where('params', '.*');
+    });
 });
 
 
