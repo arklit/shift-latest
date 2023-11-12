@@ -1,0 +1,51 @@
+.was-validated {
+    .form-control {
+        &:valid {
+            background-image: unset;
+            background-position: unset;
+            background-repeat: unset;
+            background-size: unset;
+            border: 1px dashed green;
+            padding-right: unset;
+            &:focus{
+                border: 1px dashed green;
+                box-shadow: none;
+            }
+        }
+        &:invalid {
+            background-image: unset;
+            background-position: unset;
+            background-repeat: unset;
+            background-size: unset;
+            border: 1px dashed red;
+            padding-right: unset;
+            &:focus{
+                border: 1px dashed red;
+                box-shadow: none;
+            }
+        }
+    }
+}
+
+.was-validated :valid+.ts-wrapper.single{
+    background-image: unset!important;
+}
+.was-validated :invalid+.ts-wrapper.single{
+    background-image: unset!important;
+}
+
+.validation-error {
+    border: 1px dashed red;
+
+    .rounded {
+        border-radius: 10px;
+    }
+}
+
+.validation-success {
+    border: 1px dashed green;
+
+    .rounded {
+        border-radius: 10px;
+    }
+}

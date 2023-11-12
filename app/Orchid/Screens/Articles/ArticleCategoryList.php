@@ -9,6 +9,7 @@ use App\Orchid\Filters\DateCreatedFilter;
 use App\Orchid\Filters\IsActiveFilter;
 use App\Orchid\Helpers\OrchidHelper;
 use App\Orchid\Traits\ActivitySignsTrait;
+use Lintaba\OrchidTables\Screen\TDChecklist;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Fields\DateTimer;
 use Orchid\Screen\Fields\Select;
@@ -36,6 +37,7 @@ class ArticleCategoryList extends ListScreenPattern
     {
         return [
             Layout::table('items', [
+                TDChecklist::make('checkobox'),
                 TD::make('id', 'ID'),
                 TD::make('is_active', 'Активность')->sort()->filter(
                     Select::make()->options(OrchidHelper::getYesNoArray())->empty()->title('Фильтр активности')

@@ -1,4 +1,6 @@
+import './validation';
 import './tree';
+import './mobile-commandbar';
 import CropperRocont from "./controllers/cropper.js";
 import TinyMceController from "./controllers/tinymce";
 

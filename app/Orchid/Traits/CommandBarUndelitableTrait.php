@@ -14,7 +14,7 @@ trait CommandBarUndelitableTrait
                 ->route($this->listRedirect, $this->redirectParams)->rawClick(),
 
             Button::make(__('orchid.save'))
-                ->icon('note')->method('save')->rawClick(),
+                ->icon('note')->method('save'),
         ];
     }
 }

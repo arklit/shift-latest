@@ -36,6 +36,7 @@ class ArticleEdit extends EditScreenPattern
     public function __construct()
     {
         $this->route = OrchidRoutes::ARTICLES;
+        $this->routeName = $this->route->edit();
     }
 
     public function layout(): iterable
@@ -109,8 +110,6 @@ class ArticleEdit extends EditScreenPattern
             'category_id' => ['bail', 'required',],
             'description' => ['bail', 'required', 'max:1024'],
             'text' => ['bail', 'required',],
-            'image_inner' => ['bail', 'required',],
-            'image_outer' => ['bail', 'required',],
             'publication_date' => ['bail', 'required',],
             'seo_description' => ['bail', 'nullable', 'max:1024'],
         ];
@@ -125,8 +124,6 @@ class ArticleEdit extends EditScreenPattern
             'description.required' => 'Введите анонс статьи',
             'description.max' => 'Анонс не может быть длиннее 1024 символов',
             'text.required' => 'Введите текст статьи',
-            'image_inner.required' => 'Загрузите изображение для страницы',
-            'image_outer.required' => 'Загрузите изображение для списка',
             'publication_date.required' => 'Выберите дату публикации',
             'seo_description.max' => 'SEO Description не может быть длиннее 1024 символов',
         ];

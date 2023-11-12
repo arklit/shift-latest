@@ -28,7 +28,7 @@ class TinyMce extends Field
         'disabled',
         'placeholder',
         'readonly',
-        'required',
+        'required' => 'required',
         'value',
         'height',
     ];
