@@ -21,6 +21,7 @@ use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Fields\Label;
 use Orchid\Screen\Fields\Select;
 use Orchid\Screen\Fields\TextArea;
+use Orchid\Screen\Fields\Upload;
 use Orchid\Support\Facades\Layout;
 
 class ArticleEdit extends EditScreenPattern
@@ -60,6 +61,7 @@ class ArticleEdit extends EditScreenPattern
                     DateTimer::make('item.publication_date')->title('Дата публикации')->format24hr()->required()->value(Carbon::today()),
                     TinyMce::make('item.text')->title('Текст публикации')->required(),
                     Cropper::make('item.image_inner')->title('Изображение для списка')->targetRelativeUrl()->help('Загрузка изображения обязательна'),
+                    Upload::make('item.video')->title('Видео')->help('Загрузка видео обязательна')->required(),
                 ]),
             ]),
             Layout::modal('deleteArticle', EmptyModal::class)->title('Удалить статью??')

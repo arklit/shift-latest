@@ -19,7 +19,7 @@
         data-upload-resize-height="{{$resizeHeight }}"
         data-upload-path="{{ $attributes['path'] ?? '' }}"
     >
-        <div id="dropzone-{{$id}}" class="dropzone-wrapper">
+        <div id="dropzone-{{$id}}" class="dropzone-wrapper" data-required="{{ $attributes["required"] === true ? 'required' : '' }}">
             <div class="fallback">
                 <input type="file" value="" multiple/>
             </div>

@@ -3,35 +3,41 @@ const form = document.getElementById('post-form');
 setTimeout(() => {
     keyUp()
 })
+document.addEventListener('turbo:load', keyUp)
+formSubmitValidation()
+document.addEventListener('turbo:load', formSubmitValidation)
+function formSubmitValidation() {
+    form.addEventListener('submit', (e) => {
 
-form.addEventListener('submit', (e) => {
+        const requiredInputs = document.querySelectorAll('input[required], textarea[required], select[required]');
 
-    const requiredInputs = document.querySelectorAll('input[required], textarea[required], select[required]');
-
-    requiredInputs.forEach((element) => {
-        if (element.tagName.toLowerCase() === 'input' || element.tagName.toLowerCase() === 'textarea') {
-            if (element.classList.contains('cropper-path')) {
-                validateCropper(element);
+        requiredInputs.forEach((element) => {
+            if (element.tagName.toLowerCase() === 'input' || element.tagName.toLowerCase() === 'textarea') {
+                if (element.classList.contains('cropper-path')) {
+                    validateCropper(element);
+                    element.addEventListener('change', () => {
+                        validateCropper(element)
+                    });
+                }
+                if (element.classList.contains('tinymce')) {
+                    validateTinyMce(element);
+                } else {
+                    validateInput(element);
+                    element.addEventListener('input', () => {
+                        validateInput(element)
+                    });
+                }
+            } else if (element.tagName.toLowerCase() === 'select') {
+                validateSelect(element);
                 element.addEventListener('change', () => {
-                    validateCropper(element)
-                });
-            }
-            if (element.classList.contains('tinymce')) {
-                validateTinyMce(element);
-            } else {
-                validateInput(element);
-                element.addEventListener('input', () => {
                     validateInput(element)
                 });
             }
-        } else if (element.tagName.toLowerCase() === 'select') {
-            validateSelect(element);
-            element.addEventListener('change', () => {
-                validateInput(element)
-            });
-        }
+        });
+
+        validateUploader(e)
     });
-});
+}
 
 function validateInput(input) {
     if (input.value.trim() === '') {
@@ -108,17 +114,68 @@ function validateTinyMce(input) {
 
 function keyUp() {
     const editors = document.querySelectorAll('.tinymce')
-    editors.forEach( function (input) {
+    editors.forEach(function (input) {
         let editor = tinymce.get(input.id);
         let editorContainer = input.closest('[data-controller="tinymce"]');
         editor.on('keyup', function () {
-            input.innerHTML = editor.getContent();
+            input.value = editor.getContent();
             if (editor.getContent({format: 'text'}).trim() === '') {
                 editorContainer.classList = 'validation-error rounded';
-                form.stopImmediatePropagation()
             } else {
                 editorContainer.classList = 'validation-success rounded';
             }
         });
     })
+}
+
+function validateUploader(e) {
+    const dropzoneWrapper = document.querySelector('.dropzone-wrapper[data-required="required"]');
+    if (dropzoneWrapper) {
+        const dropzone = Dropzone.forElement(dropzoneWrapper);
+        if (dropzone) {
+            if (dropzone.files.length === 0) {
+                dropzoneWrapper.classList.add('validation-error');
+                dropzoneWrapper.classList.remove('validation-success');
+                formStop(e)
+            } else {
+                dropzoneWrapper.classList.remove('validation-error');
+                dropzoneWrapper.classList.add('validation-success');
+            }
+
+            dropzone.on('addedfile', function () {
+                if (dropzone.files.length === 0) {
+                    dropzoneWrapper.classList.add('validation-error');
+                    dropzoneWrapper.classList.remove('validation-success');
+                } else {
+                    dropzoneWrapper.classList.remove('validation-error');
+                    dropzoneWrapper.classList.add('validation-success');
+                }
+            })
+
+            dropzone.on('removedfile', function () {
+                if (dropzone.files.length === 0) {
+                    dropzoneWrapper.classList.add('validation-error');
+                    dropzoneWrapper.classList.remove('validation-success');
+                } else {
+                    dropzoneWrapper.classList.remove('validation-error');
+                    dropzoneWrapper.classList.add('validation-success');
+                }
+            })
+        }
+    }
+}
+
+function formStop(e) {
+    e.preventDefault()
+
+    setTimeout(() => {
+        // Найти кнопку
+        const button = e.submitter;
+        console.log(button)
+        // Внести изменения в состояние кнопки
+        button.classList.remove('cursor-wait');
+        button.classList.remove('btn-loading');
+        button.removeAttribute('disabled');
+        button.querySelector('.spinner-loading ').remove()
+    }, 1000)
 }
