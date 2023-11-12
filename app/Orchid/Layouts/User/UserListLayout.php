@@ -58,7 +58,7 @@ class UserListLayout extends Table
 
                         Link::make(__('Edit'))
                             ->route('platform.systems.users.edit', $user->id)
-                            ->icon('pencil'),
+                            ->icon('pencil')->rawClick(),
 
                         Button::make(__('Delete'))
                             ->icon('trash')

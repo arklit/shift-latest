@@ -1,5 +1,12 @@
 .was-validated {
     .form-control {
+        &:not([required]) {
+            &:valid,
+            &:invalid {
+                border: 1px solid rgba(21, 20, 26, .1);
+            }
+        }
+
         &:valid {
             background-image: unset;
             background-position: unset;
@@ -7,11 +14,13 @@
             background-size: unset;
             border: 1px dashed green;
             padding-right: unset;
-            &:focus{
+
+            &:focus {
                 border: 1px dashed green;
                 box-shadow: none;
             }
         }
+
         &:invalid {
             background-image: unset;
             background-position: unset;
@@ -19,7 +28,8 @@
             background-size: unset;
             border: 1px dashed red;
             padding-right: unset;
-            &:focus{
+
+            &:focus {
                 border: 1px dashed red;
                 box-shadow: none;
             }
@@ -27,15 +37,30 @@
     }
 }
 
-.was-validated :valid+.ts-wrapper.single{
-    background-image: unset!important;
+.was-validated :valid + .ts-wrapper:not(.single) {
+    background-image: unset !important;
 }
-.was-validated :invalid+.ts-wrapper.single{
-    background-image: unset!important;
+
+.was-validated :invalid + .ts-wrapper:not(.single) {
+    background-image: unset !important;
 }
-.was-validated :valid+.ts-wrapper{
+
+.was-validated :valid + .ts-wrapper.single {
+    background-image: unset !important;
+}
+
+.was-validated :invalid + .ts-wrapper.single {
+    background-image: unset !important;
+}
+
+.was-validated :valid + .ts-wrapper {
     border: 1px dashed green;
 }
+
+.was-validated :invalid + .ts-wrapper {
+    border: 1px dashed red;
+}
+
 .validation-error {
     border: 1px dashed red;
 
@@ -51,11 +76,13 @@
         border-radius: 10px;
     }
 }
-.mce-container{
+
+.mce-container {
     display: flex;
-    .tinymce{
-        display: block!important;
-        min-height: unset!important;
+
+    .tinymce {
+        display: block !important;
+        min-height: unset !important;
         width: 1px;
         height: 1px;
         border: none;

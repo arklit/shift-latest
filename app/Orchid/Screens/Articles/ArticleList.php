@@ -53,7 +53,7 @@ class ArticleList extends ListScreenPattern
                 TD::make()->width(10)->alignRight()->cantHide()
                     ->render(fn($item) =>
                     DropDown::make()->icon('options-vertical')->list([
-                        Link::make(__('Edit'))->icon('wrench')->route(OrchidRoutes::ARTICLES->edit(), $item),
+                        Link::make(__('Edit'))->icon('wrench')->route(OrchidRoutes::ARTICLES->edit(), $item)->rawClick(),
                         Button::make('Удалить')->icon('trash')
                             ->method('deleteItem', ['item' => $item->id, 'title' => $item->getTitle()])
                             ->confirm('Вы действительно хотите удалить публикацию №:' . $item->id . ' - ' . $item->getTitle() . '?'),

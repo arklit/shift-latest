@@ -60,7 +60,7 @@ class ArticleEdit extends EditScreenPattern
                         ->fromQuery(ArticleCategory::query()->active()->sorted(), 'title', 'id')->required(),
                     DateTimer::make('item.publication_date')->title('Дата публикации')->format24hr()->required()->value(Carbon::today()),
                     TinyMce::make('item.text')->title('Текст публикации')->required(),
-                    Cropper::make('item.image_inner')->title('Изображение для списка')->targetRelativeUrl()->help('Загрузка изображения обязательна'),
+                    Cropper::make('item.image_inner')->title('Изображение для списка')->targetRelativeUrl()->help('Загрузка изображения обязательна')->required(),
                     Upload::make('item.video')->title('Видео')->help('Загрузка видео обязательна')->required(),
                 ]),
             ]),

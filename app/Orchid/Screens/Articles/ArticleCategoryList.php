@@ -50,7 +50,7 @@ class ArticleCategoryList extends ListScreenPattern
                     ->filter(DateTimer::make()->title('Фильтр по дате')->format('d-m-Y'))
                     ->render(fn($item) => $item->created_at?->format('d.m.Y')),
                 TD::make()->width(10)->alignRight()->render(fn($item) => Link::make()
-                    ->icon('wrench')->route($this->route->edit(), $item)),
+                    ->icon('wrench')->route($this->route->edit(), $item)->rawClick()),
             ]),
         ];
     }

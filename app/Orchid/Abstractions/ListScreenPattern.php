@@ -59,7 +59,7 @@
         public function commandBar()
         {
             return [
-                Link::make('Создать')->icon('plus')->route($this->route->create()),
+                Link::make('Создать')->icon('plus')->route($this->route->create())->rawClick(),
             ];
         }
 

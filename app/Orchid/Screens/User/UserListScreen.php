@@ -73,7 +73,7 @@ class UserListScreen extends Screen
         return [
             Link::make(__('Add'))
                 ->icon('plus')
-                ->route('platform.systems.users.create'),
+                ->route('platform.systems.users.create')->rawClick(),
         ];
     }
 
