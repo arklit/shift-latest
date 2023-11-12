@@ -1,88 +1,90 @@
+$success-border: 1px dashed green;
+$error-border: 1px dashed red;
+$default-border: 1px solid rgba(21, 20, 26, .1);
+$unset: unset!important;
+$border-radius: 10px;
+
+@mixin reset($border) {
+    background-image: $unset;
+    background-position: $unset;
+    background-repeat: $unset;
+    background-size: $unset;
+    border: $border;
+    padding-right: $unset;
+}
+
 .was-validated {
     .form-control {
         &:not([required]) {
             &:valid,
             &:invalid {
-                border: 1px solid rgba(21, 20, 26, .1);
+                border: $default-border;
+                +.ts-wrapper {
+                    border: $default-border;
+                }
             }
         }
 
         &:valid {
-            background-image: unset;
-            background-position: unset;
-            background-repeat: unset;
-            background-size: unset;
-            border: 1px dashed green;
-            padding-right: unset;
+            @include reset($success-border);
 
             &:focus {
-                border: 1px dashed green;
+                border: $success-border;
                 box-shadow: none;
+            }
+            +.ts-wrapper {
+                border: $success-border;
+                &.single {
+                    background-image: $unset;
+                }
+                &:not(.single) {
+                    background-image: $unset;
+                }
             }
         }
 
         &:invalid {
-            background-image: unset;
-            background-position: unset;
-            background-repeat: unset;
-            background-size: unset;
-            border: 1px dashed red;
-            padding-right: unset;
+            @include reset($error-border);
 
             &:focus {
-                border: 1px dashed red;
+                border: $error-border;
                 box-shadow: none;
+            }
+
+            +.ts-wrapper {
+                border: $error-border;
+                &.single {
+                    background-image: $unset;
+                }
+                &:not(.single) {
+                    background-image: $unset;
+                }
             }
         }
     }
 }
 
-.was-validated :valid + .ts-wrapper:not(.single) {
-    background-image: unset !important;
-}
-
-.was-validated :invalid + .ts-wrapper:not(.single) {
-    background-image: unset !important;
-}
-
-.was-validated :valid + .ts-wrapper.single {
-    background-image: unset !important;
-}
-
-.was-validated :invalid + .ts-wrapper.single {
-    background-image: unset !important;
-}
-
-.was-validated :valid + .ts-wrapper {
-    border: 1px dashed green;
-}
-
-.was-validated :invalid + .ts-wrapper {
-    border: 1px dashed red;
-}
-
 .validation-error {
-    border: 1px dashed red;
+    border: $error-border;
 
     .rounded {
-        border-radius: 10px;
+        border-radius: $border-radius;
     }
 }
 
 .validation-success {
-    border: 1px dashed green;
+    border: $success-border;
 
     .rounded {
-        border-radius: 10px;
+        border-radius: $border-radius;
     }
 }
 
 .mce-container {
     display: flex;
-
     .tinymce {
         display: block !important;
-        min-height: unset !important;
+        min-height: $unset;
         width: 1px;
         height: 1px;
         border: none;
