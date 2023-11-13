@@ -20,6 +20,7 @@
         data-upload-path="{{ $attributes['path'] ?? '' }}"
     >
         <div id="dropzone-{{$id}}" class="dropzone-wrapper" data-required="{{ $attributes["required"] === true ? 'required' : '' }}">
+            <input class="uploader-data" type="text" {{ $attributes["required"] === true ? 'required' : '' }}>
             <div class="fallback">
                 <input type="file" value="" multiple/>
             </div>

@@ -46,8 +46,8 @@
         </div>
         <img src="" alt="" id="test-image">
 
-        <input class="cropper-path d-none"
-               type="text"
+        <input class="cropper-path"
+               type="hidden"
                data-cropperrocont-target="source"
             {{ $attributes }}>
     </div>

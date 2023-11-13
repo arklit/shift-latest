@@ -61,6 +61,8 @@ class ArticleEdit extends EditScreenPattern
                     DateTimer::make('item.publication_date')->title('Дата публикации')->format24hr()->required()->value(Carbon::today()),
                     TinyMce::make('item.text')->title('Текст публикации')->required(),
                     Cropper::make('item.image_inner')->title('Изображение для списка')->targetRelativeUrl()->help('Загрузка изображения обязательна')->required(),
+                    Upload::make('item.image')->title('Изображение для страницы')->help('Загрузка изображения обязательна')->required(),
+                    Upload::make('item.image_2')->title('Изображение для страницы')->help('Загрузка изображения обязательна')->required(),
                 ]),
             ]),
             Layout::modal('deleteArticle', EmptyModal::class)->title('Удалить статью??')

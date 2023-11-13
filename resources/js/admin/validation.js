@@ -1,13 +1,11 @@
-const form = document.getElementById('post-form');
+// import Toastify from 'toastify-js';
 
-setTimeout(() => {
-    keyUp();
-    document.addEventListener('turbo:load', keyUp);
-    formSubmitValidation();
-    document.addEventListener('turbo:load', formSubmitValidation);
-}, 300);
+initialization()
+document.addEventListener('turbo:load', initialization);
 
 function formSubmitValidation() {
+    let form = document.getElementById('post-form');
+
     form.addEventListener('submit', (e) => {
         const requiredInputs = document.querySelectorAll('input[required], textarea[required], select[required]');
 
@@ -15,13 +13,54 @@ function formSubmitValidation() {
             validateElement(element);
 
             if (element.tagName.toLowerCase() === 'select') {
-                element.addEventListener('change', () => validateInput(element));
+                element.addEventListener('change', () => validateSelect(element));
             }
         });
-
         validateUploader(e);
+        // showErrorToast();
     });
 }
+
+/*function showErrorToast() {
+    const customTemplate = `
+    <div class="custom-toast rounded shadow-sm bg-white mb-3 fade show toast-new">
+            <div class="toast-body d-flex">
+                <p class="mb-0 custom-toast-text"></p>
+                <button type="button" class="btn-close close-toast ms-auto"></button>
+            </div>
+        </div>
+    `;
+
+    // Создайте узел DOM из шаблона
+    const customNode = document.createElement('div');
+    customNode.innerHTML = customTemplate;
+    const customToastText = customNode.querySelector('.custom-toast-text');
+
+    // Задайте текст уведомления
+    customToastText.append('Пожалуйста, проверьте введенные данные, возможны указания на других языках. А то nonononono');
+
+    let customToast = Toastify({
+        node: customNode,
+        duration: 3000,
+        gravity: 'top',
+        position: 'center',
+        backgroundColor: 'linear-gradient(to right, #ff4040, #ff6666)',
+        className: 'custom-toast-class',
+        style: {
+            zIndex: 99999999,
+        },
+    }).showToast()
+
+    // Функция закрытия уведомления
+    function closeCustomToast() {
+        const toastEl = document.querySelector('.custom-toast');
+        toastEl.classList.add('closed');
+        customToast.hideToast();
+    }
+
+    const closeButton = customNode.querySelector('.close-toast');
+    closeButton.addEventListener('click', closeCustomToast);
+}*/
 
 function validateElement(element) {
     if (element.classList.contains('cropper-path')) {
@@ -78,6 +117,7 @@ function validateCropper(input) {
         cropperContainer.classList.remove('border-dashed');
         setValidationClass(cropperContainer, false);
     } else {
+        cropperContainer.classList.remove('border-dashed');
         setValidationClass(cropperContainer, true);
     }
 
@@ -94,44 +134,84 @@ function validateCropper(input) {
         }
     });
 
-    observer.observe(img, { attributes: true });
+    observer.observe(img, {attributes: true});
 }
 
 function validateTinyMce(input) {
     const editor = tinymce.get(input.id);
     const editorContainer = input.closest('[data-controller="tinymce"]');
-    setValidationClass(editorContainer, editor.getContent({ format: 'text' }).trim() !== '', true);
+    setValidationClass(editorContainer, editor.getContent({format: 'text'}).trim() !== '', true);
 
     function validateTinyMCEAndSetInputValue() {
         input.value = editor.getContent();
-        setValidationClass(editorContainer, editor.getContent({ format: 'text' }).trim() !== '', true);
+        setValidationClass(editorContainer, editor.getContent({format: 'text'}).trim() !== '', true);
     }
 
-    editor.on('keyup', validateTinyMCEAndSetInputValue);
+    editor.on('TinyMCEKeyUpEvent', validateTinyMCEAndSetInputValue);
     editor.on('change', validateTinyMCEAndSetInputValue);
 }
 
-function keyUp() {
+function TinyMCEKeyUpEvent() {
     const editors = document.querySelectorAll('.tinymce[required="required"]');
     editors.forEach((input) => validateElement(input));
 }
 
 function validateUploader(e) {
-    const dropzoneWrapper = document.querySelector('.dropzone-wrapper[data-required="required"]');
-    if (dropzoneWrapper) {
+    const dropzoneWrappers = document.querySelectorAll('.dropzone-wrapper[data-required="required"]');
+    dropzoneWrappers.forEach(function (dropzoneWrapper) {
         const dropzone = Dropzone.forElement(dropzoneWrapper);
         if (dropzone) {
             setValidationClass(dropzoneWrapper, dropzone.files.length !== 0, true);
 
             dropzone.on('addedfile', function () {
                 setValidationClass(dropzoneWrapper, dropzone.files.length !== 0, true);
+                const uploaderDataInput = dropzoneWrapper.querySelector('.uploader-data');
+                if (uploaderDataInput) {
+                    const filePreviews = dropzoneWrapper.querySelectorAll('.dz-file-preview');
+                    uploaderDataInput.value = filePreviews.length === 0 ? '' : filePreviews.length;
+                }
             });
 
             dropzone.on('removedfile', function () {
                 setValidationClass(dropzoneWrapper, dropzone.files.length !== 0, true);
+                const uploaderDataInput = dropzoneWrapper.querySelector('.uploader-data');
+                if (uploaderDataInput) {
+                    const filePreviews = dropzoneWrapper.querySelectorAll('.dz-file-preview');
+                    uploaderDataInput.value = filePreviews.length === 0 ? '' : filePreviews.length;
+                }
             });
         }
-    }
+    });
+}
+
+function dropZoneInitCheck() {
+    const dropzoneWrappers = document.querySelectorAll('.dropzone-wrapper[data-required="required"]');
+    dropzoneWrappers.forEach(function (dropzoneWrapper) {
+        const dropzone = Dropzone.forElement(dropzoneWrapper);
+        if (dropzone) {
+            const uploaderDataInput = dropzoneWrapper.querySelector('.uploader-data');
+            if (uploaderDataInput) {
+                const filePreviews = dropzoneWrapper.querySelectorAll('.dz-file-preview');
+                uploaderDataInput.value = filePreviews.length === 0 ? '' : filePreviews.length;
+            }
+
+            dropzone.on('addedfile', function () {
+                const uploaderDataInput = dropzoneWrapper.querySelector('.uploader-data');
+                if (uploaderDataInput) {
+                    const filePreviews = dropzoneWrapper.querySelectorAll('.dz-file-preview');
+                    uploaderDataInput.value = filePreviews.length === 0 ? '' : filePreviews.length;
+                }
+            });
+
+            dropzone.on('removedfile', function () {
+                const uploaderDataInput = dropzoneWrapper.querySelector('.uploader-data');
+                if (uploaderDataInput) {
+                    const filePreviews = dropzoneWrapper.querySelectorAll('.dz-file-preview');
+                    uploaderDataInput.value = filePreviews.length === 0 ? '' : filePreviews.length;
+                }
+            });
+        }
+    });
 }
 
 function formStop(e) {
@@ -144,4 +224,15 @@ function formStop(e) {
         button.removeAttribute('disabled');
         button.querySelector('.spinner-loading ').remove();
     }, 1000);
+}
+
+function initialization() {
+    TinyMCEKeyUpEvent();
+    document.addEventListener('turbo:load', TinyMCEKeyUpEvent);
+    formSubmitValidation();
+    document.addEventListener('turbo:load', formSubmitValidation);
+    setTimeout(() => {
+        dropZoneInitCheck();
+        document.addEventListener('turbo:load', dropZoneInitCheck);
+    }, 300)
 }

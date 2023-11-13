@@ -1,5 +1,5 @@
-$success-border: 1px dashed green;
-$error-border: 1px dashed red;
+$success-border: 1px solid green;
+$error-border: 1px solid red;
 $default-border: 1px solid rgba(21, 20, 26, .1);
 $unset: unset!important;
 $border-radius: 10px;
@@ -11,6 +11,15 @@ $border-radius: 10px;
     background-size: $unset;
     border: $border;
     padding-right: $unset;
+}
+
+@mixin inputReset() {
+    min-height: $unset;
+    width: 1px;
+    height: 1px;
+    border: none;
+    position: absolute;
+    opacity: 0;
 }
 
 .was-validated {
@@ -79,18 +88,66 @@ $border-radius: 10px;
         border-radius: $border-radius;
     }
 }
-
+.uploader-data{
+    @include inputReset();
+}
 .mce-container {
     display: flex;
     .tinymce {
         display: block !important;
-        min-height: $unset;
-        width: 1px;
-        height: 1px;
-        border: none;
-        position: absolute;
-        opacity: 0;
-
+        @include inputReset();
     }
 }
 
+//trash
+//@keyframes fadeIn {
+//    from {
+//        opacity: 0;
+//    }
+//    to {
+//        opacity: 1;
+//    }
+//}
+//
+//@keyframes fadeOut {
+//    from {
+//        opacity: 1;
+//    }
+//    to {
+//        opacity: 0;
+//    }
+//}
+//
+//#toast,
+//.toast {
+//    display: none!important;
+//}
+//
+//.toastify{
+//    z-index: 9999;
+//    position: fixed;
+//    right: 0;
+//}
+//
+//.custom-toast {
+//    position: fixed;
+//    top: 15px;
+//    width: 300px;
+//    right: 20px;
+//    padding: 10px;
+//    background-color: #333;
+//    color: #fff;
+//    border-radius: 5px;
+//    animation: fadeIn 0.5s ease forwards;
+//}
+//
+//.custom-toast.closed {
+//    animation: fadeOut 0.5s ease forwards;
+//}
+//
+//.custom-toast-text {
+//    display: flex;
+//    color: #000;
+//    white-space: pre-line;
+//}
+//

@@ -1,13 +1,7 @@
-function getCommandBar() {
-    const container = document.querySelector('.command-bar');
-    const commandBarWrapper = document.querySelector('.command-bar-wrapper');
-    const textBlock = commandBarWrapper.querySelector('h1');
-    const breadcrumbs = document.querySelector('.breadcrumb');
-    const clonedText = textBlock.cloneNode(true);
-    const clonedBreadcrumbs = breadcrumbs ? breadcrumbs.cloneNode(true) : null;
 
+function getCommandBar() {
+    let container = document.querySelector('.command-bar');
     let newContainer;
-    let btnContainer;
 
     setTimeout(() => {
         const oldContainer = document.querySelector('.mobile-commandbar');
@@ -19,28 +13,46 @@ function getCommandBar() {
     const createMobileCommandBar = () => {
         newContainer = document.createElement('div');
         newContainer.classList.add('mobile-commandbar', 'show');
-        btnContainer = document.createElement('div');
-        btnContainer.classList.add('mobile-commandbar-btn');
 
-        newContainer.append(btnContainer);
-        btnContainer.innerHTML = container.innerHTML;
-        if (clonedBreadcrumbs) {
-            newContainer.prepend(clonedBreadcrumbs);
+        const commandBarLayout = document.querySelector('.commandbar-layout');
+        if (commandBarLayout) {
+            const clonedElement = commandBarLayout.cloneNode(true);
+            newContainer.append(clonedElement);
         }
-        newContainer.prepend(clonedText);
+
+        const postForm = document.querySelector('#post-form');
+        if (postForm) {
+            const postFormWidth = postForm.offsetWidth;
+            newContainer.style.width = `${postFormWidth}px`;
+        }
+
+        function setPosition(){
+            if (newContainer) {
+                const adminBackground = document.querySelector('.admin-background');
+                if (adminBackground) {
+                    let postFormRect = postForm.getBoundingClientRect();
+                    newContainer.style.left = postFormRect.left + 'px';
+                }
+            }
+        }
+
+        window.addEventListener('resize', function() {
+            setPosition();
+        });
+        setPosition();
 
         document.body.appendChild(newContainer);
 
-        newContainer.style.opacity = '0';
-        newContainer.style.transition = 'opacity 0.5s, transform 0.5s';
-        newContainer.style.position = 'fixed';
-        newContainer.style.top = '0';
-        newContainer.style.transform = 'translateY(-400px)';
-
-        setTimeout(() => {
-            newContainer.style.opacity = '1';
-            newContainer.style.transform = 'translateY(20px)';
-        }, 100);
+            newContainer.style.opacity = '0';
+            newContainer.style.transition = 'opacity 0.5s, transform 0.5s';
+            newContainer.style.position = 'fixed';
+            newContainer.style.top = '-400px';
+            newContainer.style.transform = 'translateY(-400px)';
+            setTimeout(() => {
+                newContainer.style.top = '0px';
+                newContainer.style.opacity = '1';
+                newContainer.style.transform = 'translateY(0px)';
+            }, 300);
     };
 
     const removeMobileCommandBar = () => {
@@ -69,7 +81,6 @@ function getCommandBar() {
 
     observer.observe(container);
 }
-
 document.addEventListener('turbo:load', () => {
     getCommandBar();
 });

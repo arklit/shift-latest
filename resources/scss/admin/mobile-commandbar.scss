@@ -1,28 +1,6 @@
 .mobile-commandbar {
-    right: 20px;
-    list-style: none;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 .125rem .25rem rgba(21,20,26,.075)!important;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 15px;
     z-index: 9;
-    h1{
-        font-size: 24px;
-        margin-bottom: 5px!important;
-    }
-    .breadcrumb{
-        padding: 0!important;
-    }
-    .mobile-commandbar-btn{
-        display: flex;
-        button, a{
-            padding: 0;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-        }
+    .commandbar-layout{
+        margin-bottom: 0;
     }
 }
