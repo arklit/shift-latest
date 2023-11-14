@@ -47,8 +47,6 @@ class ArticleCategoryEdit extends EditScreenPattern
                 Input::make('item.title')->title('Название')->required()->maxlength(169)->help('Не более 169 символов'),
                 Input::make('item.code')->title('Код')->required()->help('Не более 30 символов'),
                 TextArea::make('item.description')->title('Описание')->rows(5),
-                Input::make('item.seo_title')->title('Title')->maxlength(169)->help('Не более 169 символов'),
-                TextArea::make('item.seo_description')->title('Description')->rows(5),
             ]),
             Layout::modal('deleteItem', EmptyModal::class)->title('Уверены, что хотите удалить запись?')
                 ->applyButton('Да')->closeButton('Нет'),

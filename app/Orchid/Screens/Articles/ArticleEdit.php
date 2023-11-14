@@ -52,8 +52,6 @@ class ArticleEdit extends EditScreenPattern
                     ]),
                     Input::make('item.title')->title('Заголовок')->required()->maxlength(120)->help('Не более 120 символов'),
                     TextArea::make('item.description')->title('Анонс')->rows(5)->maxlength(1024)->required(),
-                    Input::make('item.seo_title')->title('SEO title')->maxlength(160)->help('Заголовок для SEO. Не более 160 символов'),
-                    TextArea::make('item.seo_description')->title('SEO description')->maxlength(1024)->rows(5)->help('Описание для SEO. Не более 1024 символов'),
                     Cropper::make('item.image_outer')->title('Изображение для страницы')->targetRelativeUrl()->help('Загрузка изображения обязательна')->required(),
                 ]),
                 Layout::rows([
