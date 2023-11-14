@@ -1,8 +1,8 @@
 $success-border: 1px solid green!important;
 $error-border: 1px solid red!important;
-$default-border: 1px solid rgba(21, 20, 26, .1);
+$default-border: 1px solid rgba(21, 20, 26, .1)!important;
 $unset: unset!important;
-$border-radius: 10px;
+$border-radius: 10px!important;
 
 @mixin reset($border) {
     background-image: $unset;
@@ -28,16 +28,6 @@ $border-radius: 10px;
 
 .was-validated {
     .form-control {
-        &:not([required]) {
-            &:valid,
-            &:invalid {
-                border: $default-border;
-                +.ts-wrapper {
-                    border: $default-border;
-                }
-            }
-        }
-
         &:valid {
             @include reset($success-border);
 
@@ -71,6 +61,16 @@ $border-radius: 10px;
                 }
                 &:not(.single) {
                     background-image: $unset;
+                }
+            }
+        }
+
+        &:not([required]) {
+            &:valid,
+            &:invalid {
+                border: $default-border;
+                +.ts-wrapper {
+                    border: $default-border;
                 }
             }
         }

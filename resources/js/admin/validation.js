@@ -3,12 +3,9 @@
 initialization()
 document.addEventListener('turbo:load', initialization);
 
-function formSubmitValidation() {
-    let form = document.getElementById('submit-modal-createOrUpdateSeoPage');
-
-    form.addEventListener('click', (e) => {
-        const requiredInputs = document.querySelectorAll('input[required], textarea[required], select[required]');
-        console.log(requiredInputs)
+function formSubmitValidation(elem, parent, event) {
+    elem.addEventListener(event, (e) => {
+        const requiredInputs = parent.querySelectorAll('input[required], textarea[required], select[required]');
         requiredInputs.forEach((element) => {
             validateElement(element);
 
@@ -227,12 +224,18 @@ function formStop(e) {
 }
 
 function initialization() {
+    let form = document.getElementById('post-form');
+    let modalForm = document.querySelectorAll('.modal-content');
+
     TinyMCEKeyUpEvent();
-    document.addEventListener('turbo:load', TinyMCEKeyUpEvent);
-    formSubmitValidation();
-    document.addEventListener('turbo:load', formSubmitValidation);
+    modalForm.forEach((form) => {
+        let modalFormBtn = form.querySelector('button[type="submit"]');
+        if (modalFormBtn) {
+            formSubmitValidation(modalFormBtn, form, 'click')
+        }
+    })
+    formSubmitValidation(form, form, 'submit');
     setTimeout(() => {
         dropZoneInitCheck();
-        document.addEventListener('turbo:load', dropZoneInitCheck);
     }, 300)
 }
