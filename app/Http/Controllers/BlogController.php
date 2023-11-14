@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\ClientRoutes;
+use App\Helpers\CommonHelper;
 use App\Models\Article;
 use App\Models\ArticleCategory;
 use App\Services\ArticlesService;
@@ -26,10 +27,24 @@ class BlogController extends Controller
         $articles = $articlesService->getArticlesList($page);
         $paginator = $articles->linkCollection()->paginizate();
 
-        $articlesService->setBreadCrumbs(
-            ClientRoutes::BLOG_LIST_PAGE, ClientRoutes::BLOG_LIST, "Страница " . $page, [$page]);
+        $crumbs = [
+            [
+                'title' => 'Блог',
+                'route' => 'web.blog.list'
+            ],
+        ];
 
-        return view('modules.blog.list', compact('articles', 'categories', 'paginator'));
+        if ($page > 1) {
+            $crumbs[] = [
+                'title' => 'Страница ' . $page,
+                'route' => 'web.blog.list.page',
+                'params' => [$page]
+            ];
+        }
+
+        CommonHelper::setCrumbs($crumbs);
+
+        return view('modules.blog.list', compact('articles', 'categories', 'paginator', 'page'));
     }
 
     /**
@@ -51,15 +66,29 @@ class BlogController extends Controller
         abort_if($articles->isEmpty(), 404);
         $paginator = $articles->linkCollection()->paginizate();
 
-        $articlesService->setBreadCrumbs(
-            ClientRoutes::BLOG_CATEGORY, ClientRoutes::BLOG_LIST, $currentCategory->getTitle(), [$categoryCode]);
+        $crumbs = [
+            [
+                'title' => 'Блог',
+                'route' => 'web.blog.list',
+            ],
+            [
+                'title' => $currentCategory->getTitle(),
+                'route' => 'web.blog.category',
+                'params' => [$currentCategory->code]
+            ]
+        ];
 
         if ($page > 1) {
-            $articlesService->setBreadCrumbs(
-                ClientRoutes::BLOG_CATEGORY_PAGE, ClientRoutes::BLOG_CATEGORY, "Страница $page", [$categoryCode, $page]);
+            $crumbs[] = [
+                'title' => 'Страница ' . $page,
+                'route' => 'web.blog.category.page',
+                'params' => [$currentCategory->code, $page]
+            ];
         }
 
-        return view('modules.blog.list', compact('articles', 'categories', 'currentCategory', 'paginator'));
+        CommonHelper::setCrumbs($crumbs);
+
+        return view('modules.blog.list', compact('articles', 'categories', 'currentCategory', 'paginator', 'page'));
     }
 
     /**
@@ -77,10 +106,24 @@ class BlogController extends Controller
             ->active()->publicated()->publicationSorted()->where('slug', '!=', $articleSlug)
             ->with('category')->limit(4)->get();
 
-        $articlesService->setBreadCrumbs(
-            ClientRoutes::BLOG_CATEGORY, ClientRoutes::BLOG_LIST, $article->category->getTitle(), [$categoryCode]);
-        $articlesService->setBreadCrumbs(
-            ClientRoutes::BLOG_ARTICLE, ClientRoutes::BLOG_CATEGORY, $article->getTitle(), [$categoryCode, $articleSlug]);
+        $crumbs = [
+            [
+                'title' => 'Блог',
+                'route' => 'web.blog.list',
+            ],
+            [
+                'title' => $article->category->getTitle(),
+                'route' => 'web.blog.category',
+                'params' => [$categoryCode]
+            ],
+            [
+                'title' => $article->getTitle(),
+                'route' => 'web.blog.card',
+                'params' => [$categoryCode, $articleSlug]
+            ]
+        ];
+
+        CommonHelper::setCrumbs($crumbs);
 
         return view('modules.blog.item', compact('article', 'otherArticles'));
     }

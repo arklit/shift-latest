@@ -113,7 +113,7 @@ export default class CropperRocont extends window.Controller {
     crop(modal) {
         let data = window.cropper.getData();
 
-        window.cropper.getCroppedCanvas().toBlob((blob) => {
+        window.cropper.getCroppedCanvas( {fillColor: '#fff'}).toBlob((blob) => {
             const formData = new FormData();
             formData.append('file', blob);
             formData.append('storage', this.data.get('storage'));

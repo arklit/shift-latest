@@ -45,8 +45,8 @@ class FilesController extends Controller
             $fileItem['mimeType'] = $file->getClientMimeType();
             $fileItem['originalName'] = $file->getClientOriginalName();
             $fileItem['pathName'] = $file->getPathname();
-            if (Str::contains($file->getClientMimeType(), 'image')) {
-                $files[] = $this->cropImage($fileItem);
+            if (Str::contains($file->getClientMimeType(), 'image') && $file->getClientMimeType() !== 'image/svg+xml') {
+                $files[] = $this->cropImage($fileItem, $request->get('width'), $request->get('height'));
             }
         }
 
@@ -61,17 +61,42 @@ class FilesController extends Controller
         return response()->json($response);
     }
 
-    public function cropImage($fileItem)
+    public function cropImage($fileItem, $width = null, $height = null)
     {
         $imagickObj = new Imagick();
         $imagickObj->readImage($fileItem['pathName']);
+        $orig_width = $imagickObj->getImageWidth();
+        $orig_height = $imagickObj->getImageHeight();
+        if (!empty($width) && !empty($height)) {
+            $orig_aspect_ratio = $orig_height / $orig_width;
+            $thumb_aspect_ratio = $height / $width;
+            if ($orig_aspect_ratio >= $thumb_aspect_ratio) {
+                $width = 0;
+            } else {
+                $height = 0;
+            }
+            if (!empty($height) && $height > $orig_height) {
+                $height = $orig_height;
+            }
+            if (!empty($width) && $width > $orig_width) {
+                $width = $orig_width;
+            }
+            $imagickObj->thumbnailImage($width, $height);
+            $imagickObj->setOption('webp:method', '6');
+            $imagickObj->setImageCompressionQuality(100);
+            $imagickObj->setOption('webp:lossless', 'true');
+            $imagickObj->setImageFormat("webp");
+        }
         $imagickObj->setImageBackgroundColor('white');
-        $imagickObj->setImageFormat("webp");
-        $imagickObj->setOption('webp:method', '6');
-        $imagickObj->setOption('lossless', true);
+        $imagickObj->setImageCompressionQuality(100);
         $fileItem['mimeType'] = 'image/webp';
 
-        $imagickObj->writeImage($fileItem['pathName']);
+        try {
+            $imagickObj->writeImage($fileItem['pathName']);
+        } catch (\Throwable $exception) {
+            dd($exception);
+        }
+
         return new UploadedFile(
             $fileItem['pathName'],
             $fileItem['originalName'],

@@ -21,13 +21,12 @@ class PageList extends ListScreenPattern
     protected ?string $listRedirect = 'platform.pages.list';
     protected ?string $updateRoute = 'platform.pages.edit';
 
-    protected string $name = 'Страницы';
-
     use ActivitySignsTrait;
 
     public function __construct()
     {
         $this->route = OrchidRoutes::INFO_PAGES;
+        $this->name = $this->route->getTitle();
     }
 
 

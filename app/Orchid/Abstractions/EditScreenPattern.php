@@ -95,6 +95,10 @@ abstract class EditScreenPattern extends Screen
      */
     protected bool $makeBreadcrumbs = true;
 
+    public function formValidateMessage(): string
+    {
+        return 'Пожалуйста, проверьте введенные данные.';
+    }
 
     protected function queryMake(ProtoInterface $item)
     {

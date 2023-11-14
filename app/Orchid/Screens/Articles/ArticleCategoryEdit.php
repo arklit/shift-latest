@@ -5,19 +5,17 @@ namespace App\Orchid\Screens\Articles;
 use App\Enums\OrchidRoutes;
 use App\Models\ArticleCategory;
 use App\Orchid\Abstractions\EditScreenPattern;
-use App\Orchid\Helpers\OrchidHelper;
 use App\Orchid\Helpers\OrchidValidator;
+use App\Orchid\Screens\Modals\EmptyModal;
 use App\Orchid\Traits\CommandBarDeletableTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 use Orchid\Screen\Fields\CheckBox;
 use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Fields\TextArea;
 use Orchid\Support\Facades\Alert;
 use Orchid\Support\Facades\Layout;
-use function Laravel\Prompts\search;
 
 class ArticleCategoryEdit extends EditScreenPattern
 {
@@ -52,7 +50,8 @@ class ArticleCategoryEdit extends EditScreenPattern
                 Input::make('item.seo_title')->title('Title')->maxlength(169)->help('Не более 169 символов'),
                 TextArea::make('item.seo_description')->title('Description')->rows(5),
             ]),
-
+            Layout::modal('deleteItem', EmptyModal::class)->title('Уверены, что хотите удалить запись?')
+                ->applyButton('Да')->closeButton('Нет'),
         ];
     }
 

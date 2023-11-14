@@ -12,6 +12,6 @@ enum ClientRoutes: string
     case BLOG_CATEGORY = 'web.articles.category';
     case BLOG_CATEGORY_PAGE = 'web.articles.category.page';
     case BLOG_ARTICLE = 'web.articles.card';
-    case STATIC_PAGE = 'web.pages.static';
+    case PAGES = 'web.pages.page';
 
 }

@@ -6,15 +6,15 @@ use App\Enums\OrchidRoutes;
 use App\Models\Article;
 use App\Models\ArticleCategory;
 use App\Orchid\Abstractions\EditScreenPattern;
+use App\Orchid\Fields\Cropper;
 use App\Orchid\Fields\TinyMce;
 use App\Orchid\Helpers\OrchidValidator;
-use App\Orchid\Layouts\EmptyModal;
+use App\Orchid\Screens\Modals\EmptyModal;
 use App\Orchid\Traits\CommandBarDeletableTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Orchid\Screen\Fields\CheckBox;
-use App\Orchid\Fields\Cropper;
 use Orchid\Screen\Fields\DateTimer;
 use Orchid\Screen\Fields\Group;
 use Orchid\Screen\Fields\Input;
@@ -65,8 +65,8 @@ class ArticleEdit extends EditScreenPattern
                     Upload::make('item.image_2')->title('Изображение для страницы')->help('Загрузка изображения обязательна')->required(),
                 ]),
             ]),
-            Layout::modal('deleteArticle', EmptyModal::class)->title('Удалить статью??')
-                ->applyButton('Да')->closeButton('Нет')->async('asyncGetArticle'),
+            Layout::modal('deleteItem', EmptyModal::class)->title('Уверены, что хотите удалить запись?')
+                ->applyButton('Да')->closeButton('Нет'),
         ];
     }
 
@@ -92,13 +92,6 @@ class ArticleEdit extends EditScreenPattern
         }
 
         return $validator->isFail() ? $validator->showErrors($this->route, $item->id) : $this->saveItem($item, $data);
-    }
-
-    public function asyncGetArticle(Article $item)
-    {
-        return [
-            'item' => $item,
-        ];
     }
 
     public function remove(Article $item)

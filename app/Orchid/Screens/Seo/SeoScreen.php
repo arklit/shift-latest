@@ -6,8 +6,8 @@ use App\Enums\OrchidRoutes;
 use App\Models\Seo;
 use App\Orchid\Abstractions\ListScreenPattern;
 use App\Orchid\Helpers\OrchidValidator;
-use App\Orchid\Layouts\EmptyModal;
 use App\Orchid\Screens\Modals\CreateOrUpdateSeo;
+use App\Orchid\Screens\Modals\EmptyModal;
 use App\Orchid\Traits\ActivitySignsTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -61,7 +61,7 @@ class SeoScreen extends ListScreenPattern
                     ModalToggle::make('Редактировать')->icon('wrench')->method('save')
                         ->modal('createOrUpdateSeoPage')->asyncParameters(['item' => $item->id]),
                     Button::make('Удалить')->icon('trash')->method('deleteItem', ['item' => $item->id, 'title' => $item->getTitle()])
-                        ->confirm('Вы действительно хотите удалить запись №' . $item->id . '<br><strong>' . $item->getTitle() . '</strong> <code>(' . $item->url . ')</code>?'),
+                        ->confirm('Вы действительно хотите удалить запись №' . $item->id . ' - <strong>' . $item->getTitle() . '</strong>?'),
                 ])),
             ]),
             Layout::modal('createOrUpdateSeoPage', CreateOrUpdateSeo::getModal())->title('Добавить SEO')

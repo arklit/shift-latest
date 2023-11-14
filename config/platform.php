@@ -116,14 +116,14 @@ return [
     'resource'      => [
         'stylesheets' => [],
         'scripts'     => [
-            '/js/tinymce/tinymce.min.js',
-            '/js/tinymce/langs/ru.js',
+            '/vendor/tinymce/tinymce.min.js',
+            '/vendor/tinymce/langs/ru.js',
         ],
     ],
 
     'vite' => [
         'resources/scss/admin/app.scss',
-        'resources/js/admin/dashboard.js'
+        'resources/js/admin/app.js'
     ],
 
     /*

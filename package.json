@@ -18,7 +18,6 @@
         "cropper": "^4.1.0",
         "cropperjs": "^1.6.1",
         "jquery": "^3.7.1",
-        "tingle.js": "^0.16.0",
-        "toastify-js": "^1.12.0"
+        "tingle.js": "^0.16.0"
     }
 }

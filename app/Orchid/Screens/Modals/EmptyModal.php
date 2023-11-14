@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Orchid\Layouts;
+namespace App\Orchid\Screens\Modals;
 
 use Orchid\Screen\Layouts\Rows;
 

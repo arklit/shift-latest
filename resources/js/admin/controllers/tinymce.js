@@ -8,8 +8,8 @@ export default class extends window.Controller {
         tinymce.init({
             selector: selector,
             language: this.element.dataset.language,
-            plugins: 'preview importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons',
-            toolbar: 'undo redo bold italic underline strikethrough fontfamily fontsize blocks alignleft aligncenter alignright alignjustify outdent indent  numlist bullist forecolor backcolor removeformat pagebreak charmap emoticons fullscreen code preview print insertfile image media template link anchor codesample ltr rtl',
+            plugins: 'preview importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons',
+            toolbar: 'undo redo bold italic underline strikethrough fontfamily fontsize blocks alignleft aligncenter alignright alignjustify outdent indent  numlist bullist forecolor backcolor removeformat pagebreak charmap emoticons fullscreen code preview print insertfile image media link anchor codesample ltr rtl',
             menubar: false,
             //content_css: '/app/css/content-style.css',
             //importcss_append: true,
