@@ -1,71 +1,71 @@
 <?php
 
-    namespace App\Orchid\Abstractions;
+namespace App\Orchid\Abstractions;
 
-    use Illuminate\Database\Eloquent\Builder;
-    use Orchid\Screen\Actions\Link;
-    use Orchid\Screen\Screen;
-    use function session;
+use App\Enums\OrchidRoutes;
+use App\Models\ProtoModel;
+use Illuminate\Database\Eloquent\Builder;
+use Orchid\Screen\Actions\Link;
+use Orchid\Screen\Screen;
+use function session;
 
-    abstract class ListScreenPattern extends Screen
+abstract class ListScreenPattern extends Screen
+{
+    /** Модель, используемая для получения данных
+     * @var Builder
+     */
+    protected Builder $model;
+
+    /** Количество экземпляров модели, выводимое на страницу
+     * @var int
+     */
+    protected int $paginate = 20;
+
+    /** Параметры для редиректа к списку моделей (номер страницы)
+     * @var array
+     */
+    protected array $redirectParams = [];
+
+    /** Enum в котором хранятся данные по именам роутов для админки
+     * @var OrchidRoutes
+     */
+    protected OrchidRoutes $route;
+
+    /** Список отношений для синхронизации с текущей моделью
+     * @var array
+     */
+    protected array $relations = [];
+
+    public function query(): iterable
     {
-        /**
-         * Модель, используемая для получения данных
-         * @var Builder
-         */
-        protected Builder $model;
+        $items = $this->model->paginate($this->paginate);
+        $this->redirectParams = ['page' => $items->currentPage()];
+        $this->setRedirect();
 
-        /**
-         * Количество экземпляров модели, выводимое на страницу
-         * @var int
-         */
-        protected int $paginate = 10;
+        return [
+            'items' => $items,
+        ];
+    }
 
-        /**
-         * Имя роута для списка (используется для редиректа на этот список, после редактирования элемента)
-         * @var string|null
-         */
-        protected ?string $listRedirect = '';
+    protected function setRedirect(string $uri = null): void
+    {
+        session()->put('listRedirect', $this->route->edit());
+        session()->put('redirectParams', $this->redirectParams);
+    }
 
-        /**
-         * Имя роута, используемого для редактирования элемента
-         * @var string|null
-         */
-        protected ?string $updateRoute = '';
+    public function commandBar(): iterable
+    {
+        return [
+            Link::make('Добавить запись')->icon('plus')->route($this->route->create()),
+        ];
+    }
 
-        /**
-         * Название скоупа (если применяется) для фильтрации моделей
-         * @var string|null
-         */
-        protected ?string $scope;
-
-        /**
-         * Параметры для редиректа к списку моделей (номер страницы)
-         * @var array
-         */
-        protected array $redirectParams = [];
-
-        public function query()
-        {
-            $items = $this->model->paginate($this->paginate);
-            $this->redirectParams = ['page' => $items->currentPage()];
-            $this->setRedirect();
-
-            return [
-                'items' => $items,
-            ];
-        }
-
-        public function commandBar()
-        {
-            return [
-                Link::make('Создать')->icon('plus')->route($this->route->create())->rawClick(),
-            ];
-        }
-
-        protected function setRedirect(string $uri = null)
-        {
-            session()->put('listRedirect', $this->listRedirect);
-            session()->put('redirectParams', $this->redirectParams);
+    public function detachRelations(ProtoModel $item)
+    {
+        if (!empty($this->relations)) {
+            foreach ($this->relations as $relation) {
+                $item->$relation()->detach();
+            }
         }
     }
+}

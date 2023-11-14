@@ -4,11 +4,11 @@ initialization()
 document.addEventListener('turbo:load', initialization);
 
 function formSubmitValidation() {
-    let form = document.getElementById('post-form');
+    let form = document.getElementById('submit-modal-createOrUpdateSeoPage');
 
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('click', (e) => {
         const requiredInputs = document.querySelectorAll('input[required], textarea[required], select[required]');
-
+        console.log(requiredInputs)
         requiredInputs.forEach((element) => {
             validateElement(element);
 

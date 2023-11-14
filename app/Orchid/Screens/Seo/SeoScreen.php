@@ -21,8 +21,6 @@ use Orchid\Support\Facades\Layout;
 
 class SeoScreen extends ListScreenPattern
 {
-    public string $name = 'Список SEO страниц';
-
     protected int $paginate = 50;
 
     use ActivitySignsTrait;
@@ -42,6 +40,7 @@ class SeoScreen extends ListScreenPattern
 
     public function query(): iterable
     {
+        $this->name = 'Список SEO страниц';
         $this->model = Seo::query();
         return parent::query();
     }
