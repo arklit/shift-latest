@@ -19,6 +19,7 @@ use Orchid\Screen\Fields\DateTimer;
 use Orchid\Screen\Fields\Group;
 use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Fields\Label;
+use Orchid\Screen\Fields\Picture;
 use Orchid\Screen\Fields\Select;
 use Orchid\Screen\Fields\TextArea;
 use Orchid\Screen\Fields\Upload;
@@ -61,8 +62,6 @@ class ArticleEdit extends EditScreenPattern
                     DateTimer::make('item.publication_date')->title('Дата публикации')->format24hr()->required()->value(Carbon::today()),
                     TinyMce::make('item.text')->title('Текст публикации')->required(),
                     Cropper::make('item.image_inner')->title('Изображение для списка')->targetRelativeUrl()->help('Загрузка изображения обязательна')->required(),
-                    Upload::make('item.image')->title('Изображение для страницы')->help('Загрузка изображения обязательна')->required(),
-                    Upload::make('item.image_2')->title('Изображение для страницы')->help('Загрузка изображения обязательна')->required(),
                 ]),
             ]),
             Layout::modal('deleteItem', EmptyModal::class)->title('Уверены, что хотите удалить запись?')

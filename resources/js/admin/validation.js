@@ -1,5 +1,3 @@
-// import Toastify from 'toastify-js';
-
 initialization()
 document.addEventListener('turbo:load', initialization);
 

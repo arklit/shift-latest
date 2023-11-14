@@ -23,7 +23,7 @@ class SitemapScreen extends EditScreenPattern
     public function commandBar(): array
     {
         return [
-            Button::make('Обновить')->icon('refresh')->type(Color::INFO())->method('generateXml'),
+            Button::make('Обновить')->icon('refresh')->method('generateXml'),
         ];
     }
 
