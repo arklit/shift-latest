@@ -116,22 +116,20 @@ function validateUploader(e) {
         const uploadField = dropzoneWrapper.querySelector('.uploader-field');
         if (dropzone) {
             setValidationClass(uploadField, dropzone.files.length !== 0, true);
+            const uploaderDataInput = dropzoneWrapper.querySelector('.uploader-data');
+            uploaderDataInput.value = dropzone.files.length === 0 ? '' : dropzone.files.length;
 
             dropzone.on('addedfile', function () {
                 setValidationClass(uploadField, dropzone.files.length !== 0, true);
-                const uploaderDataInput = dropzoneWrapper.querySelector('.uploader-data');
                 if (uploaderDataInput) {
-                    const filePreviews = dropzoneWrapper.querySelectorAll('.dz-file-preview');
-                    uploaderDataInput.value = filePreviews.length === 0 ? '' : filePreviews.length;
+                    uploaderDataInput.value = dropzone.files.length === 0 ? '' : dropzone.files.length;
                 }
             });
 
             dropzone.on('removedfile', function () {
                 setValidationClass(uploadField, dropzone.files.length !== 0, true);
-                const uploaderDataInput = dropzoneWrapper.querySelector('.uploader-data');
                 if (uploaderDataInput) {
-                    const filePreviews = uploadField.querySelectorAll('.dz-file-preview');
-                    uploaderDataInput.value = filePreviews.length === 0 ? '' : filePreviews.length;
+                    uploaderDataInput.value = dropzone.files.length === 0 ? '' : dropzone.files.length;
                 }
             });
         }
@@ -145,23 +143,18 @@ function dropZoneInitCheck() {
         if (dropzone) {
             const uploaderDataInput = dropzoneWrapper.querySelector('.uploader-data');
             if (uploaderDataInput) {
-                const filePreviews = dropzoneWrapper.querySelectorAll('.dz-file-preview');
-                uploaderDataInput.value = filePreviews.length === 0 ? '' : filePreviews.length;
+                uploaderDataInput.value = dropzone.files.length === 0 ? '' : dropzone.files.length;
             }
 
             dropzone.on('addedfile', function () {
-                const uploaderDataInput = dropzoneWrapper.querySelector('.uploader-data');
                 if (uploaderDataInput) {
-                    const filePreviews = dropzoneWrapper.querySelectorAll('.dz-file-preview');
-                    uploaderDataInput.value = filePreviews.length === 0 ? '' : filePreviews.length;
+                    uploaderDataInput.value = dropzone.files.length === 0 ? '' : dropzone.files.length;
                 }
             });
 
             dropzone.on('removedfile', function () {
-                const uploaderDataInput = dropzoneWrapper.querySelector('.uploader-data');
                 if (uploaderDataInput) {
-                    const filePreviews = dropzoneWrapper.querySelectorAll('.dz-file-preview');
-                    uploaderDataInput.value = filePreviews.length === 0 ? '' : filePreviews.length;
+                    uploaderDataInput.value = dropzone.files.length === 0 ? '' : dropzone.files.length;
                 }
             });
         }
