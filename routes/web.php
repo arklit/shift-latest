@@ -1,6 +1,7 @@
 <?php
 
 use App\Helpers\Constants;
+use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\MainPageController;
 use App\Http\Controllers\PagesController;
@@ -17,6 +18,7 @@ Route::get('/robots.txt', RobotsTxtController::class)->name('robots-txt');
 
 Route::group(['prefix' => 'ajax'], function () {
     Route::post('/search-tree', [PagesController::class, 'search'])->name('search');
+    Route::post('/send-modal', [AjaxController::class, 'validateForm'])->name('validate.modals');
 });
 
 Route::group(['as' => 'web.'], function () {

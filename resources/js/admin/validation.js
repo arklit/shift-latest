@@ -181,11 +181,58 @@ function initialization() {
     modalForm.forEach((form) => {
         let modalFormBtn = form.querySelector('button[type="submit"]');
         if (modalFormBtn) {
-            formSubmitValidation(modalFormBtn, form, 'click')
+            // formSubmitValidation(modalFormBtn, form, 'click')
+            modalFormBtn.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                const errorBlock = document.querySelector('.error-block');
+
+                if (errorBlock) {
+                    errorBlock.remove();
+                }
+
+                sendForm(form);
+            });
         }
     })
     formSubmitValidation(form, form, 'submit');
     setTimeout(() => {
         dropZoneInitCheck();
     }, 300)
+
+
+    function sendForm(form) {
+        const formData = new FormData(form);
+        const xhr = new XMLHttpRequest();
+
+        xhr.open('POST', '/ajax/send-modal');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+
+                    if (response.success) {
+                        // Обработка успешного ответа
+                    } else {
+                        const errors = response.errors;
+                        const errorBlock = document.createElement('div');
+                        errorBlock.classList.add('error-block');
+
+                        errors.forEach(function (error) {
+                            const errorElement = document.createElement('p');
+                            errorElement.textContent = error;
+                            errorBlock.appendChild(errorElement);
+                        });
+
+                        const modalHeader = document.querySelector('.modal-header');
+                        modalHeader.parentNode.insertBefore(errorBlock, modalHeader.nextSibling);
+                    }
+                } else {
+                    // Обработка ошибки
+                }
+            }
+        };
+        xhr.send(formData);
+    }
+
 }
