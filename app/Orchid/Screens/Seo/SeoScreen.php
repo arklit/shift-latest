@@ -83,18 +83,10 @@ class SeoScreen extends ListScreenPattern
         $data = $request->input('item');
         $data['url'] = Str::finish(Str::start($data['url'], '/'), '/');
 
+        $item->fill($data)->save();
+        Alert::success('Новая страница успешно добавлен');
 
-        $validator = (new OrchidValidator($data, ['title']))->setIndividualRules($this->getRules(), $this->getMessages())
-            ->setUniqueFields($item, ['url' => 'Такой URL уже используется'])
-            ->clearQuillTags(['text'])
-            ->validate();
-
-        if (!$validator->isFail()) {
-            $item->fill($data)->save();
-            Alert::success('Новый проект успешно добавлен');
-        }
-
-        return $validator->showErrors($this->route->base());
+        return redirect()->route($this->route->base());
     }
 
     public function deleteItem(Seo $item)
@@ -103,26 +95,5 @@ class SeoScreen extends ListScreenPattern
         $title = $item->getTitle();
         $item->delete() ? Alert::success("Запись №:$id - '$title'  успешно удалена!")
             : Alert::error("Произошла ошибка при попытке удалить запись");
-    }
-
-    public function getRules(): array
-    {
-        return [
-            'title' => ['bail', 'required', 'max:160'],
-            'url' => ['bail', 'required', 'unique:seos'],
-            'description' => ['bail'],
-        ];
-    }
-
-    public function getMessages(): array
-    {
-        return [
-            'title.required' => 'Введите заголовок',
-            'title.max' => 'Заголовок не может быть длиннее 160 символов',
-            'url.required' => 'Введите URL',
-            'url.max' => 'URL не может быть длиннее 60 символов',
-            'url.unique' => 'Страница с таким URL уже добавлена',
-            'description.required' => 'Введите описание',
-        ];
     }
 }

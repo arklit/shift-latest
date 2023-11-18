@@ -11,29 +11,39 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class AjaxController extends Controller
 {
     public function validateForm(FormRequest $request)
     {
-        // Получение данных формы
         $formData = $request->input('item');
 
-        $rules = [
-            'url' => 'required',
-            'title' => 'required',
-        ];
+        if ($formData['modal_id'] === 'createOrUpdateSeoPage')
+        {
+            $formData['url'] = Str::finish(Str::start($formData['url'], '/'), '/');
+            $rules = [
+                'title' => ['bail', 'required', 'max:160'],
+                'url' => ['bail', 'required', 'unique:seos'],
+                'description' => ['bail'],
+            ];
 
-        $messages = [
-            'url.required' => 'Поле 1 обязательно для заполнения',
-            'title.required' => 'Поле 2 обязательно для заполнения',
-        ];
+            $messages = [
+                'title.required' => 'Введите заголовок',
+                'title.max' => 'Заголовок не может быть длиннее 160 символов',
+                'url.required' => 'Введите URL',
+                'url.max' => 'URL не может быть длиннее 60 символов',
+                'url.unique' => 'Страница с таким URL уже добавлена',
+            ];
 
-        $validator = Validator::make($formData, $rules, $messages);
+            $validator = Validator::make($formData, $rules, $messages);
 
-        if ($validator->fails()) {
-            $errors = $validator->errors()->all();
-            return response()->json(['success' => false, 'errors' => $errors]);
+            if ($validator->fails()) {
+                $errors = collect($validator->messages()->messages())->map(fn ($error, $name) => $error[0])->toArray();
+                return response()->json(['success' => false, 'errors' => $errors]);
+            }
+        } else {
+            return response()->json(['success' => true, 'message' => 'notFoundForm']);
         }
 
         return response()->json(['success' => true]);

@@ -6,6 +6,7 @@ use App\Orchid\Fields\Cropper;
 use App\Orchid\Fields\TinyMce;
 use Orchid\Screen\Fields\Group;
 use Orchid\Screen\Fields\Input;
+use Orchid\Screen\Fields\Upload;
 
 class PageLayout extends AbstractPageLayout
 {
@@ -20,6 +21,7 @@ class PageLayout extends AbstractPageLayout
                 Cropper::make('item.image_inner')->targetRelativeUrl()->title('Изображение в карточке'),
             ]),
             TinyMce::make('item.text')->title('Текст'),
+            Upload::make('item.icon')->maxFiles(1)->title('Иконка')->required(),
         ];
 
         return array_merge(parent::getDefaultLayout(), $layout);

@@ -1,4 +1,4 @@
-import './validation';
+import './validation/validation';
 import './tree';
 import './mobile-commandbar';
 import CropperRocont from "./controllers/cropper.js";
