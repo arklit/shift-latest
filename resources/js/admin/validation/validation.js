@@ -53,15 +53,14 @@ function initialization() {
 
     TinyMCEKeyUpEvent(); // Вызов функции для обработки события keyup в TinyMCE редакторе
 
+    formSubmitValidation(form, form, 'submit'); // Вызов функции валидации формы при отправке
     modalForm.forEach((form) => {
         let modalFormBtn = form.querySelector('button[type="submit"]'); // Получение кнопки отправки формы внутри модального окна
         if (modalFormBtn) {
-            formSubmitValidation(modalFormBtn, form, 'click'); // Вызов функции валидации формы при клике на кнопку отправки
-            modalFormSubmitValidation(modalFormBtn, form); // Вызов функции валидации модальной формы при отправке
+            formSubmitValidation(modalFormBtn, form, 'click'); // Вызов фронтовой валидации формы при клике на кнопку отправки
+            modalFormSubmitValidation(modalFormBtn, form); // Вызов функции валидации модальной формы при клике для показа ошибок с бэка
         }
     });
-
-    formSubmitValidation(form, form, 'submit'); // Вызов функции валидации формы при отправке
     setTimeout(() => {
         dropZoneInitCheck(); // Вызов функции инициализации загрузчика через 300 мс
     }, 300);

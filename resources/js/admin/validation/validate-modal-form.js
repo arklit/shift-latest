@@ -1,5 +1,7 @@
-import { setValidationClass } from "./validation";
+import {setValidationClass} from "./validation";
+
 function sendModalForm(form) {
+    let formBtn = form.querySelector('button[type="submit"]'); // Ищем кнопку отправки формы
     const formData = new FormData(form); // Создаем объект FormData из формы
     const xhr = new XMLHttpRequest(); // Создаем объект XMLHttpRequest
     setFormId(form, formData); // Вызываем функцию setFormId для установки идентификатора формы
@@ -28,6 +30,7 @@ function sendModalForm(form) {
                     modalHeader.parentNode.insertBefore(errorBlock, modalHeader.nextSibling); // Вставляем блок ошибок после элемента 'modalHeader'
 
                     scrollToErrorInput(form, errors); // вызываем функцию скроллинга к первому элементу с ошибкой
+                    toggleBtnState(formBtn,false);
                 }
             } else {
                 // Обработка ошибки
@@ -60,7 +63,6 @@ function setFormId(form, formData) {
 function checkRequiredInput(form) {
     const requiredInputs = form.querySelectorAll('input[required], textarea[required], select[required]'); // Находим все обязательные поля внутри формы
     let hasEmptyField = false; // Инициализируем флаг hasEmptyField как false
-
     requiredInputs.forEach(input => { // Проходимся по всем обязательным полям
         if (input.value.trim() === '') { // Проверяем, является ли значение поля пустым
             hasEmptyField = true; // Если значение пустое, устанавливаем флаг hasEmptyField в true
@@ -96,6 +98,30 @@ function scrollToErrorInput(form, errors){
     }
 }
 
+function setOpacityToChildren(parentElement, opacity) {
+    const childElements = parentElement.querySelectorAll('*');
+
+    childElements.forEach(function(element) {
+        element.style.opacity = opacity;
+    });
+}
+
+// Метод работает на все формы кроме confirm в скринах списка для подтверждения дейтсвий
+function toggleBtnState(btn, isSend) {
+    const circle = '<span class="spinner-loading position-absolute top-50 start-50 translate-middle"><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span></span>';
+    if (isSend) {
+        setOpacityToChildren(btn, '0');
+        btn.classList = 'btn btn-default cursor-wait btn-loading';
+        btn.disabled = true;
+        btn.insertAdjacentHTML('beforeend', circle);
+    } else {
+        btn.querySelector('.spinner-loading').remove();
+        btn.classList = 'btn btn-default';
+        setOpacityToChildren(btn, '1');
+        btn.disabled = false;
+    }
+}
+
 export default function modalFormSubmitValidation(elem, form) {
     elem.addEventListener('click', (e) => {
         e.preventDefault(); // Отменяем действие по умолчанию
@@ -103,7 +129,7 @@ export default function modalFormSubmitValidation(elem, form) {
         if (errorBlock) { // Если блок ошибок существует
             errorBlock.remove(); // Удаляем блок ошибок
         }
-
+        toggleBtnState(elem, true);
         sendModalForm(form); // Вызываем функцию sendModalForm для отправки формы
     });
 }

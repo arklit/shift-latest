@@ -22,8 +22,6 @@ return new class extends Migration
             $table->string('slug');
             $table->string('description', 1024)->nullable();
             $table->text('text');
-            $table->string('seo_title');
-            $table->string('seo_description', 1024)->nullable();
             $table->string('image_inner', 512)->nullable();
             $table->string('image_outer', 512)->nullable();
             $table->timestamps();

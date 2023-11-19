@@ -49,7 +49,6 @@ class SelectListener extends Listener
                 Select::make('item.template')
                     ->title('Выбор шаблона')
                     ->options(PagesTypes::getOptions())
-                    ->required()
                     ->canSee($this->query->get('item.type') === 'template'),
 
                 Select::make('item.parent_id')

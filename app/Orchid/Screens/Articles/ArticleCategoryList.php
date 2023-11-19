@@ -40,7 +40,6 @@ class ArticleCategoryList extends ListScreenPattern
     {
         return [
             Layout::table('items', [
-                TDChecklist::make('checkobox'),
                 TD::make('id', 'ID'),
                 TD::make('is_active', 'Активность')->sort()->filter(
                     Select::make()->options(OrchidHelper::getYesNoArray())->empty()->title('Фильтр активности')
@@ -65,7 +64,7 @@ class ArticleCategoryList extends ListScreenPattern
         ];
     }
 
-    public function deleteItem(Article $item)
+    public function deleteItem(ArticleCategory $item)
     {
         $id = $item->id;
         $title = $item->getTitle();

@@ -21,7 +21,6 @@ class PageLayout extends AbstractPageLayout
                 Cropper::make('item.image_inner')->targetRelativeUrl()->title('Изображение в карточке'),
             ]),
             TinyMce::make('item.text')->title('Текст'),
-            Upload::make('item.icon')->maxFiles(1)->title('Иконка')->required(),
         ];
 
         return array_merge(parent::getDefaultLayout(), $layout);
