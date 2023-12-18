@@ -78,6 +78,8 @@ export default class CropperRocont extends window.Controller {
             this.crop(this.modal)
         });
 
+        this.clearEvent()
+
         return this.modal;
     }
 
@@ -106,14 +108,11 @@ export default class CropperRocont extends window.Controller {
         document.querySelector('.cropper-path').dispatchEvent(new Event("change"));
     }
 
-
     /**
      * Action on click button "Crop"
      */
     crop(modal) {
-        let data = window.cropper.getData();
-
-        window.cropper.getCroppedCanvas( {fillColor: '#fff'}).toBlob((blob) => {
+        window.cropper.getCroppedCanvas({fillColor: '#fff'}).toBlob((blob) => {
             const formData = new FormData();
             formData.append('file', blob);
             formData.append('storage', this.data.get('storage'));
@@ -157,11 +156,27 @@ export default class CropperRocont extends window.Controller {
         let parent = document.querySelector('.selectedCropper').closest('.cropper-parent');
 
         parent.querySelector('.cropper-path').value = '';
+        parent.querySelector('.cropper-change-input').value = '';
         parent.querySelector('.cropper-preview').src = '';
         parent.querySelector('.cropper-preview').classList.add('none');
         parent.querySelector('.cropper-remove').classList.add('none');
 
         event.target.classList.remove('selectedCropper')
+    }
+
+    clearEvent() {
+        let modal = document.querySelector('.tingle-modal');
+        let btn = modal.querySelector('.btn.btn-link');
+
+        btn.addEventListener('click', (event) => {
+            this.clear(event)
+        });
+
+        window.addEventListener('click', (event) => {
+            if (!event.target.closest('.tingle-modal')) {
+                this.clear(event)
+            }
+        });
     }
 
     /**

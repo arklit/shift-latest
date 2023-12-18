@@ -25,7 +25,7 @@ class PageList extends ListScreenPattern
 
     public function __construct()
     {
-        $this->route = OrchidRoutes::INFO_PAGES;
+        $this->route = OrchidRoutes::PAGES;
         $this->name = $this->route->getTitle();
     }
 

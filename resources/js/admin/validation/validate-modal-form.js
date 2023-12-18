@@ -40,6 +40,29 @@ function sendModalForm(form) {
     xhr.send(formData); // Отправляем запрос с данными формы
 }
 
+function onCloseModal() {
+    const closeBtns = document.querySelectorAll('.btn-close');
+    console.log(closeBtns)
+    closeBtns.forEach((btn) => {
+        console.log(btn)
+        btn.addEventListener('click', () => {
+            const errorBlock = btn.parentNode.nextSibling; // Найдём блок ошибок на странице
+
+            if (errorBlock && errorBlock.classList.contains('error-block')) { // Если блок ошибок существует
+                errorBlock.remove(); // Удаляем блок ошибок
+            }
+        });
+    });
+
+    window.addEventListener('click', (event) => {
+        if (!event.target.closest('.modal-content')) {
+            const errorBlock = document.querySelector('.error-block');
+            if (errorBlock) {
+                errorBlock.remove();
+            }
+        }
+    });
+}
 function createErrorBlock(errorBlock, errorTitle, errorList) {
     errorBlock.classList = 'error-block alert alert-danger rounded shadow-sm mb-3 p-4'; // Устанавливаем классы для блока ошибок
     errorTitle.insertAdjacentHTML('afterbegin', '<strong>О нет! </strong> Измените пару вещей и повторите попытку.'); // Вставляем HTML внутрь заголовка ошибок
