@@ -33,7 +33,7 @@
                            accept="image/*"
                            data-cropperrocont-target="upload"
                            data-action="change->cropperrocont#upload"
-                           class="d-none">
+                           class="d-none cropper-change-input">
                 </label>
 
                 <button type="button" class="btn btn-outline-danger cropper-remove"

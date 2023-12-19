@@ -11,7 +11,7 @@ enum OrchidRoutes: string
     case SEO = 'seo';
     case ROBOTS = 'robot';
     case SITEMAP = 'sitemap';
-    case INFO_PAGES = 'pages';
+    case PAGES = 'pages';
     case CONFIGURATOR = 'configurator';
 
     public function list(): string
@@ -42,7 +42,7 @@ enum OrchidRoutes: string
         return match ($this->value) {
             self::ARTICLES->value => 'Публикации',
             self::ARTICLE_CATEGORIES->value => 'Категории публикаций',
-            self::INFO_PAGES->value => 'Страницы',
+            self::PAGES->value => 'Страницы',
             self::SEO->value => 'SEO-модуль',
             self::CONFIGURATOR->value => 'Конфигуратор',
             self::ROBOTS->value => 'Robots.txt',
@@ -59,7 +59,7 @@ enum OrchidRoutes: string
         return match ($this->value) {
             self::ARTICLES->value,
             self::ARTICLE_CATEGORIES->value,
-            self::INFO_PAGES->value,
+            self::PAGES->value,
             self::SEO->value => false,
             self::CONFIGURATOR->value,
             self::SITEMAP->value,

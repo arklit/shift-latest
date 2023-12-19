@@ -25,7 +25,7 @@ class PageEdit extends EditScreenPattern
 
     public function __construct()
     {
-        $this->route = OrchidRoutes::INFO_PAGES;
+        $this->route = OrchidRoutes::PAGES;
     }
 
     public function query(Page $item)
