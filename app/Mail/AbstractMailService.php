@@ -10,7 +10,7 @@ abstract class AbstractMailService
     protected CommonMailer $mailer;
     protected string $view;
     protected string $subject;
-    protected string $mail_key = 'email';
+    protected string $mailKey;
     protected function send(array $data, array $savedFiles = [], array $memoryFiles = []): bool
     {
         $this->mailer = new CommonMailer($data, $this->view);
@@ -28,7 +28,7 @@ abstract class AbstractMailService
             }
         }
 
-        $recipients = Configurator::query()->where('key', $this->mail_key)->first()->value;
+        $recipients = Configurator::query()->where('key', $this->mailKey)->first()->value;
         Mail::to($recipients)->send($this->mailer);
         return true;
     }

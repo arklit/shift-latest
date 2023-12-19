@@ -6,6 +6,7 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\MainPageController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\RobotsTxtController;
+use App\Http\Controllers\SimpleFormsController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TemplatesController;
 use App\Http\Controllers\TestController;
@@ -17,6 +18,11 @@ Route::get('/sitemap.xml', SitemapController::class)->name('xml-map');
 Route::get('/robots.txt', RobotsTxtController::class)->name('robots-txt');
 
 Route::group(['prefix' => 'ajax'], function () {
+    Route::controller(SimpleFormsController::class)->as('forms.')->prefix('/forms')->group(function () {
+        Route::get('/{code}/get', 'getForm')->name('get');
+        Route::post('/{code}/send', 'sendForm')->name('send');
+    });
+
     Route::post('/search-tree', [PagesController::class, 'search'])->name('search');
     Route::post('/send-modal', [AjaxController::class, 'validateForm'])->name('validate.modals');
 });

@@ -20,9 +20,11 @@ class ManagerMailService extends AbstractMailService
         return $this;
     }
 
-    public function regularMailMethod(array $formData, string $subject): bool
+    public function regularMailMethod(array $formData, string $subject, $letterView, string $mailKey): bool
     {
+        $this->view = $letterView;
         $this->subject = $subject;
+        $this->mailKey = $mailKey;
         return $this->send($formData);
     }
 }

@@ -48,6 +48,7 @@ class SimpleFormsController
     public function sendForm(Request $request, string $code): JsonResponse
     {
         $this->prepare($code);
+
         $validator = Validator::make($request->all(), $this->params['rules'], $this->params['messages']);
 
         if ($validator->fails()) {
@@ -60,7 +61,7 @@ class SimpleFormsController
             $payload = $validator->validated();
             $mailer = new ManagerMailService();
             $method = $this->params['mail_method'];
-            $mailer->$method($payload, $this->params['subject'], $this->params['letter_view']);
+            $mailer->$method($payload, $this->params['subject'], $this->params['letter_view'], $this->params['mail_key']);
         } catch (Exception $e) {
             LoggerHelper::debug(json_encode($validator->validated(), JSON_UNESCAPED_UNICODE));
             LoggerHelper::commonErrorVerbose($e);
