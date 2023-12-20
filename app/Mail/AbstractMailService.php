@@ -28,7 +28,9 @@ abstract class AbstractMailService
             }
         }
 
-        $recipients = Configurator::query()->where('key', $this->mailKey)->first()->value;
+        $key = $this->mailKey ?? 'email';
+
+        $recipients = Configurator::query()->where('key', $key)->first()->value;
         Mail::to($recipients)->send($this->mailer);
         return true;
     }
