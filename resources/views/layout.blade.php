@@ -11,6 +11,71 @@
     @vite('resources/scss/client/app.scss')
 </head>
 <body>
+<form id="myForm">
+    @csrf
+    <input type="text" name="name" placeholder="Имя" required>
+    <input type="email" name="email" placeholder="Email" required>
+    <button type="submit">Отправить</button>
+</form>
+
+<form id="myForm2">
+    @csrf
+    <input type="text" name="name" placeholder="Имя" required>
+    <input type="email" name="email" placeholder="Email" required>
+    <button type="submit">Отправить</button>
+</form>
+
+<script>
+    document.getElementById('myForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        var formData = new FormData(this);
+
+        fetch('/ajax/forms/test/send', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                console.log(data);
+                // Обработка ответа от сервера
+            })
+            .catch(function(error) {
+                console.error(error);
+                // Обработка ошибок
+            });
+    });
+
+    document.getElementById('myForm2').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        var formData = new FormData(this);
+
+        fetch('/ajax/forms/test2/send', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                console.log(data);
+                // Обработка ответа от сервера
+            })
+            .catch(function(error) {
+                console.error(error);
+                // Обработка ошибок
+            });
+    });
+</script>
     <div class="page">
         @include('components.header')
         @yield('content')
