@@ -16,7 +16,6 @@ class CreateOrUpdateSeo
     public static function getModal(): Rows
     {
         return Layout::rows([
-            Input::make('item.id')->type('hidden'),
             CheckBox::make('item.indexation_off')->title('Закрыть страницу от индексации')->sendTrueOrFalse()->value(false),
             Input::make('item.url')->title('URL')->required(),
             Input::make('item.title')->title('Title ')->required()->maxlength(220)->help('Не более 220 символов'),

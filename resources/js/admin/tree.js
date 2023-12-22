@@ -1,5 +1,5 @@
-// Обработчик события ввода текста в поле поиска
-let searchInput = document.getElementById('search-tree');
+initialization()
+document.addEventListener('turbo:load', initialization);
 
 // Метод для поиска родителей страницы
 function showPageAndParents(page) {
@@ -119,14 +119,20 @@ function debounce(func, delay) {
 }
 
 // инициализация методов
-if (searchInput !== null)
-{
-    tree()
-    document.querySelector('.uncollapse-all').addEventListener('click', uncollapse);
-    document.querySelector('.collapse-all').addEventListener('click', collapse);
+function initialization() {
+    setTimeout(() => {
+        let input = document.getElementById('search-tree');
+        if (input) {
+            tree()
+            document.querySelector('.uncollapse-all').addEventListener('click', uncollapse);
+            document.querySelector('.collapse-all').addEventListener('click', collapse);
 
-    searchInput.addEventListener('input', debounce(function () {
-        let query = searchInput.value;
-        searchTree(query);
-    }, 200)); // Задержка в 500 миллисекунд
+            input.addEventListener('input', debounce(function () {
+                let query = input.value;
+                searchTree(query);
+            }, 200)); // Задержка в 200 миллисекунд
+        }
+    }, 300)
 }
+
+

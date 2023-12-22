@@ -1,13 +1,14 @@
-.page-tree-container{
-    padding: 20px;
+.page-tree-container {
+    padding: 1.5rem 1.5rem 2rem 1.5rem;
 
-    .command-bar{
+    .command-bar {
         display: flex;
         justify-content: flex-start;
         align-items: center;
         margin-bottom: 30px;
-        .search-bar{
-            input{
+
+        .search-bar {
+            input {
                 height: 36px;
                 width: 300px;
                 padding: 10px;
@@ -16,7 +17,8 @@
                 border-radius: 2px;
             }
         }
-        button{
+
+        button {
             height: 36px;
             padding: 10px;
             border: 1px solid #00BCD0;
@@ -26,19 +28,21 @@
             justify-content: center;
             background: transparent;
             font-weight: 300;
-            &.uncollapse-all{
+
+            &.uncollapse-all {
                 margin-right: 8px;
 
             }
         }
     }
 
-    .main-list{
+    .main-list {
         list-style: none;
         padding: 0;
         overflow: hidden;
         position: relative;
-        &:before{
+
+        &:before {
             content: '';
             border-left: 1px dotted grey;
             position: absolute;
@@ -47,13 +51,16 @@
             width: 1px;
             height: 100%;
         }
-        li,ul{
+
+        li, ul {
             list-style: none;
             padding-left: 0;
         }
-        ul{
+
+        ul {
             position: relative;
-            &:before{
+
+            &:before {
                 content: '';
                 border-left: 1px dotted grey;
                 position: absolute;
@@ -63,15 +70,17 @@
                 height: 100%;
             }
         }
-        .has-children{
-            &.parent{
+
+        .has-children {
+            &.parent {
                 position: relative;
                 background: #fff;
                 z-index: 12;
                 overflow: hidden;
             }
         }
-        .label{
+
+        .label {
             font-weight: 300;
             display: flex;
             justify-content: flex-start;
@@ -79,17 +88,21 @@
             padding: 6px 0;
             overflow: hidden;
             background: #fff;
-            .page-name{
+
+            .page-name {
                 opacity: .6;
-                &.active{
+
+                &.active {
                     opacity: 1;
                 }
-                &:hover{
+
+                &:hover {
                     cursor: pointer;
                     text-decoration: underline;
                 }
             }
-            .closed-img{
+
+            .closed-img {
                 display: block;
                 width: 10px;
                 height: 10px;
@@ -97,38 +110,40 @@
                 background-repeat: no-repeat;
                 background-size: 100%;
                 margin-right: 8px;
-                &:hover{
+
+                &:hover {
                     cursor: pointer;
                 }
-                &.open{
+
+                &.open {
                     background-image: url("../../../public/assets/img/admin/tree/minus.svg");
                     position: relative;
-                    &:hover{
+
+                    &:hover {
                         cursor: pointer;
                     }
                 }
             }
-            .type-img{
+
+            .type-img {
                 width: 10px;
                 margin-right: 8px;
-                &:hover{
+
+                &:hover {
                     cursor: pointer;
                 }
             }
-            .uri{
+
+            .uri {
                 color: #646464;
                 margin-left: 10px;
             }
         }
-        .list{
+
+        .list {
             display: none;
             padding-left: 18px;
         }
     }
 }
 
-.d-none{
-    &.d-block{
-        display: block!important;
-    }
-}

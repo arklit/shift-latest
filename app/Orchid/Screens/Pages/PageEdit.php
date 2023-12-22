@@ -7,10 +7,12 @@ use App\Enums\PagesTypes;
 use App\Models\Page;
 use App\Orchid\Abstractions\EditScreenPattern;
 use App\Orchid\Helpers\OrchidValidator;
+use App\Orchid\Screens\Modals\EmptyModal;
 use App\Orchid\Traits\CommandBarDeletableTrait;
 use Illuminate\Http\Request;
 use Orchid\Screen\Layouts\Rows;
 use Orchid\Support\Facades\Alert;
+use Orchid\Support\Facades\Layout;
 
 class PageEdit extends EditScreenPattern
 {
@@ -23,7 +25,7 @@ class PageEdit extends EditScreenPattern
 
     public function __construct()
     {
-        $this->route = OrchidRoutes::INFO_PAGES;
+        $this->route = OrchidRoutes::PAGES;
     }
 
     public function query(Page $item)
@@ -39,6 +41,8 @@ class PageEdit extends EditScreenPattern
     {
         return [
             $this->layout,
+            Layout::modal('deleteItem', EmptyModal::class)->title('Уверены, что хотите удалить запись?')
+                ->applyButton('Да')->closeButton('Нет'),
         ];
     }
 
@@ -55,6 +59,11 @@ class PageEdit extends EditScreenPattern
             return $validator->showErrors($this->route, $item->id);
         }
 
+        if ($item->children()->where('id', $data['parent_id'])->exists()) {
+            Alert::error('Родительская страница не может наследоваться от своего ребёнка.');
+            return redirect()->back()->withInput();
+        }
+
         return $this->saveItem($item, $data);
     }
 
@@ -63,7 +72,7 @@ class PageEdit extends EditScreenPattern
         if ($item->removableChildren()->count() > 0)
         {
             Alert::error('Родительскую страницу нельзя удалить пока к ней привязаны дочерние!');
-            return redirect()->route($this->listRedirect, $this->redirectParams);
+            return redirect()->back()->withInput();
         }
         return $this->removeItem($item);
     }

@@ -14,8 +14,6 @@ use Orchid\Support\Facades\Layout;
 
 class SitemapScreen extends EditScreenPattern
 {
-    public string $name = 'Карта сайта';
-
     public function __construct()
     {
         $this->route = OrchidRoutes::SITEMAP;
@@ -25,7 +23,7 @@ class SitemapScreen extends EditScreenPattern
     public function commandBar(): array
     {
         return [
-            Button::make('Обновить')->icon('refresh')->type(Color::INFO())->method('generateXml'),
+            Button::make('Обновить')->icon('refresh')->method('generateXml'),
         ];
     }
 
@@ -50,6 +48,7 @@ class SitemapScreen extends EditScreenPattern
 
     public function query()
     {
+        $this->name = 'Карта сайта';
         $xml = Storage::disk('public')->get('/sitemap.xml') ?? '';
 
         return [

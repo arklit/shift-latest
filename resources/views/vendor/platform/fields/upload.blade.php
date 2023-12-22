@@ -19,13 +19,14 @@
         data-upload-resize-height="{{$resizeHeight }}"
         data-upload-path="{{ $attributes['path'] ?? '' }}"
     >
-        <div id="dropzone-{{$id}}" class="dropzone-wrapper">
+        <div id="dropzone-{{$id}}" class="dropzone-wrapper" data-required="{{ $attributes["required"] === true ? 'required' : '' }}">
+            <input class="uploader-data" type="text" {{ $attributes["required"] === true ? 'required' : '' }}>
             <div class="fallback">
                 <input type="file" value="" multiple/>
             </div>
             <div class="visual-dropzone sortable-dropzone dropzone-previews">
                 <div class="dz-message dz-preview dz-processing dz-image-preview">
-                    <div class="bg-light d-flex justify-content-center align-items-center border r-2x"
+                    <div class="bg-light d-flex justify-content-center align-items-center border r-2x uploader-field"
                          style="min-height: 112px;">
                         <div class="px-2 py-4">
                             <x-orchid-icon path="bs.cloud-arrow-up" class="h3"/>

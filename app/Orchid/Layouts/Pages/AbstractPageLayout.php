@@ -5,6 +5,7 @@ namespace App\Orchid\Layouts\Pages;
 use App\Enums\PagesTypes;
 use App\Helpers\Constants;
 use App\Models\Page;
+use App\Orchid\Fields\Divider;
 use Orchid\Screen\Fields\CheckBox;
 use Orchid\Screen\Fields\Group;
 use Orchid\Screen\Fields\Input;
@@ -28,6 +29,7 @@ abstract class AbstractPageLayout extends Rows
     {
         $item = $this->query->all()['item'];
         return [
+            Divider::make('item.heading')->value('Основная информация')->class('mb-20'),
             Group::make([
                 CheckBox::make('item.is_active')->title('Активность')->sendTrueOrFalse(),
                 Label::make('item.page_type')->title('Тип страницы')->value(PagesTypes::from($item->type)->getTitle())->style('margin-bottom:0'),
@@ -44,7 +46,8 @@ abstract class AbstractPageLayout extends Rows
             Group::make([
                 TextArea::make('item.announce')->title('Анонс')->rows(5)->help('Анонс, который выводится в описание карточки в списке элементов'),
                 Input::make('item.uri')->title('URI')->required()
-            ])
+            ]),
+            Divider::make('item.heading')->value('Информация о странице')->class('mtb-20'),
         ];
     }
 

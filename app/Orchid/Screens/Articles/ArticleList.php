@@ -6,11 +6,7 @@ use App\Enums\OrchidRoutes;
 use App\Models\Article;
 use App\Models\ArticleCategory;
 use App\Orchid\Abstractions\ListScreenPattern;
-use App\Orchid\Filters\CategoryFilter;
-use App\Orchid\Filters\DateCreatedFilter;
-use App\Orchid\Filters\IsActiveFilter;
 use App\Orchid\Helpers\OrchidHelper;
-use App\Orchid\Layouts\EmptyModal;
 use App\Orchid\Traits\ActivitySignsTrait;
 use Illuminate\Support\Str;
 use Orchid\Screen\Actions\Button;
@@ -30,6 +26,12 @@ class ArticleList extends ListScreenPattern
     {
         $this->route = OrchidRoutes::ARTICLES;
         $this->name = $this->route->getTitle();
+    }
+
+    public function query(): iterable
+    {
+        $this->model = Article::query()->with('category')->filters();
+        return parent::query();
     }
 
     public function layout(): iterable
@@ -56,26 +58,9 @@ class ArticleList extends ListScreenPattern
                         Link::make(__('Edit'))->icon('wrench')->route(OrchidRoutes::ARTICLES->edit(), $item),
                         Button::make('Удалить')->icon('trash')
                             ->method('deleteItem', ['item' => $item->id, 'title' => $item->getTitle()])
-                            ->confirm('Вы действительно хотите удалить публикацию №:' . $item->id . ' - ' . $item->getTitle() . '?'),
+                            ->confirm('Что хотите удалить запись №:' . $item->id . ' - ' . $item->getTitle() . '?'),
                 ])),
             ]),
-
-            Layout::modal('deleteItem', EmptyModal::class)->title('Удалить статью??')
-                ->applyButton('Да')->closeButton('Нет')->async('asyncGetItem'),
-        ];
-    }
-
-    public function query(): iterable
-    {
-        $this->model = Article::query()->with('category')->filters();
-
-        return parent::query();
-    }
-
-    public function asyncGetItem(Article $item)
-    {
-        return [
-            'item' => $item,
         ];
     }
 
@@ -83,7 +68,7 @@ class ArticleList extends ListScreenPattern
     {
         $id = $item->id;
         $title = $item->getTitle();
-        $item->delete() ? Alert::success("Публикация №:$id - '$title'  успешно удалена!")
-            : Alert::error("Произошла ошибка при попытке удалить публикацию");
+        $item->delete() ? Alert::success("Запись №:$id - '$title'  успешно удалена!")
+            : Alert::error("Произошла ошибка при попытке удалить запись");
     }
 }

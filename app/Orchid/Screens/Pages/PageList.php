@@ -21,13 +21,12 @@ class PageList extends ListScreenPattern
     protected ?string $listRedirect = 'platform.pages.list';
     protected ?string $updateRoute = 'platform.pages.edit';
 
-    protected string $name = 'Страницы';
-
     use ActivitySignsTrait;
 
     public function __construct()
     {
-        $this->route = OrchidRoutes::INFO_PAGES;
+        $this->route = OrchidRoutes::PAGES;
+        $this->name = $this->route->getTitle();
     }
 
 
@@ -75,12 +74,6 @@ class PageList extends ListScreenPattern
     {
         $data = $request->input('item');
 
-        $validator = Validator::make($data, $this->getRules(), $this->getMessages());
-
-        if ($validator->fails()) {
-            return redirect()->route($this->listRedirect)->withErrors($validator);
-        }
-
         if ($data['type'] === 'template') {
             $data['type'] = $data['template'];
             unset($data['template']);
@@ -95,21 +88,5 @@ class PageList extends ListScreenPattern
         }
 
         return redirect()->route($this->updateRoute, [$page->id])->withInput();
-    }
-
-    protected function getRules(): array
-    {
-        return [
-            'code' => ['bail', 'required', 'regex:~^[A-Za-z0-9\-_]+$~', Rule::unique(Page::TABLE_NAME)],
-        ];
-    }
-
-    protected function getMessages(): array
-    {
-        return [
-            'code.required' => 'Укажите код брэнда',
-            'code.regex' => 'В коде допустимы только цифры и латинские буквы',
-            'code.unique' => 'Такой код уже используется',
-        ];
     }
 }

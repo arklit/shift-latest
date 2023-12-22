@@ -6,6 +6,7 @@ use App\Orchid\Fields\Cropper;
 use App\Orchid\Fields\TinyMce;
 use Orchid\Screen\Fields\Group;
 use Orchid\Screen\Fields\Input;
+use Orchid\Screen\Fields\Upload;
 
 class PageLayout extends AbstractPageLayout
 {

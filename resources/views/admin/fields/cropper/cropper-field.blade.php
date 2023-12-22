@@ -33,7 +33,7 @@
                            accept="image/*"
                            data-cropperrocont-target="upload"
                            data-action="change->cropperrocont#upload"
-                           class="d-none">
+                           class="d-none cropper-change-input">
                 </label>
 
                 <button type="button" class="btn btn-outline-danger cropper-remove"
@@ -46,7 +46,7 @@
         </div>
         <img src="" alt="" id="test-image">
 
-        <input class="cropper-path d-none"
+        <input class="cropper-path"
                type="text"
                data-cropperrocont-target="source"
             {{ $attributes }}>

@@ -20,8 +20,6 @@ return new class extends Migration
             $table->string('code');
             $table->text('description')->nullable();
             $table->integer('sort')->default(0);
-            $table->string('seo_title');
-            $table->text('seo_description')->nullable();
             $table->timestamps();
         });
     }

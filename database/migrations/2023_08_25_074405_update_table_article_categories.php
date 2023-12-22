@@ -15,7 +15,6 @@ return new class extends Migration
     {
         Schema::table('article_categories', function (Blueprint $table) {
             $table->string('code')->unique()->change();
-           $table->string('seo_title')->nullable()->change();
         });
     }
 

@@ -75,7 +75,7 @@
                 <div class="modal-footer">
                     @if(!$withoutCloseButton)
                         <button type="button" class="btn btn-link" data-bs-dismiss="modal">
-                            {{ $close }}
+                            <span>{{ $close }}</span>
                         </button>
                     @endif
 
@@ -85,7 +85,7 @@
                                     id="submit-modal-{{$key}}"
                                     data-turbo="{{ var_export($turbo) }}"
                                     class="btn btn-default">
-                                {{ $apply }}
+                                <span>{{ $apply }}</span>
                             </button>
                         @endif
                     @else

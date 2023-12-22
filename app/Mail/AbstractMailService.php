@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\Configurator;
 use Illuminate\Support\Facades\Mail;
 
 abstract class AbstractMailService
@@ -9,15 +10,9 @@ abstract class AbstractMailService
     protected CommonMailer $mailer;
     protected string $view;
     protected string $subject;
-    protected array $prodMails = [];
-    protected array $debugMails = [];
-
+    protected string $mailKey;
     protected function send(array $data, array $savedFiles = [], array $memoryFiles = []): bool
     {
-        if (config('rocont.is_debug')) {
-            return false;
-        }
-
         $this->mailer = new CommonMailer($data, $this->view);
         $this->mailer->subject = $this->subject;
 
@@ -33,7 +28,9 @@ abstract class AbstractMailService
             }
         }
 
-        $recipients = app()->isProduction() ? $this->prodMails : $this->debugMails;
+        $key = $this->mailKey ?? 'email';
+
+        $recipients = Configurator::query()->where('key', $key)->first()->value;
         Mail::to($recipients)->send($this->mailer);
         return true;
     }
