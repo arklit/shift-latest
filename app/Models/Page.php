@@ -26,6 +26,11 @@ class Page extends ProtoModel
         return $this->hasMany(self::class, 'parent_id', 'id')->active();
     }
 
+    public function removableChildren()
+    {
+        return $this->hasMany(self::class, 'parent_id', 'id');
+    }
+
     public function childrenRecursive()
     {
         return $this->children()->with('childrenRecursive');
@@ -68,7 +73,7 @@ class Page extends ProtoModel
     {
         return [
             'title' => $page->name,
-            'route' => 'web.pages.list',
+            'route' => 'web.pages.page',
             'params' => $page->uri
         ];
     }

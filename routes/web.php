@@ -37,7 +37,7 @@ Route::group(['as' => 'web.'], function () {
     });
 
     Route::controller(PagesController::class)->middleware(Pages::class)->as('pages.')->prefix('/')->group(function () {
-        Route::get('/{params?}', 'getPage')->name('list')->where('params', '.*');
+        Route::get('/{params?}', 'getPage')->name('page')->where('params', '.*');
     });
 });
 

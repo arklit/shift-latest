@@ -1,6 +1,3 @@
-// application.needPreventsFormAbandonmentValue = false;
-console.log(application);
-
 // Обработчик события ввода текста в поле поиска
 let searchInput = document.getElementById('search-tree');
 
@@ -58,7 +55,7 @@ function searchTree(query) {
 }
 
 // Скрипт аккордиона
-function accordion() {
+function tree() {
     document.querySelectorAll('.closed-img').forEach(function (closedImg) {
         closedImg.addEventListener('click', function (event) {
             let label = this.parentNode;
@@ -121,16 +118,15 @@ function debounce(func, delay) {
     };
 }
 
-// document.querySelectorAll('.page-name').forEach(function (item) {
-//     this.addEventListener
-// });
-
 // инициализация методов
-accordion()
-document.querySelector('.uncollapse-all').addEventListener('click', uncollapse);
-document.querySelector('.collapse-all').addEventListener('click', collapse);
+if (searchInput !== null)
+{
+    tree()
+    document.querySelector('.uncollapse-all').addEventListener('click', uncollapse);
+    document.querySelector('.collapse-all').addEventListener('click', collapse);
 
-searchInput.addEventListener('input', debounce(function () {
-    let query = searchInput.value;
-    searchTree(query);
-}, 500)); // Задержка в 500 миллисекунд
+    searchInput.addEventListener('input', debounce(function () {
+        let query = searchInput.value;
+        searchTree(query);
+    }, 200)); // Задержка в 500 миллисекунд
+}
