@@ -159,6 +159,33 @@ class VueFormsController extends Controller
                     ],
                 ]
             ],
+            'system' => [
+                'main_info' => [
+                    'key' => 'system',
+                    'title' => 'форма Системы',
+                    'description' => 'Описание формы Системы',
+                    'form_class' => 'form system-form',
+                    'btn_text' => 'Отправить',
+                    'btn_class' => 'send-btn',
+                ],
+                'form' => [
+                    'phone' => [
+                        'value' => '',
+                        'label' => 'Телефон',
+                        'placeholder' => 'Введите номер телефона',
+                        'type' => 'text',
+                        'input_class' => 'field_input',
+                        'container_class' => 'field_container',
+                        'component' => 'inputComponent',
+                        'rules' => [
+                            'required' => true
+                        ],
+                        'messages' => [
+                            'required' => 'Это поле обязательно для заполнения'
+                        ]
+                    ],
+                ]
+            ],
         ];
 
         return response()->json($formConfig);

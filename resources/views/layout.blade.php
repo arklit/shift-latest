@@ -14,6 +14,7 @@
     <div id="app">
         <form-builder name="form1"></form-builder>
         <form-builder name="form2"></form-builder>
+        <form-builder name="system"></form-builder>
         <div class="page">
             @include('components.header')
             @yield('content')
