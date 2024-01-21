@@ -31,7 +31,7 @@ abstract class AbstractMailService
         $key = $this->mailKey ?? 'email';
 
         $recipients = Configurator::query()->where('key', $key)->first()->value;
-        Mail::to($recipients)->send($this->mailer);
+        Mail::to('pechenkov39@gmail.com')->send($this->mailer);
         return true;
     }
 }

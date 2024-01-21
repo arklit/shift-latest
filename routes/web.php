@@ -1,8 +1,9 @@
 <?php
 
 use App\Helpers\Constants;
-use App\Http\Controllers\AjaxController;
+use App\Http\Controllers\OrchidController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\FormsController;
 use App\Http\Controllers\MainPageController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\RobotsTxtController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\SimpleFormsController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TemplatesController;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\VueFormsController;
 use App\Http\Middleware\Pages;
 use Illuminate\Support\Facades\Route;
 
@@ -18,13 +20,16 @@ Route::get('/sitemap.xml', SitemapController::class)->name('xml-map');
 Route::get('/robots.txt', RobotsTxtController::class)->name('robots-txt');
 
 Route::group(['prefix' => 'ajax'], function () {
-    Route::controller(SimpleFormsController::class)->as('forms.')->prefix('/forms')->group(function () {
+    Route::controller(FormsController::class)->as('forms.')->prefix('/forms')->group(function () {
         Route::get('/{code}/get', 'getForm')->name('get');
         Route::post('/{code}/send', 'sendForm')->name('send');
     });
 
+    Route::get('/get-form-config', [VueFormsController::class, 'getFormConfig']);
+    Route::get('/get-options', [VueFormsController::class, 'getOptions']);
+
     Route::post('/search-tree', [PagesController::class, 'search'])->name('search');
-    Route::post('/send-modal', [AjaxController::class, 'validateForm'])->name('validate.modals');
+    Route::post('/send-modal', [OrchidController::class, 'validateForm'])->name('validate.modals');
 });
 
 Route::group(['as' => 'web.'], function () {

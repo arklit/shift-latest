@@ -1,5 +1,6 @@
 import './bootstrap';
 import './ui';
+import './vue/initialization'
 import FormsUsageWithValidation from "./form";
 
 let data = {
