@@ -114,7 +114,6 @@ export default {
         },
         updateField(fieldName, value) {
             this.formModel[fieldName] = value;
-            console.log(fieldName, value)
         },
         async getFormConfig() {
             try {
