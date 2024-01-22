@@ -117,15 +117,16 @@ export default {
         },
         async getFormConfig() {
             try {
-                const response = await axios.get('/ajax/get-form-config');
-                const formConfigs = response.data;
-                this.validationForm = formConfigs;
-                const selectedFormConfig = formConfigs[this.name];
+                const response = await axios.post('/ajax/get-form-config/' + this.name);
+                const formConfig = response.data;
+                this.validationForm = formConfig;
 
-                this.form = selectedFormConfig?.form || null;
-                this.formInfo = selectedFormConfig?.main_info || null;
-                const {messages} = this.extractValidationRulesAndMessages(formConfigs, this.name);
+                this.form = formConfig?.form || null;
+                this.formInfo = formConfig?.info || null;
+                const {messages} = this.extractValidationRulesAndMessages(formConfig, this.name);
                 this.validations = messages;
+
+                console.log(this.form, this.formInfo, this.validations);
             } catch (error) {
                 console.log(error);
             }
@@ -201,7 +202,7 @@ export default {
         generateFormModel(formConfig) {
             const model = {};
             for (const key in formConfig) {
-                if (key !== 'main_info' && key !== 'form' && typeof formConfig[key] === 'object') {
+                if (key !== 'info' && key !== 'form' && typeof formConfig[key] === 'object') {
                     if (key.includes('fields_')) {
                         Object.assign(model, formConfig[key]);
                     } else {

@@ -25,7 +25,7 @@ Route::group(['prefix' => 'ajax'], function () {
         Route::post('/{code}/send', 'sendForm')->name('send');
     });
 
-    Route::get('/get-form-config', [VueFormsController::class, 'getFormConfig']);
+    Route::post('/get-form-config/{code}', [VueFormsController::class, 'getFormConfig']);
     Route::get('/get-options', [VueFormsController::class, 'getOptions']);
 
     Route::post('/search-tree', [PagesController::class, 'search'])->name('search');
