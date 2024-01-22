@@ -6,21 +6,12 @@
 
 <script>
 import vSelect from 'vue-select';
-
+import { commonProps } from '../props.js';
 export default {
     components: {
         'v-select': vSelect,
     },
-    props: {
-        modelValue: String|Object,
-        label: String,
-        placeholder: String,
-        name: String,
-        className: String,
-        value: String,
-        errors: Object,
-        type: String
-    },
+    props: commonProps,
     emits: ['update:modelValue'],
     data() {
         return {

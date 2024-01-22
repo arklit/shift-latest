@@ -19,19 +19,8 @@ use Symfony\Component\HttpFoundation\Response;
 class FormsController extends Controller
 {
     protected array $params;
-
+    protected array $validation;
     use CommonResponsesTrait;
-
-    /**
-     * Метод получения шаблонов вёрстки для стандартных форм
-     * @param string $code
-     * @return Application|Factory|View
-     */
-    public function getForm(string $code)
-    {
-        $this->prepare($code);
-        return view($this->params['form_view']);
-    }
 
     /**
      * Метод отправки стандартных форм
@@ -42,7 +31,7 @@ class FormsController extends Controller
     public function sendForm(Request $request, string $code): JsonResponse
     {
         $this->prepare($code);
-        $validator = Validator::make($request->all(), $this->params['rules'], $this->params['messages']);
+        $validator = Validator::make($request->all(), $this->validation['rules'], $this->validation['messages']);
 
         if ($validator->fails()) {
             return $this->responseFail(
@@ -71,6 +60,7 @@ class FormsController extends Controller
     protected function prepare(string $code): void
     {
         $this->params = CommonHelper::getPreset('forms.' . $code);
+        $this->validation = (new CommonHelper)->extractValidationRulesAndMessages($this->params);
         abort_if(!$this->params, 404);
     }
 }

@@ -11,7 +11,7 @@ use App\Http\Controllers\SimpleFormsController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TemplatesController;
 use App\Http\Controllers\TestController;
-use App\Http\Controllers\VueFormsController;
+use App\Http\Controllers\FormBuilderController;
 use App\Http\Middleware\Pages;
 use Illuminate\Support\Facades\Route;
 
@@ -25,8 +25,8 @@ Route::group(['prefix' => 'ajax'], function () {
         Route::post('/{code}/send', 'sendForm')->name('send');
     });
 
-    Route::post('/get-form-config/{code}', [VueFormsController::class, 'getFormConfig']);
-    Route::get('/get-options', [VueFormsController::class, 'getOptions']);
+    Route::post('/get-form-config/{code}', [FormBuilderController::class, 'getFormConfig']);
+    Route::get('/get-options', [FormBuilderController::class, 'getOptions']);
 
     Route::post('/search-tree', [PagesController::class, 'search'])->name('search');
     Route::post('/send-modal', [OrchidController::class, 'validateForm'])->name('validate.modals');

@@ -4,7 +4,6 @@ return [
     'order' => [
         'mail_method' => 'regularMailMethod',
         'subject' => 'Форма заказа',
-        'form_view' => 'forms.order-form',
         'letter_view' => 'mails.admin.order-form',
         'mail_key' => 'email',
         'info' => [
@@ -15,14 +14,14 @@ return [
             'btn_class' => 'btn',
         ],
         'form' => [
-            'name' => [
+            'date' => [
                 'value' => '',
-                'label' => 'Имя',
-                'placeholder' => 'Введите имя',
+                'label' => 'Дата',
+                'placeholder' => '__.__.____',
                 'type' => 'text',
-                'input_class' => 'field_input',
+                'input_class' => 'field_date',
                 'container_class' => 'field_container',
-                'component' => 'inputComponent',
+                'component' => 'datePickerComponent',
                 'rules' => [
                     'required' => true,
                     'maxLength' => 10
@@ -53,15 +52,18 @@ return [
                 'value' => '',
                 'label' => 'Телефон',
                 'placeholder' => 'Введите номер телефона',
+                'mask' => '+7 (###) ###-##-##',
                 'type' => 'text',
                 'input_class' => 'field_input',
                 'container_class' => 'field_container',
                 'component' => 'inputComponent',
                 'rules' => [
-                    'required' => true
+                    'required' => true,
+                    'minLength' => 18
                 ],
                 'messages' => [
-                    'required' => 'Это поле обязательно для заполнения'
+                    'required' => 'Это поле обязательно для заполнения',
+                    'minLength' => 'Введите полный номер телефона'
                 ]
             ],
             'select' => [
@@ -71,7 +73,7 @@ return [
                 'type' => 'select',
                 'input_class' => 'field_select',
                 'container_class' => 'field_container',
-                'component' => 'select-Component',
+                'component' => 'selectComponent',
                 'rules' => [
                     'required' => true
                 ],
@@ -95,14 +97,15 @@ return [
                         'required' => 'Это поле обязательно для заполнения'
                     ]
                 ],
-                'b' => [
+                'docs' => [
                     'value' => '',
-                    'label' => 'b',
-                    'placeholder' => 'b',
+                    'label' => 'Документы',
+                    'placeholder' => '',
                     'type' => 'text',
-                    'input_class' => 'field_input',
+                    'input_class' => 'field_file',
                     'container_class' => 'field_container',
-                    'component' => 'inputComponent',
+                    'component' => 'fileComponent',
+                    'multiple' => false,
                     'rules' => [
                         'required' => true
                     ],
@@ -116,16 +119,47 @@ return [
     'feedback' => [
         'mail_method' => 'regularMailMethod',
         'subject' => 'Форма обратной связи"',
-        'form_view' => 'forms.feedback-form',
         'letter_view' => 'mails.admin.feedback-form',
         'mail_key' => 'reg_email',
-        'rules' => [
-            'name' => ['bail', 'required'],
-            'phone' => ['bail', 'required'],
+        'info' => [
+            'key' => 'feedback',
+            'title' => 'форма 2',
+            'description' => 'Описание формы 2',
+            'form_class' => 'form',
+            'btn_text' => 'text',
+            'btn_class' => 'btn',
         ],
-        'messages' => [
-            'name.required' => 'Поле "Имя" обязательно для заполнения',
-            'phone.required' => 'Поле "Email" обязательно для заполнения',
-        ],
+        'form' => [
+            'name' => [
+                'value' => '',
+                'label' => 'Имя',
+                'placeholder' => 'Введите имя',
+                'type' => 'text',
+                'input_class' => 'field_input',
+                'container_class' => 'field_container',
+                'component' => 'inputComponent',
+                'rules' => [
+                    'required' => true,
+                ],
+                'messages' => [
+                    'required' => 'Это поле обязательно для заполнения',
+                ]
+            ],
+            'phone' => [
+                'value' => '',
+                'label' => 'Телефон',
+                'placeholder' => 'Введите номер телефона',
+                'type' => 'text',
+                'input_class' => 'field_input',
+                'container_class' => 'field_container',
+                'component' => 'inputComponent',
+                'rules' => [
+                    'required' => true
+                ],
+                'messages' => [
+                    'required' => 'Это поле обязательно для заполнения'
+                ]
+            ],
+        ]
     ],
 ];

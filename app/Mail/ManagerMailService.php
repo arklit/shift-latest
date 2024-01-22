@@ -4,7 +4,7 @@ namespace App\Mail;
 
 class ManagerMailService extends AbstractMailService
 {
-    public function regularMailMethod(array $formData, string $subject, $letterView, string $mailKey)
+    public function regularMailMethod(array $formData, string $subject, $letterView, string $mailKey): bool
     {
         $this->view = $letterView;
         $this->subject = $subject;

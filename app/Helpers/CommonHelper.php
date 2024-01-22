@@ -27,23 +27,34 @@ class CommonHelper
         return (is_null($block) || empty($data)) ? $data : $data[$block];
     }
 
-    public static function setBreadCrumbs(string $route, string $parentRoute, string $title, array $params): void
+    public function extractValidationRulesAndMessages($form): array
     {
-        Breadcrumbs::for($route, fn(Trail $t) => $t->parent($parentRoute)
-            ->push($title, route($route, $params)));
+        $validationRules = [];
+        $validationMessages = [];
+
+        $this->processFields($form['form'], '', $validationRules, $validationMessages);
+
+        return [
+            'rules' => $validationRules,
+            'messages' => $validationMessages
+        ];
     }
 
-    public static function getBreadCrumbs(Trail $t, array $crumbs)
+    private function processFields($fields, $parentPath, &$validationRules, &$validationMessages): void
     {
-        $t->parent(ClientRoutes::MAIN_PAGE);
-        foreach ($crumbs as $crumb) {
-            $t->push($crumb['title'], route($crumb['route'], $crumb['params'] ?? []));
+        foreach ($fields as $fieldName => $field) {
+            $path = $parentPath ? $parentPath . '.' . $fieldName : $fieldName;
+
+            if (isset($field['rules'])) {
+                foreach ($field['rules'] as $ruleKey => $ruleValue) {
+                    $validationRules[$path . '.' . $ruleKey] = $ruleValue;
+                    $validationMessages[$path . '.' . $ruleKey] = $field['messages'][$ruleKey];
+                }
+            }
+
+            if (isset($field['form']) && is_array($field['form'])) {
+                $this->processFields($field['form'], $path, $validationRules, $validationMessages);
+            }
         }
-        return $t;
-    }
-
-    public static function setCrumbs($crumbs): void
-    {
-        Breadcrumbs::for(Route::currentRouteName(), fn(Trail $t) => CommonHelper::getBreadCrumbs($t, $crumbs));
     }
 }

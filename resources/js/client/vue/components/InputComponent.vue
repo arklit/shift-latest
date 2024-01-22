@@ -1,23 +1,18 @@
 <template>
     <label>{{ label }}</label>
-    <input :class="className" :type="type" :placeholder="placeholder" :name="name" :value="internalValue" @input="onInput">
+    <input v-mask="mask" :class="className" :type="type" :placeholder="placeholder" :name="name" :value="internalValue" @input="onInput">
     <span class="form-error" v-show="errors.$dirty">{{ errors.$errors[0]?.$message }}</span>
 </template>
 
 <script>
+import VueMask from 'v-mask';
+import { commonProps } from '../props.js';
 export default {
-    props: {
-        modelValue: String,
-        label: String,
-        type: String,
-        placeholder: String,
-        name: String,
-        className: String,
-        value: String,
-        errors: Object
-    },
+    props: commonProps,
     emits: ['update:modelValue'],
-
+    components: {
+        VueMask
+    },
     computed: {
         internalValue: {
             get() {

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\CommonHelper;
 use App\Models\Article;
 
-class VueFormsController extends Controller
+class FormBuilderController extends Controller
 {
     public function getFormConfig(string $code)
     {

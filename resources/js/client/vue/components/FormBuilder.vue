@@ -15,6 +15,8 @@
                     :placeholder="field.placeholder"
                     :class-name="field.input_class"
                     :errors="v$.formModel[subKey]"
+                    :mask="field.mask ?? ''"
+                    :multiple="field.multiple ?? false"
                     @update:modelValue="updateField(subKey, $event);"
                 />
             </div>
@@ -29,6 +31,8 @@
                 :placeholder="field.placeholder"
                 :class-name="field.input_class"
                 :errors="v$.formModel[key]"
+                :mask="field.mask ?? ''"
+                :multiple="field.multiple ?? false"
                 @update:modelValue="updateField(key, $event);"
             />
         </div>
@@ -41,6 +45,8 @@ import axios from "axios";
 import {isInteger, toNumber} from "lodash/lang";
 import InputComponent from './InputComponent.vue'
 import SelectComponent from "./SelectComponent.vue";
+import DatePickerComponent from "./DatePickerComponent.vue";
+import FileComponent from "./FileComponent.vue";
 import {useVuelidate} from '@vuelidate/core';
 import {
     required,
@@ -62,7 +68,9 @@ export default {
     name: 'FormBuilder',
     components: {
         InputComponent,
-        SelectComponent
+        SelectComponent,
+        DatePickerComponent,
+        FileComponent
     },
     props: {
         name: String
@@ -71,7 +79,7 @@ export default {
         return {
             form: {},
             formInfo: {},
-            formModel: this.generateFormModel(this.form),
+            formModel: {},
             validationForm: {},
             v$: useVuelidate(),
             validations: {},
@@ -114,6 +122,8 @@ export default {
         },
         updateField(fieldName, value) {
             this.formModel[fieldName] = value;
+            console.log(fieldName, value);
+            console.log(this.formModel)
         },
         async getFormConfig() {
             try {
@@ -121,12 +131,11 @@ export default {
                 const formConfig = response.data;
                 this.validationForm = formConfig;
 
-                this.form = formConfig?.form || null;
+                this.form = formConfig.form || null;
                 this.formInfo = formConfig?.info || null;
-                const {messages} = this.extractValidationRulesAndMessages(formConfig, this.name);
+                const {messages} = this.extractValidationRulesAndMessages(this.form);
                 this.validations = messages;
-
-                console.log(this.form, this.formInfo, this.validations);
+                this.formModel = this.generateFormModel(this.form);
             } catch (error) {
                 console.log(error);
             }
@@ -165,49 +174,43 @@ export default {
             }
         },
 
-        processField(field, path, validationRules, validationMessages) {
-            if (field.rules) {
-                validationRules[path] = {};
-                validationMessages[path] = {};
-                for (const ruleKey in field.rules) {
-                    if (ruleKey === null || ruleKey === undefined || ruleKey === '') {
-                        continue; // Не требуется валидация для пустых полей
+        processFields(fields, parentPath, validationRules, validationMessages) {
+            for (const key in fields) {
+                const field = fields[key];
+                const path = parentPath ? `${key}` : key;
+                if (field.rules) {
+                    validationRules[path] = {};
+                    validationMessages[path] = {};
+                    for (const ruleKey in field.rules) {
+                        if (ruleKey && field.rules[ruleKey]) {
+                            const rule = field.rules[ruleKey];
+                            const ruleFunction = this.createRule(ruleKey, rule);
+                            validationRules[path][ruleKey] = rule;
+                            validationMessages[path][ruleKey] = helpers.withMessage(field.messages[ruleKey], ruleFunction);
+                        }
                     }
-                    const rule = field.rules[ruleKey];
-                    const ruleFunction = this.createRule(ruleKey, rule);
-                    validationRules[path][ruleKey] = rule;
-                    validationMessages[path][ruleKey] = helpers.withMessage(field.messages[ruleKey], ruleFunction);
-                }
-            } else if (typeof field === 'object') {
-                for (const key in field) {
-                    this.processField(field[key], `${key}`, validationRules, validationMessages);
+                } else if (typeof field === 'object') {
+                    this.processFields(field, path, validationRules, validationMessages);
                 }
             }
         },
 
-        extractValidationRulesAndMessages(config, formName) {
+        extractValidationRulesAndMessages(fields) {
             const validationRules = {};
             const validationMessages = {};
 
-            const form = config[formName];
-            if (form) {
-                this.processField(form, formName, validationRules, validationMessages);
-            } else {
-                console.error(`Form with name '${formName}' not found in the config.`);
-            }
+            this.processFields(fields, '', validationRules, validationMessages);
 
-            return {rules: validationRules, messages: validationMessages};
+            return { rules: validationRules, messages: validationMessages };
         },
 
-        generateFormModel(formConfig) {
+        generateFormModel(form) {
             const model = {};
-            for (const key in formConfig) {
-                if (key !== 'info' && key !== 'form' && typeof formConfig[key] === 'object') {
-                    if (key.includes('fields_')) {
-                        Object.assign(model, formConfig[key]);
-                    } else {
-                        model[key] = formConfig[key].value;
-                    }
+            for (const key in form) {
+                if (key.includes('fields_')) {
+                    Object.assign(model, form[key].value);
+                } else {
+                    model[key] = form[key].value;
                 }
             }
             return model;
