@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\Configurator;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Mail;
 
 abstract class AbstractMailService
@@ -23,8 +24,9 @@ abstract class AbstractMailService
         }
 
         if (!empty($memoryFiles)) {
+            /** @var UploadedFile $file */
             foreach ($memoryFiles as $name => $file) {
-                $this->mailer->attachData($file, $name);
+                $this->mailer->attachData($file->get(), $file->getClientOriginalName());
             }
         }
 

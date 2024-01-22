@@ -14,6 +14,21 @@ return [
             'btn_class' => 'btn',
         ],
         'form' => [
+            'name' => [
+                'value' => '',
+                'label' => 'Имя',
+                'placeholder' => 'Введите имя',
+                'type' => 'text',
+                'input_class' => 'field_input',
+                'container_class' => 'field_container',
+                'component' => 'inputComponent',
+                'rules' => [
+                    'required' => true
+                ],
+                'messages' => [
+                    'required' => 'Это поле обязательно для заполнения'
+                ]
+            ],
             'date' => [
                 'value' => '',
                 'label' => 'Дата',
@@ -82,10 +97,10 @@ return [
                 ]
             ],
             'fields_1' => [
-                'a' => [
+                'surname' => [
                     'value' => '',
-                    'label' => 'a',
-                    'placeholder' => 'a',
+                    'label' => 'Фамилия',
+                    'placeholder' => 'Фамилия',
                     'type' => 'text',
                     'input_class' => 'field_input',
                     'container_class' => 'field_container',
@@ -97,7 +112,22 @@ return [
                         'required' => 'Это поле обязательно для заполнения'
                     ]
                 ],
-                'docs' => [
+                'history' => [
+                    'value' => '',
+                    'label' => 'Фамилия',
+                    'placeholder' => 'Фамилия',
+                    'type' => 'text',
+                    'input_class' => 'field_input',
+                    'container_class' => 'field_container',
+                    'component' => 'inputComponent',
+                    'rules' => [
+                        'required' => true
+                    ],
+                    'messages' => [
+                        'required' => 'Это поле обязательно для заполнения'
+                    ]
+                ],
+                /*'docs' => [
                     'value' => '',
                     'label' => 'Документы',
                     'placeholder' => '',
@@ -112,7 +142,7 @@ return [
                     'messages' => [
                         'required' => 'Это поле обязательно для заполнения'
                     ]
-                ],
+                ],*/
             ]
         ]
     ],

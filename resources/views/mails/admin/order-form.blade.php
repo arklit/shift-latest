@@ -4,6 +4,7 @@
     {{ $email }} <br>
     {{ $phone }} <br>
     {{ $select }} <br>
-    {{ $a }} <br>
-    {{ $b }}
+    {{ $surname }} <br>
+    {{ $history }} <br>
+    {{ $date }} <br>
 @endsection

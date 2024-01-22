@@ -44,11 +44,24 @@ class CommonHelper
     {
         foreach ($fields as $fieldName => $field) {
             $path = $parentPath ? $parentPath . '.' . $fieldName : $fieldName;
-
             if (isset($field['rules'])) {
                 foreach ($field['rules'] as $ruleKey => $ruleValue) {
-                    $validationRules[$path . '.' . $ruleKey] = $ruleValue;
+                    $rule = $this->convertVuelidateRulesToLaravel($ruleKey, $ruleValue);
+                    $validationRules[$path][] = $rule;
                     $validationMessages[$path . '.' . $ruleKey] = $field['messages'][$ruleKey];
+                }
+            }
+
+            if (str_contains($fieldName, 'fields_')) {
+                foreach ($field as $subFieldName => $subField) {
+                    if (isset($subField['rules'])) {
+                        $subPath = $subFieldName;
+                        foreach ($subField['rules'] as $subRuleKey => $subRuleValue) {
+                            $subRule = $this->convertVuelidateRulesToLaravel($subRuleKey, $subRuleValue);
+                            $validationRules[$subPath][] = $subRule;
+                            $validationMessages[$subPath . '.' . $subRuleKey] = $subField['messages'][$subRuleKey];
+                        }
+                    }
                 }
             }
 
@@ -56,5 +69,27 @@ class CommonHelper
                 $this->processFields($field['form'], $path, $validationRules, $validationMessages);
             }
         }
+    }
+
+    function convertVuelidateRulesToLaravel($vuelidateRule, $ruleValue): string
+    {
+        return match ($vuelidateRule) {
+            'required' => 'required',
+            'requiredIf' => 'required_if:' . $ruleValue,
+            'requiredUnless' => 'required_unless:' . $ruleValue,
+            'minLength' => 'min:' . $ruleValue,
+            'maxLength' => 'max:' . $ruleValue,
+            'email' => 'email',
+            'numeric' => 'numeric',
+            'alpha' => 'alpha',
+            'alphaNum' => 'alpha_num',
+            'alphaDash' => 'alpha_dash',
+            'alphaSpace' => 'alpha_space',
+            'regex' => 'regex:' . $ruleValue,
+            'unique' => 'unique:' . $ruleValue,
+            'confirmed' => 'same:' . $ruleValue,
+            'in' => 'in:' . $ruleValue,
+            default => $vuelidateRule
+        };
     }
 }

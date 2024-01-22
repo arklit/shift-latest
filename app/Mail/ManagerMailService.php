@@ -11,6 +11,12 @@ class ManagerMailService extends AbstractMailService
         $this->mailKey = $mailKey;
         return $this->send($formData);
     }
+
+    public function sendMailWithMemoryFiles(array $formData, $files, string $subject, $letterView, string $mailKey): bool
+    {
+        $this->view = $letterView;
+        $this->subject = $subject;
+        $this->mailKey = $mailKey;
+        return $this->send($formData, memoryFiles: $files);
+    }
 }
-
-

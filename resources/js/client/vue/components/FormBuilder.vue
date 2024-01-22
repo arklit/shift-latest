@@ -99,22 +99,25 @@ export default {
             } else {
                 console.log('success');
                 this.fillFormData();
+                console.log(this.formData)
                 this.sendFormData();
             }
         },
         fillFormData() {
-            this.formData = {};
+            this.formData = new FormData();
             for (let key in this.formModel) {
-                if (typeof this.formModel[key] === 'object' && this.formModel[key].value !== null) {
-                    this.formData[key] = this.formModel[key].value;
+                if (this.formModel[key] instanceof File) {
+                    this.formData.append(key, this.formModel[key]);
+                } else if (typeof this.formModel[key] === 'object' && this.formModel[key].value !== null) {
+                    this.formData.append(key, this.formModel[key].value);
                 } else {
-                    this.formData[key] = this.formModel[key];
+                    this.formData.append(key, this.formModel[key]);
                 }
             }
         },
         async sendFormData() {
             try {
-                const response = await axios.post('/ajax/forms/' + this.formInfo.key + '/send', this.formData);
+                const response = await axios.post('/ajax/forms/' + this.name + '/send', this.formData);
                 console.log('Form sent successfully', response);
             } catch (error) {
                 console.error('Error sending form', error);
@@ -122,8 +125,6 @@ export default {
         },
         updateField(fieldName, value) {
             this.formModel[fieldName] = value;
-            console.log(fieldName, value);
-            console.log(this.formModel)
         },
         async getFormConfig() {
             try {
@@ -201,7 +202,7 @@ export default {
 
             this.processFields(fields, '', validationRules, validationMessages);
 
-            return { rules: validationRules, messages: validationMessages };
+            return {rules: validationRules, messages: validationMessages};
         },
 
         generateFormModel(form) {
