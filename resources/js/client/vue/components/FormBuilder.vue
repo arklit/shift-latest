@@ -1,19 +1,20 @@
 <template>
-    <form :class="formInfo.form_class" v-if="form">
+    <form :class="formInfo.form_class" v-if="form && true">
         {{ formInfo.title }} <br>
         {{ formInfo.description }}
-        <div v-for="(field, key) in form" :class="field.container_class ?? 'fields_group'" :key="key">
-            <div v-if="key.includes('fields_')" :class="field.container_class" v-for="(field, subKey) in field"
+        <div v-for="(field, key) in form" :class="field.container_field_class ?? 'fields_group'" :key="key">
+            <div v-if="key.includes('fields_')" :class="field.container_field_class" v-for="(field, subKey) in field"
                  :key="subKey">
                 <component
-                    :is="field.component"
+                    :is="field.vue_field_component"
+                    :id="field.id"
                     :name="subKey"
                     :label="field.label"
                     :value="field.value"
                     :modelValue="formModel[subKey]"
                     :type="field.type"
                     :placeholder="field.placeholder"
-                    :class-name="field.input_class"
+                    :class-name="field.field_class"
                     :errors="v$.formModel[subKey]"
                     :mask="field.mask ?? ''"
                     :multiple="field.multiple ?? false"
@@ -22,21 +23,22 @@
             </div>
             <component
                 v-else
-                :is="field.component"
+                :is="field.vue_field_component"
                 :name="key"
+                :id="field.id"
                 :label="field.label"
                 :value="field.value"
                 :modelValue="formModel[key]"
                 :type="field.type"
                 :placeholder="field.placeholder"
-                :class-name="field.input_class"
+                :class-name="field.field_class"
                 :errors="v$.formModel[key]"
                 :mask="field.mask ?? ''"
                 :multiple="field.multiple ?? false"
                 @update:modelValue="updateField(key, $event);"
             />
         </div>
-        <button @click.prevent="onSubmit" :class="formInfo.btn_class">{{ formInfo.btn_text }}</button>
+        <button @click.prevent="onSubmit" :class="formInfo.button_class">{{ formInfo.button_text }}</button>
     </form>
 </template>
 
@@ -80,7 +82,6 @@ export default {
             form: {},
             formInfo: {},
             formModel: {},
-            validationForm: {},
             v$: useVuelidate(),
             validations: {},
             formData: {},
@@ -105,10 +106,18 @@ export default {
         },
         fillFormData() {
             this.formData = new FormData();
+            console.log(this.formModel)
             for (let key in this.formModel) {
-                if (this.formModel[key] instanceof File) {
+                if (Array.isArray(this.formModel[key])) {
+                    for (let file of this.formModel[key]) {
+                        this.formData.append(key + '[]', file);
+                    }
+                } else if (this.formModel[key] instanceof File) {
                     this.formData.append(key, this.formModel[key]);
-                } else if (typeof this.formModel[key] === 'object' && this.formModel[key].value !== null) {
+                } else if (
+                    typeof this.formModel[key] === 'object' &&
+                    this.formModel[key].value !== null
+                ) {
                     this.formData.append(key, this.formModel[key].value);
                 } else {
                     this.formData.append(key, this.formModel[key]);
@@ -130,10 +139,8 @@ export default {
             try {
                 const response = await axios.post('/ajax/get-form-config/' + this.name);
                 const formConfig = response.data;
-                this.validationForm = formConfig;
-
-                this.form = formConfig.form || null;
-                this.formInfo = formConfig?.info || null;
+                this.form = formConfig.fields || null;
+                this.formInfo = formConfig?.view || null;
                 const {messages} = this.extractValidationRulesAndMessages(this.form);
                 this.validations = messages;
                 this.formModel = this.generateFormModel(this.form);
@@ -142,52 +149,61 @@ export default {
             }
         },
 
-        createRule(ruleName, ruleValue) {
-            if (ruleName === 'required') {
-                return required;
-            } else if (ruleName === 'requiredIf') {
-                return requiredIf(ruleValue);
-            } else if (ruleName === 'requiredUnless') {
-                return requiredUnless(ruleValue);
-            } else if (ruleName === 'minLength') {
-                return minLength(ruleValue);
-            } else if (ruleName === 'maxLength') {
+        createRule(ruleName) {
+            if (ruleName.includes('max')) {
+                const ruleValue = parseInt(ruleName.split(':')[1]); // Получаем значение из строки
                 return maxLength(ruleValue);
+            } else if (ruleName.includes('min')) {
+                const ruleValue = parseInt(ruleName.split(':')[1]); // Получаем значение из строки
+                return minLength(ruleValue);
+            } else if (ruleName === 'required') {
+                return required ;
+            } else if (ruleName === 'required_if') {
+                return requiredIf(ruleName);
+            } else if (ruleName === 'required_unless') {
+                return requiredUnless(ruleName);
             } else if (ruleName === 'email') {
                 return email;
             } else if (ruleName === 'numeric') {
                 return numeric;
             } else if (ruleName === 'alpha') {
                 return alpha;
-            } else if (ruleName === 'alphaNum') {
+            } else if (ruleName === 'alpha_num') {
                 return alphaNum;
             } else if (ruleName === 'integer') {
                 return integer;
             } else if (ruleName === 'decimal') {
                 return decimal;
             } else if (ruleName === 'between') {
-                const [min, max] = ruleValue;
-                return between(min, max);
-            } else if (ruleName === 'sameAs') {
-                return sameAs(ruleValue);
+                const [min, max] = ruleName.split(':')[1].split(',');
+                return between([min, max]);
+            } else if (ruleName === 'same') {
+                return sameAs(ruleName);
             } else {
-                return () => ''; // Правило по умолчанию, если название не распознано
+                return null; // Возвращаем null для неизвестных правил
             }
         },
 
         processFields(fields, parentPath, validationRules, validationMessages) {
             for (const key in fields) {
                 const field = fields[key];
-                const path = parentPath ? `${key}` : key;
+                const path = key;
                 if (field.rules) {
                     validationRules[path] = {};
                     validationMessages[path] = {};
                     for (const ruleKey in field.rules) {
                         if (ruleKey && field.rules[ruleKey]) {
                             const rule = field.rules[ruleKey];
-                            const ruleFunction = this.createRule(ruleKey, rule);
-                            validationRules[path][ruleKey] = rule;
-                            validationMessages[path][ruleKey] = helpers.withMessage(field.messages[ruleKey], ruleFunction);
+                            const ruleParts = rule.split(':');
+                            const ruleName = ruleParts[0];
+                            const ruleFunction = this.createRule(rule, ruleParts[1]); // Передаем имя и значение правила
+                            validationRules[path][ruleKey] = ruleFunction; // Записываем функцию правила
+                            if (field.messages && field.messages[ruleName]) {
+                                if (!validationMessages[path]) {
+                                    validationMessages[path] = {}; // Создаем объект сообщений, если его нет
+                                }
+                                validationMessages[path][ruleName] = helpers.withMessage(field.messages[ruleName], ruleFunction); // Записываем сообщение с правильным ключом
+                            }
                         }
                     }
                 } else if (typeof field === 'object') {
@@ -201,7 +217,6 @@ export default {
             const validationMessages = {};
 
             this.processFields(fields, '', validationRules, validationMessages);
-
             return {rules: validationRules, messages: validationMessages};
         },
 

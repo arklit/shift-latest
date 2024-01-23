@@ -42,11 +42,11 @@ class FormsController extends Controller
         try {
             $payload = $validator->validated();
             $mailer = new ManagerMailService();
-            $method = $this->params['mail_method'];
+            $method = $this->params['send']['method'];
             if (!empty($request->allFiles())) {
-                $mailer->$method($payload, $request->allFiles(), $this->params['subject'], $this->params['letter_view'], $this->params['mail_key']);
+                $mailer->$method($payload, $request->allFiles(), $this->params['send']['subject'], $this->params['send']['view'], $this->params['send']['key']);
             } else {
-                $mailer->$method($payload, $this->params['subject'], $this->params['letter_view'], $this->params['mail_key']);
+                $mailer->$method($payload, $this->params['send']['subject'], $this->params['send']['view'], $this->params['send']['key']);
             }
         } catch (Exception $e) {
             LoggerHelper::debug(json_encode($payload, JSON_UNESCAPED_UNICODE));

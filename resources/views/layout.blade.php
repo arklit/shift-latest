@@ -13,7 +13,6 @@
 <body>
     <div id="app">
         <form-builder name="order"></form-builder>
-        <form-builder name="feedback"></form-builder>
         <div class="page">
             @include('components.header')
             @yield('content')

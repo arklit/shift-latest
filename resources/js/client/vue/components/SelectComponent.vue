@@ -1,7 +1,7 @@
 <template>
     <label>{{ label }}</label>
     <v-select :class="className" :options="options" v-model="selectedValue" @input="onInput"></v-select>
-    <span class="form-error" v-show="errors.$dirty">{{ errors.$errors[0]?.$message }}</span>
+    <span v-if="errors" class="form-error" v-show="errors.$dirty">{{ errors.$errors[0]?.$message }}</span>
 </template>
 
 <script>

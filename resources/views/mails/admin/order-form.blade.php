@@ -5,6 +5,5 @@
     {{ $phone }} <br>
     {{ $select }} <br>
     {{ $surname }} <br>
-    {{ $history }} <br>
     {{ $date }} <br>
 @endsection

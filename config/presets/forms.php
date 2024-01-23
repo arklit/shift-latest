@@ -2,31 +2,36 @@
 
 return [
     'order' => [
-        'mail_method' => 'regularMailMethod',
-        'subject' => 'Форма заказа',
-        'letter_view' => 'mails.admin.order-form',
-        'mail_key' => 'email',
-        'info' => [
+        // Конфигурация по отправке формы
+        'send' => [
+            'method' => 'sendMailWithMemoryFiles',
+            'subject' => 'Форма заказа',
+            'view' => 'mails.admin.order-form',
+            'key' => 'email',
+        ],
+        // Конфигурация по отображению формы
+        'view' => [
             'title' => 'Заголовок формы',
             'description' => 'Описание формы',
             'form_class' => 'form',
-            'btn_text' => 'text',
-            'btn_class' => 'btn',
+            'button_text' => 'text',
+            'button_class' => 'btn',
         ],
-        'form' => [
+        // Конфигурация полей формы
+        'fields' => [
             'name' => [
                 'value' => '',
                 'label' => 'Имя',
                 'placeholder' => 'Введите имя',
                 'type' => 'text',
-                'input_class' => 'field_input',
-                'container_class' => 'field_container',
-                'component' => 'inputComponent',
-                'rules' => [
-                    'required' => true
-                ],
+                'id' => 'name',
+                'field_class' => 'field_input',
+                'container_field_class' => 'field_container',
+                'vue_field_component' => 'inputComponent',
+                'rules' => ['required','max:10'],
                 'messages' => [
-                    'required' => 'Это поле обязательно для заполнения'
+                    'required' => 'Это поле обязательно для заполнения',
+                    'max' => 'Максимальная длина 10 символов'
                 ]
             ],
             'date' => [
@@ -34,16 +39,14 @@ return [
                 'label' => 'Дата',
                 'placeholder' => '__.__.____',
                 'type' => 'text',
-                'input_class' => 'field_date',
-                'container_class' => 'field_container',
-                'component' => 'datePickerComponent',
-                'rules' => [
-                    'required' => true,
-                    'maxLength' => 10
-                ],
+                'id' => 'date',
+                'field_class' => 'field_date',
+                'container_field_class' => 'field_container',
+                'vue_field_component' => 'datePickerComponent',
+                'rules' => ['required'],
                 'messages' => [
                     'required' => 'Это поле обязательно для заполнения',
-                    'maxLength' => 'Максимальная длина 10 символов'
+                    'max' => 'Максимальная длина 10 символов'
                 ]
             ],
             'email' => [
@@ -51,13 +54,11 @@ return [
                 'label' => 'Почта',
                 'placeholder' => 'Введите почту',
                 'type' => 'email',
-                'input_class' => 'field_input',
-                'container_class' => 'field_container',
-                'component' => 'inputComponent',
-                'rules' => [
-                    'required' => true,
-                    'email' => true
-                ],
+                'id' => 'email',
+                'field_class' => 'field_input',
+                'container_field_class' => 'field_container',
+                'vue_field_component' => 'inputComponent',
+                'rules' => ['required', 'email'],
                 'messages' => [
                     'required' => 'Это поле обязательно для заполнения',
                     'email' => 'Это поле должно содержать почту'
@@ -69,31 +70,42 @@ return [
                 'placeholder' => 'Введите номер телефона',
                 'mask' => '+7 (###) ###-##-##',
                 'type' => 'text',
-                'input_class' => 'field_input',
-                'container_class' => 'field_container',
-                'component' => 'inputComponent',
-                'rules' => [
-                    'required' => true,
-                    'minLength' => 18
-                ],
+                'id' => 'phone',
+                'field_class' => 'field_input',
+                'container_field_class' => 'field_container',
+                'vue_field_component' => 'inputComponent',
+                'rules' => ['required', 'min:18'],
                 'messages' => [
                     'required' => 'Это поле обязательно для заполнения',
-                    'minLength' => 'Введите полный номер телефона'
+                    'min' => 'Введите полный номер телефона'
                 ]
             ],
             'select' => [
-                'value' => '',
+                'value' => '123123',
                 'label' => 'Селект',
                 'placeholder' => 'Выберите значение',
                 'type' => 'select',
-                'input_class' => 'field_select',
-                'container_class' => 'field_container',
-                'component' => 'selectComponent',
-                'rules' => [
-                    'required' => true
-                ],
+                'id' => 'select',
+                'field_class' => 'field_select',
+                'container_field_class' => 'field_container',
+                'vue_field_component' => 'selectComponent',
+                'rules' => ['max:10'],
                 'messages' => [
-                    'required' => 'Это поле обязательно для заполнения'
+                    'max' => 'Максимальная длина 10 символов'
+                ]
+            ],
+            'checkbox' => [
+                'value' => false,
+                'label' => 'Согласие с <a href="/policy">политикой конфиденциальности</a>',
+                'placeholder' => '',
+                'type' => 'checkbox',
+                'id' => 'checkbox',
+                'field_class' => 'field_checkbox',
+                'container_field_class' => 'field_container checkbox',
+                'vue_field_component' => 'inputComponent',
+                'rules' => ['required'],
+                'messages' => [
+                    'required' => 'Это поле обязательно для заполнения',
                 ]
             ],
             'fields_1' => [
@@ -102,93 +114,30 @@ return [
                     'label' => 'Фамилия',
                     'placeholder' => 'Фамилия',
                     'type' => 'text',
-                    'input_class' => 'field_input',
-                    'container_class' => 'field_container',
-                    'component' => 'inputComponent',
-                    'rules' => [
-                        'required' => true
-                    ],
+                    'id' => 'surname',
+                    'field_class' => 'field_input',
+                    'container_field_class' => 'field_container',
+                    'vue_field_component' => 'inputComponent',
+                    'rules' => ['required'],
                     'messages' => [
                         'required' => 'Это поле обязательно для заполнения'
                     ]
                 ],
-                'history' => [
-                    'value' => '',
-                    'label' => 'Фамилия',
-                    'placeholder' => 'Фамилия',
-                    'type' => 'text',
-                    'input_class' => 'field_input',
-                    'container_class' => 'field_container',
-                    'component' => 'inputComponent',
-                    'rules' => [
-                        'required' => true
-                    ],
-                    'messages' => [
-                        'required' => 'Это поле обязательно для заполнения'
-                    ]
-                ],
-                /*'docs' => [
+                'docs' => [
                     'value' => '',
                     'label' => 'Документы',
                     'placeholder' => '',
                     'type' => 'text',
-                    'input_class' => 'field_file',
-                    'container_class' => 'field_container',
-                    'component' => 'fileComponent',
-                    'multiple' => false,
-                    'rules' => [
-                        'required' => true
-                    ],
+                    'id' => 'docs',
+                    'field_class' => 'field_file',
+                    'container_field_class' => 'field_container',
+                    'vue_field_component' => 'fileComponent',
+                    'multiple' => true,
+                    'rules' => ['required'],
                     'messages' => [
                         'required' => 'Это поле обязательно для заполнения'
                     ]
-                ],*/
-            ]
-        ]
-    ],
-    'feedback' => [
-        'mail_method' => 'regularMailMethod',
-        'subject' => 'Форма обратной связи"',
-        'letter_view' => 'mails.admin.feedback-form',
-        'mail_key' => 'reg_email',
-        'info' => [
-            'key' => 'feedback',
-            'title' => 'форма 2',
-            'description' => 'Описание формы 2',
-            'form_class' => 'form',
-            'btn_text' => 'text',
-            'btn_class' => 'btn',
-        ],
-        'form' => [
-            'name' => [
-                'value' => '',
-                'label' => 'Имя',
-                'placeholder' => 'Введите имя',
-                'type' => 'text',
-                'input_class' => 'field_input',
-                'container_class' => 'field_container',
-                'component' => 'inputComponent',
-                'rules' => [
-                    'required' => true,
                 ],
-                'messages' => [
-                    'required' => 'Это поле обязательно для заполнения',
-                ]
-            ],
-            'phone' => [
-                'value' => '',
-                'label' => 'Телефон',
-                'placeholder' => 'Введите номер телефона',
-                'type' => 'text',
-                'input_class' => 'field_input',
-                'container_class' => 'field_container',
-                'component' => 'inputComponent',
-                'rules' => [
-                    'required' => true
-                ],
-                'messages' => [
-                    'required' => 'Это поле обязательно для заполнения'
-                ]
             ],
         ]
     ],

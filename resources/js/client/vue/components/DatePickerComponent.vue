@@ -1,7 +1,7 @@
 <template>
-    <label>{{ label }}</label>
-    <input autocomplete="off" v-on:keydown.prevent :class="className + ' base-date-input'" :type="type" :placeholder="placeholder" :name="name" :value="internalValue"/>
-    <span class="form-error" v-show="errors.$dirty">{{ errors.$errors[0]?.$message }}</span>
+    <label :for="id" v-html="label"></label>
+    <input :id="id" autocomplete="off" v-on:keydown.prevent :class="className + ' base-date-input'" :type="type" :placeholder="placeholder" :name="name" :value="internalValue"/>
+    <span v-if="errors" class="form-error" v-show="errors.$dirty">{{ errors.$errors[0]?.$message }}</span>
 </template>
 
 <script>

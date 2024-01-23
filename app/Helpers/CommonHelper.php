@@ -32,7 +32,7 @@ class CommonHelper
         $validationRules = [];
         $validationMessages = [];
 
-        $this->processFields($form['form'], '', $validationRules, $validationMessages);
+        $this->processFields($form['fields'], '', $validationRules, $validationMessages);
 
         return [
             'rules' => $validationRules,
@@ -45,10 +45,10 @@ class CommonHelper
         foreach ($fields as $fieldName => $field) {
             $path = $parentPath ? $parentPath . '.' . $fieldName : $fieldName;
             if (isset($field['rules'])) {
-                foreach ($field['rules'] as $ruleKey => $ruleValue) {
-                    $rule = $this->convertVuelidateRulesToLaravel($ruleKey, $ruleValue);
-                    $validationRules[$path][] = $rule;
-                    $validationMessages[$path . '.' . $ruleKey] = $field['messages'][$ruleKey];
+                foreach ($field['rules'] as $ruleValue) {
+                    $rule = $this->convertVuelidateRulesToLaravel($ruleValue);
+                    $validationRules[$path][] = $ruleValue;
+                    $validationMessages[$path . '.' . $rule] = $field['messages'][$rule];
                 }
             }
 
@@ -56,40 +56,28 @@ class CommonHelper
                 foreach ($field as $subFieldName => $subField) {
                     if (isset($subField['rules'])) {
                         $subPath = $subFieldName;
-                        foreach ($subField['rules'] as $subRuleKey => $subRuleValue) {
-                            $subRule = $this->convertVuelidateRulesToLaravel($subRuleKey, $subRuleValue);
-                            $validationRules[$subPath][] = $subRule;
-                            $validationMessages[$subPath . '.' . $subRuleKey] = $subField['messages'][$subRuleKey];
+                        foreach ($subField['rules'] as $subRuleValue) {
+                            $subRule = $this->convertVuelidateRulesToLaravel($subRuleValue);
+                            $validationRules[$subPath][] = $subRuleValue;
+                            $validationMessages[$subPath . '.' . $subRule] = $subField['messages'][$subRule];
                         }
                     }
                 }
             }
 
-            if (isset($field['form']) && is_array($field['form'])) {
-                $this->processFields($field['form'], $path, $validationRules, $validationMessages);
+            if (isset($field['fields']) && is_array($field['fields'])) {
+                $this->processFields($field['fields'], $path, $validationRules, $validationMessages);
             }
         }
     }
 
-    function convertVuelidateRulesToLaravel($vuelidateRule, $ruleValue): string
+    private function convertVuelidateRulesToLaravel($ruleValue): string
     {
-        return match ($vuelidateRule) {
-            'required' => 'required',
-            'requiredIf' => 'required_if:' . $ruleValue,
-            'requiredUnless' => 'required_unless:' . $ruleValue,
-            'minLength' => 'min:' . $ruleValue,
-            'maxLength' => 'max:' . $ruleValue,
-            'email' => 'email',
-            'numeric' => 'numeric',
-            'alpha' => 'alpha',
-            'alphaNum' => 'alpha_num',
-            'alphaDash' => 'alpha_dash',
-            'alphaSpace' => 'alpha_space',
-            'regex' => 'regex:' . $ruleValue,
-            'unique' => 'unique:' . $ruleValue,
-            'confirmed' => 'same:' . $ruleValue,
-            'in' => 'in:' . $ruleValue,
-            default => $vuelidateRule
-        };
+        if (str_contains($ruleValue, ':')) {
+            $ruleParts = explode(':', $ruleValue);
+            return $ruleParts[0];
+        } else {
+            return $ruleValue;
+        }
     }
 }

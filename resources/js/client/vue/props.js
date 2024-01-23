@@ -1,5 +1,6 @@
 // props.js
 export const commonProps = {
+    id: String,
     modelValue: String|Object,
     label: String,
     type: String,
