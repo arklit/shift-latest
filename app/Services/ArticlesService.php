@@ -34,10 +34,4 @@ class ArticlesService
             ->publicationSorted()
             ->paginate(perPage: Article::PER_PAGE, page: $page);
     }
-
-    public function setBreadCrumbs(ClientRoutes $route, ClientRoutes $parentRoute, string $title, array $params): void
-    {
-        Breadcrumbs::for($route->value, fn(Trail $t) => $t->parent($parentRoute->value)
-            ->push($title, route($route->value, $params)));
-    }
 }

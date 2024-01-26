@@ -6,7 +6,7 @@ use App\Enums\OrchidRoutes;
 use App\Models\ProtoModel;
 use App\Orchid\Abstractions\EditScreenPattern;
 use App\Orchid\Layouts\EmptyModal;
-use App\Orchid\Traits\CommandBarDeletableTrait;
+use App\Traits\CommandBarDeletableTrait;
 use Illuminate\Http\Request;
 use Orchid\Support\Facades\Layout;
 

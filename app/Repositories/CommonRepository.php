@@ -34,13 +34,10 @@ class CommonRepository extends AbstractRepository
             $keys[] = "'$key'";
             $when .= "WHEN '$key' THEN '$value' ";
         }
-//        array_keys($data)
-//        dd($keys);
         $whereIn = implode(',', $keys);
 
         $sql = $when . "ELSE null END WHERE `key` IN ($whereIn)";
 
-//        dd($sql);
         try {
             return self::execute($sql);
         } catch (Exception $e) {

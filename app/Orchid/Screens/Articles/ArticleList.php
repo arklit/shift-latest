@@ -7,7 +7,7 @@ use App\Models\Article;
 use App\Models\ArticleCategory;
 use App\Orchid\Abstractions\ListScreenPattern;
 use App\Orchid\Helpers\OrchidHelper;
-use App\Orchid\Traits\ActivitySignsTrait;
+use App\Traits\ActivitySignsTrait;
 use Illuminate\Support\Str;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\DropDown;
