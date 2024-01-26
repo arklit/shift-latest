@@ -103,9 +103,9 @@ return [
                 'field_class' => 'field_checkbox',
                 'container_field_class' => 'field_container checkbox',
                 'vue_field_component' => 'inputComponent',
-                'rules' => ['required'],
+                'rules' => ['accepted'],
                 'messages' => [
-                    'required' => 'Это поле обязательно для заполнения',
+                    'accepted' => 'Это поле обязательно для заполнения'
                 ]
             ],
             'fields_1' => [
@@ -129,6 +129,7 @@ return [
                     'placeholder' => '',
                     'type' => 'text',
                     'id' => 'docs',
+                    'accept' => 'application/pdf,application/vnd.ms-excel',
                     'field_class' => 'field_file',
                     'container_field_class' => 'field_container',
                     'vue_field_component' => 'fileComponent',

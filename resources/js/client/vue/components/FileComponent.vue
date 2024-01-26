@@ -2,7 +2,7 @@
     <div>
         <label :for="id" v-html="label"></label>
         <span v-if="length > 1">{{ length }}</span>
-        <input :id="id" :class="className" type="file" :name="name" :multiple="multiple" @change="onFileChange">
+        <input :id="id" :class="className" type="file" :name="name" :accept="accept" :multiple="multiple" @change="onFileChange">
         <span v-if="errors" class="form-error" v-show="errors.$dirty">{{ errors.$errors[0]?.$message }}</span>
 
         <div v-if="multiple" v-for="(file, index) in downloadedFiles" :key="index">

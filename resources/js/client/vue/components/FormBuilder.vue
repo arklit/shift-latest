@@ -18,6 +18,7 @@
                     :errors="v$.formModel[subKey]"
                     :mask="field.mask ?? ''"
                     :multiple="field.multiple ?? false"
+                    :accept="field.accept ?? ''"
                     @update:modelValue="updateField(subKey, $event);"
                 />
             </div>
@@ -35,6 +36,7 @@
                 :errors="v$.formModel[key]"
                 :mask="field.mask ?? ''"
                 :multiple="field.multiple ?? false"
+                :accept="field.accept ?? ''"
                 @update:modelValue="updateField(key, $event);"
             />
         </div>
@@ -177,8 +179,8 @@ export default {
             } else if (ruleName === 'between') {
                 const [min, max] = ruleName.split(':')[1].split(',');
                 return between([min, max]);
-            } else if (ruleName === 'same') {
-                return sameAs(ruleName);
+            } else if (ruleName === 'accepted') {
+                return sameAs(true);
             } else {
                 return null; // Возвращаем null для неизвестных правил
             }
