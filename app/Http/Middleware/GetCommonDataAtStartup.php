@@ -10,12 +10,12 @@ class GetCommonDateAtStartup
 {
     public function handle(Request $request, Closure $next)
     {
-        $configsData = CommonRepository::take()->getConfigurationData()->toArray();
+        $configsData = CommonRepository::take()->getConfigurationData();
 
         if (!empty($configsData)) {
             $configs = [];
             foreach ($configsData as $datum) {
-                $configs['rocont.' . $datum['key']] = $datum['value'];
+                $configs[$datum['key']] = $datum['value'];
             }
             config($configs);
         }

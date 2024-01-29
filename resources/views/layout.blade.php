@@ -9,8 +9,10 @@
 
     @include('components.common.meta')
     @vite('resources/scss/client/app.scss')
+    {!! config('head') !!}
 </head>
 <body>
+{!! config('body_start') !!}
 <form id="myForm">
     @csrf
     <input type="text" name="name" placeholder="Имя" required>
@@ -38,14 +40,14 @@
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             }
         })
-            .then(function(response) {
+            .then(function (response) {
                 return response.json();
             })
-            .then(function(data) {
+            .then(function (data) {
                 console.log(data);
                 // Обработка ответа от сервера
             })
-            .catch(function(error) {
+            .catch(function (error) {
                 console.error(error);
                 // Обработка ошибок
             });
@@ -63,25 +65,26 @@
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             }
         })
-            .then(function(response) {
+            .then(function (response) {
                 return response.json();
             })
-            .then(function(data) {
+            .then(function (data) {
                 console.log(data);
                 // Обработка ответа от сервера
             })
-            .catch(function(error) {
+            .catch(function (error) {
                 console.error(error);
                 // Обработка ошибок
             });
     });
 </script>
-    <div class="page">
-        @include('components.header')
-        @yield('content')
-        @include('components.common.seo-text-block')
-        @include('components.footer')
-    </div>
-    @vite(['resources/js/client/app.js'])
+<div class="page">
+    @include('components.header')
+    @yield('content')
+    @include('components.common.seo-text-block')
+    @include('components.footer')
+</div>
+@vite(['resources/js/client/app.js'])
+{!! config('body_end') !!}
 </body>
 </html>
