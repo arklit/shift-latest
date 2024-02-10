@@ -3,6 +3,7 @@ import tingle from 'tingle.js'
 
 export default class CropperRocont extends window.Controller {
 
+    static selected = null
     static targets = [
         "source",
         "upload"
@@ -95,8 +96,8 @@ export default class CropperRocont extends window.Controller {
             event.target.value = null;
             return;
         }
-        event.target.classList.add('selectedCropper')
 
+        this.selected = event.target.closest('.cropper-parent')
         this.getModal().open();
 
         let reader = new FileReader();
@@ -122,23 +123,21 @@ export default class CropperRocont extends window.Controller {
             formData.append('width', this.data.get('width'));
             formData.append('height', this.data.get('height'));
 
-            let parent = document.querySelector('.selectedCropper').closest('.cropper-parent');
-
             window.axios.post(this.prefix('/systems/files'), formData)
                 .then((response) => {
                     let image = response.data.url;
                     let targetValue = this.data.get('target');
 
-                    parent.querySelector('.cropper-preview').src = image;
-                    parent.querySelector('.cropper-preview').classList.remove('none');
-                    parent.querySelector('.cropper-remove').classList.remove('none');
-                    parent.querySelector('.cropper-path').value = response.data[targetValue];
+                    this.selected.querySelector('.cropper-preview').src = image;
+                    this.selected.querySelector('.cropper-preview').classList.remove('none');
+                    this.selected.querySelector('.cropper-remove').classList.remove('none');
+                    this.selected.querySelector('.cropper-path').value = response.data[targetValue];
 
                     // add event for listener
-                    parent.querySelector('.cropper-path').dispatchEvent(new Event("change"));
+                    this.selected.querySelector('.cropper-path').dispatchEvent(new Event("change"));
 
                     modal.close();
-                    document.querySelector('.selectedCropper').classList.remove('selectedCropper')
+                    this.selected = null
                 })
                 .catch((error) => {
                     this.alert('Validation error', 'File upload error');
@@ -152,16 +151,15 @@ export default class CropperRocont extends window.Controller {
      *
      */
     clear(event) {
-        event.target.classList.add('selectedCropper')
-        let parent = document.querySelector('.selectedCropper').closest('.cropper-parent');
+        this.selected = event.target.closest('.cropper-parent')
+        if (this.selected) {
+            this.selected.querySelector('.cropper-path').value = '';
+            this.selected.querySelector('.cropper-preview').src = '';
+            this.selected.querySelector('.cropper-preview').classList.add('none');
+            this.selected.querySelector('.cropper-remove').classList.add('none');
+        }
 
-        parent.querySelector('.cropper-path').value = '';
-        parent.querySelector('.cropper-change-input').value = '';
-        parent.querySelector('.cropper-preview').src = '';
-        parent.querySelector('.cropper-preview').classList.add('none');
-        parent.querySelector('.cropper-remove').classList.add('none');
-
-        event.target.classList.remove('selectedCropper')
+        this.selected = null
     }
 
     clearEvent() {
