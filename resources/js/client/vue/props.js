@@ -7,8 +7,10 @@ export const commonProps = {
     placeholder: String,
     name: String,
     className: String,
+    labelClassName: String,
     value: String|Boolean,
     errors: Object,
+    errorClass: String,
     mask: String,
     accept: String, // Добавляем новый пропс accept для указания допустимых типов файлов
     multiple: {

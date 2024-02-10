@@ -1,14 +1,14 @@
 <template>
-    <label :for="id" v-html="label"></label>
+    <label :for="id" :class="labelClassName" v-html="label"></label>
     <input :id="id" autocomplete="off" v-on:keydown.prevent :class="className + ' base-date-input'" :type="type" :placeholder="placeholder" :name="name" :value="internalValue"/>
-    <span v-if="errors" class="form-error" v-show="errors.$dirty">{{ errors.$errors[0]?.$message }}</span>
+    <span v-if="errors" :class="errorClass ?? 'form-error'" v-show="errors.$dirty">{{ errors.$errors[0]?.$message }}</span>
 </template>
 
 <script>
 
 import AirDatepicker from "air-datepicker";
 import 'air-datepicker/air-datepicker.css';
-import { commonProps } from '../props.js';
+import { commonProps } from '../../props.js';
 export default {
     props: commonProps,
     emits: ['update:modelValue'],
@@ -19,7 +19,7 @@ export default {
     },
     mounted() {
         const today = new Date();
-        this.datePicker = new AirDatepicker('.base-date-input', {
+        this.datePicker = new AirDatepicker('#'+this.id, {
             autoClose: true,
             // minDate: today,
             onShow: () => {

@@ -1,7 +1,7 @@
 <template>
     <form :class="formInfo.form_class" v-if="form && true">
-        {{ formInfo.title }} <br>
-        {{ formInfo.description }}
+        <div v-if="formInfo.title">{{ formInfo.title }}</div>
+        <div v-if="formInfo.description">{{ formInfo.description }}</div>
         <div v-for="(field, key) in form" :class="field.container_field_class ?? 'fields_group'" :key="key">
             <div v-if="key.includes('fields_')" :class="field.container_field_class" v-for="(field, subKey) in field"
                  :key="subKey">
@@ -10,12 +10,14 @@
                     :id="field.id"
                     :name="subKey"
                     :label="field.label"
+                    :labelClassName="field.label_class_name"
                     :value="field.value"
                     :modelValue="formModel[subKey]"
                     :type="field.type"
                     :placeholder="field.placeholder"
                     :class-name="field.field_class"
                     :errors="v$.formModel[subKey]"
+                    :error-class="field.error_class"
                     :mask="field.mask ?? ''"
                     :multiple="field.multiple ?? false"
                     :accept="field.accept ?? ''"
@@ -28,12 +30,14 @@
                 :name="key"
                 :id="field.id"
                 :label="field.label"
+                :labelClassName="field.label_class_name"
                 :value="field.value"
                 :modelValue="formModel[key]"
                 :type="field.type"
                 :placeholder="field.placeholder"
                 :class-name="field.field_class"
                 :errors="v$.formModel[key]"
+                :error-class="field.error_class"
                 :mask="field.mask ?? ''"
                 :multiple="field.multiple ?? false"
                 :accept="field.accept ?? ''"
@@ -47,11 +51,13 @@
 <script>
 import axios from "axios";
 import {isInteger, toNumber} from "lodash/lang";
-import InputComponent from './InputComponent.vue'
-import SelectComponent from "./SelectComponent.vue";
-import DatePickerComponent from "./DatePickerComponent.vue";
-import FileComponent from "./FileComponent.vue";
+import InputComponent from './fields/InputComponent.vue'
+import SelectComponent from "./fields/SelectComponent.vue";
+import DatePickerComponent from "./fields/DatePickerComponent.vue";
+import FileComponent from "./fields/FileComponent.vue";
+import TextAreaComponent from "./fields/TextAreaComponent.vue";
 import {useVuelidate} from '@vuelidate/core';
+import moment from "moment";
 import {
     required,
     minLength,
@@ -72,6 +78,7 @@ export default {
     name: 'FormBuilder',
     components: {
         InputComponent,
+        TextAreaComponent,
         SelectComponent,
         DatePickerComponent,
         FileComponent
@@ -159,7 +166,7 @@ export default {
                 const ruleValue = parseInt(ruleName.split(':')[1]); // Получаем значение из строки
                 return minLength(ruleValue);
             } else if (ruleName === 'required') {
-                return required ;
+                return required;
             } else if (ruleName === 'required_if') {
                 return requiredIf(ruleName);
             } else if (ruleName === 'required_unless') {
@@ -181,9 +188,24 @@ export default {
                 return between([min, max]);
             } else if (ruleName === 'accepted') {
                 return sameAs(true);
+            } else if (ruleName.includes('before_or_equal')) {
+                return this.dateBefore;
+            } else if (ruleName.includes('after_or_equal')) {
+                return this.dateAfter;
             } else {
                 return null; // Возвращаем null для неизвестных правил
             }
+        },
+
+        dateAfter() {
+            const dateFrom = moment(this.formModel.date_from, 'DD.MM.YYYY');
+            const dateTo = moment(this.formModel.date_to, 'DD.MM.YYYY');
+            return dateTo.isSameOrAfter(dateFrom);
+        },
+        dateBefore() {
+            const dateFrom = moment(this.formModel.date_from, 'DD.MM.YYYY');
+            const dateTo = moment(this.formModel.date_to, 'DD.MM.YYYY');
+            return dateFrom.isSameOrBefore(dateTo);
         },
 
         processFields(fields, parentPath, validationRules, validationMessages) {
@@ -245,4 +267,3 @@ export default {
     }
 }
 </script>
-

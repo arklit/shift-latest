@@ -1,12 +1,12 @@
 <template>
-    <label>{{ label }}</label>
+    <label :class="labelClassName">{{ label }}</label>
     <v-select :class="className" :options="options" v-model="selectedValue" @input="onInput"></v-select>
-    <span v-if="errors" class="form-error" v-show="errors.$dirty">{{ errors.$errors[0]?.$message }}</span>
+    <span v-if="errors" :class="errorClass ?? 'form-error'" v-show="errors.$dirty">{{ errors.$errors[0]?.$message }}</span>
 </template>
 
 <script>
 import vSelect from 'vue-select';
-import { commonProps } from '../props.js';
+import { commonProps } from '../../props.js';
 export default {
     components: {
         'v-select': vSelect,
