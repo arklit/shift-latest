@@ -6,7 +6,7 @@ use App\Repositories\CommonRepository;
 use Closure;
 use Illuminate\Http\Request;
 
-class GetCommonDateAtStartup
+class GetCommonDataAtStartup
 {
     public function handle(Request $request, Closure $next)
     {
