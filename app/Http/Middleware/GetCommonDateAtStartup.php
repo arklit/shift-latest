@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Repositories\CommonRepository;
+use App\Services\ConfiguratorService;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -10,7 +11,8 @@ class GetCommonDateAtStartup
 {
     public function handle(Request $request, Closure $next)
     {
-        $configsData = CommonRepository::take()->getConfigurationData()->toArray();
+        $configsData = CommonRepository::take()->getConfigurationData();
+        $config = new ConfiguratorService($configsData);
 
         if (!empty($configsData)) {
             $configs = [];
@@ -19,6 +21,12 @@ class GetCommonDateAtStartup
             }
             config($configs);
         }
+
+        view()->composer('*',
+            function ($view) use ($config) {
+                $view->with(compact('config'));
+            }
+        );
 
         return $next($request);
     }

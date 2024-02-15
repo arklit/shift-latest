@@ -3,11 +3,12 @@
 namespace App\Orchid\Screens\Articles;
 
 use App\Enums\OrchidRoutes;
+use App\Models\Article;
 use App\Models\ArticleCategory;
 use App\Orchid\Abstractions\EditScreenPattern;
 use App\Orchid\Helpers\OrchidValidator;
 use App\Orchid\Screens\Modals\EmptyModal;
-use App\Orchid\Traits\CommandBarDeletableTrait;
+use App\Traits\CommandBarDeletableTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -24,7 +25,9 @@ class ArticleCategoryEdit extends EditScreenPattern
     protected string $deleteMessage = 'Запись успешно удалена';
     protected string $createMessage = 'Запись успешно добавлена';
     protected string $titleColumnName = 'title';
-
+    protected array $relations = [
+        'articles' => Article::class
+    ];
     use CommandBarDeletableTrait;
 
     public function __construct()

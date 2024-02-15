@@ -14,7 +14,6 @@ use Orchid\Support\Facades\Layout;
 
 class ConfiguratorEdit extends EditScreenPattern
 {
-    public string $name = 'Конфигуратор';
     protected string $createTitle = 'Создание конфигурации';
     protected string $updateTitle = 'Редактирование конфигурации';
     protected array $fields = [];
@@ -23,7 +22,9 @@ class ConfiguratorEdit extends EditScreenPattern
     {
         $this->route = OrchidRoutes::CONFIGURATOR;
         $this->redirectTo = $this->route->base();
+        $this->name = $this->route->getTitle();
     }
+
 
     public function commandBar()
     {

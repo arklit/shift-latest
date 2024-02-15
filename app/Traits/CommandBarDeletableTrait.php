@@ -1,6 +1,6 @@
 <?php
 
-    namespace App\Orchid\Traits;
+    namespace App\Traits;
 
     use Orchid\Screen\Actions\Button;
     use Orchid\Screen\Actions\Link;

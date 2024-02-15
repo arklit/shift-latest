@@ -2,8 +2,7 @@
 
 namespace App\Models;
 
-use App\Orchid\Traits\ActiveScopeTrait;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use App\Traits\IsActiveScopeTrait;
 use Illuminate\Support\Facades\Route;
 use Kalnoy\Nestedset\NodeTrait;
 use Tabuna\Breadcrumbs\Breadcrumbs;
@@ -11,7 +10,7 @@ use Tabuna\Breadcrumbs\Trail;
 
 class Page extends ProtoModel
 {
-    use ActiveScopeTrait;
+    use IsActiveScopeTrait;
     use NodeTrait;
 
     public const TABLE_NAME = 'pages';

@@ -5,7 +5,7 @@ function sendModalForm(form) {
     const formData = new FormData(form); // Создаем объект FormData из формы
     const xhr = new XMLHttpRequest(); // Создаем объект XMLHttpRequest
     setFormId(form, formData); // Вызываем функцию setFormId для установки идентификатора формы
-    xhr.open('POST', '/ajax/send-modal'); // Устанавливаем метод и URL запроса
+    xhr.open('POST', '/orchid/send-modal'); // Устанавливаем метод и URL запроса
     xhr.onreadystatechange = function () {
         if (xhr.readyState === XMLHttpRequest.DONE) { // Проверяем состояние запроса
             if (xhr.status === 200) { // Проверяем статус ответа
