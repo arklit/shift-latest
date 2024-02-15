@@ -25,9 +25,7 @@ class ConfiguratorEdit extends EditScreenPattern
         $this->route = OrchidRoutes::CONFIGURATOR;
         $this->name = $this->route->getTitle();
         $this->redirectTo = $this->route->base();
-        $this->name = $this->route->getTitle();
     }
-
 
     public function commandBar()
     {
@@ -44,7 +42,6 @@ class ConfiguratorEdit extends EditScreenPattern
     public function layout(): array
     {
         $config = config('presets.configurator');
-        $configsData = CommonRepository::take()->getConfigurationData();
 
         $fields = [];
         $layouts = [];
@@ -62,13 +59,13 @@ class ConfiguratorEdit extends EditScreenPattern
 
                 $fields[$index][$key] =
                     (new ConfiguratorService())
-                        ->getField(
-                            fieldType: $configField['type'],
-                            name: 'item.' . $key,
-                            label: $configField['title'],
-                            value: $fieldValue->value ?: '',
-                            mask: $configField['mask'] ?? null,
-                            isRequired: $configField['required']);
+                    ->getField(
+                        fieldType: $configField['type'],
+                        name: 'item.' . $key,
+                        label: $configField['title'],
+                        value: $fieldValue->value ?: '',
+                        mask: $configField['mask'] ?? null,
+                        isRequired: $configField['required']);
             }
         }
 
