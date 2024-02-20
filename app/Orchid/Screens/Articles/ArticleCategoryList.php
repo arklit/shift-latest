@@ -6,11 +6,8 @@ use App\Enums\OrchidRoutes;
 use App\Models\Article;
 use App\Models\ArticleCategory;
 use App\Orchid\Abstractions\ListScreenPattern;
-use App\Orchid\Filters\DateCreatedFilter;
-use App\Orchid\Filters\IsActiveFilter;
 use App\Orchid\Helpers\OrchidHelper;
-use App\Orchid\Traits\ActivitySignsTrait;
-use Lintaba\OrchidTables\Screen\TDChecklist;
+use App\Traits\ActivitySignsTrait;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\DropDown;
 use Orchid\Screen\Actions\Link;
@@ -24,6 +21,9 @@ class ArticleCategoryList extends ListScreenPattern
 {
     use ActivitySignsTrait;
 
+    protected array $relations = [
+        'articles' => Article::class,
+    ];
     public function __construct()
     {
         $this->route = OrchidRoutes::ARTICLE_CATEGORIES;
@@ -68,7 +68,17 @@ class ArticleCategoryList extends ListScreenPattern
     {
         $id = $item->id;
         $title = $item->getTitle();
-        $item->delete() ? Alert::success("Запись №:$id - '$title'  успешно удалена!")
-            : Alert::error("Произошла ошибка при попытке удалить запись");
+
+        if ($item->articles()->count()) {
+            Alert::error('Категорию нельзя удалить если она содержит записи');
+        } else {
+            try {
+                $this->detachRelations($item);
+                $item->delete();
+            } catch (\Exception $exception) {
+                Alert::error($exception->getMessage());
+            }
+            Alert::success("Запись №:$id - '$title'  успешно удалена!");
+        }
     }
 }

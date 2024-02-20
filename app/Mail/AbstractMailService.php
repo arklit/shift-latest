@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\Configurator;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Mail;
 
 abstract class AbstractMailService
@@ -23,15 +24,22 @@ abstract class AbstractMailService
         }
 
         if (!empty($memoryFiles)) {
+            /** @var UploadedFile $file */
             foreach ($memoryFiles as $name => $file) {
-                $this->mailer->attachData($file, $name);
+                if (is_array($file)) {
+                    foreach ($file as $f) {
+                        $this->mailer->attachData($f->get(), $f->getClientOriginalName());
+                    }
+                } else {
+                    $this->mailer->attachData($file->get(), $file->getClientOriginalName());
+                }
             }
         }
 
         $key = $this->mailKey ?? 'email';
 
-        $recipients = Configurator::query()->where('key', $key)->first()->value;
-        Mail::to($recipients)->send($this->mailer);
+//        $recipients = Configurator::query()->where('key', $key)->first()->value;
+        Mail::to('pechenkov39@gmail.com')->send($this->mailer);
         return true;
     }
 }

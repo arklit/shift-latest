@@ -10,7 +10,7 @@ use App\Orchid\Fields\Cropper;
 use App\Orchid\Fields\TinyMce;
 use App\Orchid\Helpers\OrchidValidator;
 use App\Orchid\Screens\Modals\EmptyModal;
-use App\Orchid\Traits\CommandBarDeletableTrait;
+use App\Traits\CommandBarDeletableTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
@@ -19,10 +19,8 @@ use Orchid\Screen\Fields\DateTimer;
 use Orchid\Screen\Fields\Group;
 use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Fields\Label;
-use Orchid\Screen\Fields\Picture;
 use Orchid\Screen\Fields\Select;
 use Orchid\Screen\Fields\TextArea;
-use Orchid\Screen\Fields\Upload;
 use Orchid\Support\Facades\Layout;
 
 class ArticleEdit extends EditScreenPattern

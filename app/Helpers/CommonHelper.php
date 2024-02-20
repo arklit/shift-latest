@@ -27,23 +27,57 @@ class CommonHelper
         return (is_null($block) || empty($data)) ? $data : $data[$block];
     }
 
-    public static function setBreadCrumbs(string $route, string $parentRoute, string $title, array $params): void
+    public function extractValidationRulesAndMessages($form): array
     {
-        Breadcrumbs::for($route, fn(Trail $t) => $t->parent($parentRoute)
-            ->push($title, route($route, $params)));
+        $validationRules = [];
+        $validationMessages = [];
+
+        $this->processFields($form['fields'], '', $validationRules, $validationMessages);
+
+        return [
+            'rules' => $validationRules,
+            'messages' => $validationMessages
+        ];
     }
 
-    public static function getBreadCrumbs(Trail $t, array $crumbs)
+    private function processFields($fields, $parentPath, &$validationRules, &$validationMessages): void
     {
-        $t->parent(ClientRoutes::MAIN_PAGE);
-        foreach ($crumbs as $crumb) {
-            $t->push($crumb['title'], route($crumb['route'], $crumb['params'] ?? []));
+        foreach ($fields as $fieldName => $field) {
+            $path = $parentPath ? $parentPath . '.' . $fieldName : $fieldName;
+            if (isset($field['rules'])) {
+                foreach ($field['rules'] as $ruleValue) {
+                    $rule = $this->convertVuelidateRulesToLaravel($ruleValue);
+                    $validationRules[$path][] = $ruleValue;
+                    $validationMessages[$path . '.' . $rule] = $field['messages'][$rule];
+                }
+            }
+
+            if (str_contains($fieldName, 'fields_')) {
+                foreach ($field as $subFieldName => $subField) {
+                    if (isset($subField['rules'])) {
+                        $subPath = $subFieldName;
+                        foreach ($subField['rules'] as $subRuleValue) {
+                            $subRule = $this->convertVuelidateRulesToLaravel($subRuleValue);
+                            $validationRules[$subPath][] = $subRuleValue;
+                            $validationMessages[$subPath . '.' . $subRule] = $subField['messages'][$subRule];
+                        }
+                    }
+                }
+            }
+
+            if (isset($field['fields']) && is_array($field['fields'])) {
+                $this->processFields($field['fields'], $path, $validationRules, $validationMessages);
+            }
         }
-        return $t;
     }
 
-    public static function setCrumbs($crumbs): void
+    private function convertVuelidateRulesToLaravel($ruleValue): string
     {
-        Breadcrumbs::for(Route::currentRouteName(), fn(Trail $t) => CommonHelper::getBreadCrumbs($t, $crumbs));
+        if (str_contains($ruleValue, ':')) {
+            $ruleParts = explode(':', $ruleValue);
+            return $ruleParts[0];
+        } else {
+            return $ruleValue;
+        }
     }
 }

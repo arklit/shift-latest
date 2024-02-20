@@ -44,7 +44,6 @@
                    accept="image/*"
                    class="d-none">
         </div>
-        <img src="" alt="" id="test-image">
 
         <input class="cropper-path"
                type="text"

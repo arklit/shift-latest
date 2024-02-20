@@ -8,7 +8,7 @@ use App\Models\Page;
 use App\Orchid\Abstractions\EditScreenPattern;
 use App\Orchid\Helpers\OrchidValidator;
 use App\Orchid\Screens\Modals\EmptyModal;
-use App\Orchid\Traits\CommandBarDeletableTrait;
+use App\Traits\CommandBarDeletableTrait;
 use Illuminate\Http\Request;
 use Orchid\Screen\Layouts\Rows;
 use Orchid\Support\Facades\Alert;

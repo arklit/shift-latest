@@ -1,6 +1,6 @@
 <?php
 
-    namespace App\Orchid\Traits;
+    namespace App\Traits;
 
     use Illuminate\Support\Str;
     use ReflectionClass;

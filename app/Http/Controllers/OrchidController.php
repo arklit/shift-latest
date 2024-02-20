@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
-class AjaxController extends Controller
+class OrchidController extends Controller
 {
     public function validateForm(FormRequest $request)
     {

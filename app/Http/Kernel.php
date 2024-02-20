@@ -4,7 +4,7 @@ namespace App\Http;
 
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\EncryptCookies;
-use App\Http\Middleware\GetCommonDateAtStartup;
+use App\Http\Middleware\GetCommonDataAtStartup;
 use App\Http\Middleware\GetSeoData;
 use App\Http\Middleware\Pages;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
@@ -64,7 +64,7 @@ class Kernel extends HttpKernel
             VerifyCsrfToken::class,
             SubstituteBindings::class,
             GetSeoData::class,
-            GetCommonDateAtStartup::class,
+            GetCommonDataAtStartup::class,
         ],
 
         'api' => [
