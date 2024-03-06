@@ -24,8 +24,8 @@ services:
     working_dir: /var/www/${DOCKER_NAME}/site
     volumes:
       - /etc/localtime:/etc/localtime
-      - ./docker/php-fpm/php.ini:/etc/php/8.2/fpm/conf.d/99-overrides.ini
-      - ./docker/php-fpm/php-fpm.conf:/etc/php/8.2/fpm/pool.d/z-overrides.conf
+      - ./docker/php-fpm/php.ini:/etc/php/8.3/fpm/conf.d/99-overrides.ini
+      - ./docker/php-fpm/php-fpm.conf:/etc/php/8.3/fpm/pool.d/z-overrides.conf
       - ./docker/php-fpm/log:/var/log/php-fpm
       - .:/var/www/${DOCKER_NAME}/site
     ports:
