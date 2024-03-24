@@ -127,10 +127,6 @@ abstract class EditScreenPattern extends Screen
         } else {
             $this->redirectTo = 'platform.main';
         }
-//        if ($this->redirectAfterUpdate) {
-//            $this->listRedirect = session()->has('listRedirect') ? session()->get('listRedirect') : $this->listRedirect;
-//            $this->redirectParams = session()->has('redirectParams') ? session()->get('redirectParams') : $this->redirectParams;
-//        }
     }
 
     protected function saveItem(ProtoInterface $item, array $data)
@@ -145,7 +141,9 @@ abstract class EditScreenPattern extends Screen
 
             if (!empty($this->relations)) {
                 foreach ($this->relations as $relation) {
-                    $item->$relation()->sync($data[$relation]);
+                    if (!empty($data[$relation])) {
+                        $item->$relation()->sync($data[$relation]);
+                    }
                 }
             }
         } catch (Exception $e) {
@@ -181,7 +179,7 @@ abstract class EditScreenPattern extends Screen
 
         $item->delete();
         $this->redirectAfterDelete();
-        Alert::warning($this->deleteMessage);
+        Alert::success($this->deleteMessage);
         return redirect()->route($this->redirectTo);
     }
 

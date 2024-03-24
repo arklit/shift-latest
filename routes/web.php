@@ -7,15 +7,13 @@ use App\Http\Controllers\FormsController;
 use App\Http\Controllers\MainPageController;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\RobotsTxtController;
-use App\Http\Controllers\SimpleFormsController;
 use App\Http\Controllers\SitemapController;
-use App\Http\Controllers\TemplatesController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\FormBuilderController;
 use App\Http\Middleware\Pages;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/super-test', TestController::class)->name('test-get');
+Route::get('/test-query', [TestController::class, 'getQuery'])->name('getQuery');
 Route::get('/sitemap.xml', SitemapController::class)->name('xml-map');
 Route::get('/robots.txt', RobotsTxtController::class)->name('robots-txt');
 
@@ -26,9 +24,6 @@ Route::group(['prefix' => 'ajax'], function () {
     });
 
     Route::post('/get-form-config/{code}', [FormBuilderController::class, 'getFormConfig']);
-    Route::get('/get-options', [FormBuilderController::class, 'getOptions']);
-
-    Route::post('/search-tree', [PagesController::class, 'search'])->name('search');
     Route::post('/send-modal', [OrchidController::class, 'validateForm'])->name('validate.modals');
 });
 
@@ -43,10 +38,6 @@ Route::group(['as' => 'web.'], function () {
         Route::get('/{categoryCode}', 'getArticlesCategory')->name('category');
         Route::get('/{categoryCode}/p{page}', 'getArticlesCategory')->name('category.page')->where(['page' => Constants::REGEX_ID]);
         Route::get('/{categoryCode}/{articleSlug}', 'getArticlePage')->name('card');
-    });
-
-    Route::controller(TemplatesController::class)->middleware(Pages::class)->as('templates.')->prefix('/')->group(function () {
-        Route::get('/about/company', 'getCompanyPage')->name('about');
     });
 
     Route::controller(PagesController::class)->middleware(Pages::class)->as('pages.')->prefix('/')->group(function () {

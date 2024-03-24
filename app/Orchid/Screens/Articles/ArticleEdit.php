@@ -25,13 +25,9 @@ use Orchid\Support\Facades\Layout;
 
 class ArticleEdit extends EditScreenPattern
 {
+    use CommandBarDeletableTrait;
     protected string $createTitle = 'Создание статьи';
     protected string $updateTitle = 'Редактирование статьи';
-    protected string $deleteMessage = 'Запись успешно удалена';
-    protected string $createMessage = 'Запись успешно добавлена';
-    protected string $titleColumnName = 'title';
-
-    use CommandBarDeletableTrait;
 
     public function __construct()
     {
@@ -75,11 +71,10 @@ class ArticleEdit extends EditScreenPattern
         $data = $request->input('item');
 
         $validator = (new OrchidValidator($data, []))->setIndividualRules($this->getRules(), $this->getMessages())
-            ->clearQuillTags(['text'])
             ->validate();
 
         if ($item->exists) {
-            $data['slug'] = $item->getIdentifier();
+            $data['slug'] = $item->getCode();
         } else {
             $data['slug'] = Str::slug($data['title']);
             $item->fill($data)->save();

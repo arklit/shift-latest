@@ -13,13 +13,17 @@ export default class CropperRocont extends window.Controller {
      *
      */
     connect() {
-        let image = this.data.get('url') ? this.data.get('url') : this.data.get(`value`);
+        const { url, value } = this.data.get;
+        const image = url ? url : value;
+
+        const preview = this.element.querySelector('.cropper-preview');
+        const remove = this.element.querySelector('.cropper-remove');
 
         if (image) {
-            this.element.querySelector('.cropper-preview').src = image;
+            preview.src = image;
         } else {
-            this.element.querySelector('.cropper-preview').classList.add('none');
-            this.element.querySelector('.cropper-remove').classList.add('none');
+            preview.classList.add('none');
+            remove.classList.add('none');
         }
     }
 
@@ -28,20 +32,20 @@ export default class CropperRocont extends window.Controller {
      * @returns {Modal}
      */
     getModal() {
-        let width = this.data.get('width');
-        let height = this.data.get('height');
+        const { width, height } = this.data.get;
 
-        let html = `<div class="modal-to-clone" role="dialog">
-                                <div class="modal-dialog modal-fullscreen-md-down modal-lg">
-                                    <div class="modal-content-wrapper">
-                                        <div class="modal-content">
-                                            <div class="position-relative">
-                                                <img class="upload-panel">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>`
+        const html = `
+            <div class="modal-to-clone" role="dialog">
+                <div class="modal-dialog modal-fullscreen-md-down modal-lg">
+                    <div class="modal-content-wrapper">
+                        <div class="modal-content">
+                            <div class="position-relative">
+                                <img class="upload-panel">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>`;
 
         this.modal = new tingle.modal({
             footer: true,
@@ -89,8 +93,8 @@ export default class CropperRocont extends window.Controller {
      *
      * @param event
      */
-    upload(event) {
-        let maxFileSize = this.data.get('max-file-size');
+    async upload(event) {
+        const maxFileSize = this.data.get('max-file-size');
         if (maxFileSize !== null && event.target.files[0].size / 1024 / 1024 > maxFileSize) {
             this.alert('Validation error', `The download file is too large. Max size: ${maxFileSize} MB`);
             event.target.value = null;
@@ -102,9 +106,12 @@ export default class CropperRocont extends window.Controller {
 
         let reader = new FileReader();
         reader.readAsDataURL(event.target.files[0]);
-        reader.onloadend = () => {
-            window.cropper.replace(reader.result)
-        };
+        await new Promise(resolve => {
+            reader.onloadend = () => {
+                window.cropper.replace(reader.result);
+                resolve();
+            };
+        });
 
         document.querySelector('.cropper-path').dispatchEvent(new Event("change"));
     }
@@ -113,7 +120,7 @@ export default class CropperRocont extends window.Controller {
      * Action on click button "Crop"
      */
     crop(modal) {
-        window.cropper.getCroppedCanvas({fillColor: '#fff'}).toBlob((blob) => {
+        window.cropper.getCroppedCanvas().toBlob((blob) => {
             const formData = new FormData();
             formData.append('file', blob);
             formData.append('storage', this.data.get('storage'));
@@ -143,7 +150,7 @@ export default class CropperRocont extends window.Controller {
                     this.alert('Validation error', 'File upload error');
                     console.warn(error);
                 });
-        }, 'image/jpeg');
+        });
 
     }
 
@@ -229,5 +236,4 @@ export default class CropperRocont extends window.Controller {
     aspectratiofree() {
         this.cropper.setAspectRatio(NaN);
     }
-
 }

@@ -29,7 +29,6 @@ abstract class AbstractPageLayout extends Rows
     {
         $item = $this->query->all()['item'];
         return [
-            Divider::make('item.heading')->value('Основная информация')->class('mb-20'),
             Group::make([
                 CheckBox::make('item.is_active')->title('Активность')->sendTrueOrFalse(),
                 Label::make('item.page_type')->title('Тип страницы')->value(PagesTypes::from($item->type)->getTitle())->style('margin-bottom:0'),
@@ -47,7 +46,6 @@ abstract class AbstractPageLayout extends Rows
                 TextArea::make('item.announce')->title('Анонс')->rows(5)->help('Анонс, который выводится в описание карточки в списке элементов'),
                 Input::make('item.uri')->title('URI')->required()
             ]),
-            Divider::make('item.heading')->value('Информация о странице')->class('mtb-20'),
         ];
     }
 

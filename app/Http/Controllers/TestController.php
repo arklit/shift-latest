@@ -2,38 +2,59 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\PagesTypes;
-use App\Models\Page;
-use App\Services\Crumbchain;
-use App\Services\StaticPagesService;
-use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
 class TestController extends Controller
 {
-    protected string $managersGuard = 'web';
-    protected ?Authenticatable $manager;
 
-    public function __invoke(Request $request)
+    public function getQuery()
     {
-        $pages = Page::query()->with('ancestors')->get()->toTree();
-        return view('admin.page-tree', compact('pages'));
-//        $url = request()->path();
-//
-//        dd($url);
-//        $data =
-//
-//
-//            abort_if(!auth($this->managersGuard)->check(), 404);
-//        $sp = StaticPage::query()->with('children')->find(5);
-//        StaticPagesService::makeCrumbsChainWithNesting($sp);
-//
-////        Crumbchain::makeParentsChain($sp);
-//        dump(
-////            $sp,
-//            Crumbchain::cs()->getCrumbs()
-//        );
+        /*dd(123);
+        abort_if(!auth('web')->check(), 404);*/
 
+        $routeCollection = Route::getRoutes();
+        $routeList = [];
+        foreach ($routeCollection as $route) {
+            $uri = $route->uri();
+            if (Str::startsWith($uri, 'ajax')) {
+                $routeList[] = [
+                    'method' => $route->methods()[0],
+                    'uri'    => $uri,
+                    'demo'   => json_encode($this->getDemoData($uri)),
+                ];
+            }
+        }
+        return view('test-query', compact('routeList'));
+    }
 
+    private function getDemoData(string $uri)
+    {
+        return match ($uri) {
+            'api/sms/send-code' => [
+                'phone' => '79110896773',
+            ],
+            'api/auth/login' => [
+                'phone' => '79110896773',
+                'code' => '',
+            ],
+            'api/auth/check-inn' => [
+                'inn' => '7703406864',
+            ],
+            'api/cabinet/update-user' => [
+                'name' => 'test',
+                'surname' => 'test',
+                'email' => 'test',
+                'company' => [
+                    'inn' => '123123',
+                    'billing_check' => 'test',
+                    'corporate_check' => 'test',
+                    'address' => 'test',
+                    'bank' => 'test',
+                    'bik' => 'test',
+                ]
+            ],
+            default => []
+        };
     }
 }
