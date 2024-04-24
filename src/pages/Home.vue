@@ -5,10 +5,5 @@ let store = useCounterStore()
 </script>
 
 <template>
-  <main>
-    <div style="display: flex; align-items: center; gap: 30px">
-      <span>{{store.count}}</span>
-      <button @click="store.increment()">counter++</button>
-    </div>
-  </main>
+  <router-view></router-view>
 </template>

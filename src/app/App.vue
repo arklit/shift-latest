@@ -1,12 +1,17 @@
 <template>
-  <div class="app">
-  <RouterView/>
+  <div class="App">
+    <Links :links="links"/>
   </div>
 </template>
+<script lang="ts" setup>
+import Links from '@/entities/Links.vue';
+import Article from '@/entities/Article.vue'
+import {defineComponent} from "vue";
+import {articles} from "@/data/data";
+import {links} from "@/data/data";
+import Shift  from '@/entities/Shift';
 
-<script setup lang="ts">
-import { RouterView} from 'vue-router'
 </script>
 
-<style scoped>
+<style lang="scss">
 </style>
