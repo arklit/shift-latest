@@ -23,11 +23,6 @@ abstract class ProtoModel extends Model implements ProtoInterface
         return $this->title ?? $this->name;
     }
 
-    public function getIdentifier()
-    {
-        return $this->code ?? $this->slug;
-    }
-
     public function getCode()
     {
         return $this->code ?? $this->slug;

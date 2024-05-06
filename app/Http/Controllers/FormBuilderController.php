@@ -13,11 +13,4 @@ class FormBuilderController extends Controller
         $formConfig = FormsConfig::getFormByKey($code);
         return response()->json($formConfig);
     }
-
-    public function getOptions()
-    {
-        $articles = Article::query()->active()->get();
-        $options = $articles->map(fn($article) => ['label' => $article->title, 'value' => $article->id]);
-        return response()->json($options);
-    }
 }

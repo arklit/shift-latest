@@ -5,7 +5,7 @@ function sendModalForm(form) {
     const formData = new FormData(form); // Создаем объект FormData из формы
     const xhr = new XMLHttpRequest(); // Создаем объект XMLHttpRequest
     setFormId(form, formData); // Вызываем функцию setFormId для установки идентификатора формы
-    xhr.open('POST', '/orchid/send-modal'); // Устанавливаем метод и URL запроса
+    xhr.open('POST', '/ajax/send-modal'); // Устанавливаем метод и URL запроса
     xhr.onreadystatechange = function () {
         if (xhr.readyState === XMLHttpRequest.DONE) { // Проверяем состояние запроса
             if (xhr.status === 200) { // Проверяем статус ответа
@@ -23,7 +23,9 @@ function sendModalForm(form) {
                     Object.values(errors).forEach(function (error, index) { // Проходимся по массиву ошибок
                         createErrorList(errorList, error); // Вызываем функцию createErrorList для создания элементов списка ошибок
                         let errorInput = form.querySelector(`[name="item[${Object.keys(errors)[index]}]"]`)// Получаем инпут ошибки
-                        setValidationClass(errorInput, false); // вызываем функцию setValidationClass с аргументами errorInput и false
+                        if (errorInput) {
+                            setValidationClass(errorInput, false); // вызываем функцию setValidationClass с аргументами errorInput и false
+                        }
                     });
 
                     const modalHeader = document.querySelector('.modal-header'); // Находим элемент с классом 'modal-header'
@@ -31,6 +33,7 @@ function sendModalForm(form) {
 
                     scrollToErrorInput(form, errors); // вызываем функцию скроллинга к первому элементу с ошибкой
                     toggleBtnState(formBtn,false);
+                    onCloseModal(); // Вызываем метод удаления ошибки из модалки
                 }
             } else {
                 // Обработка ошибки
@@ -63,6 +66,7 @@ function onCloseModal() {
         }
     });
 }
+
 function createErrorBlock(errorBlock, errorTitle, errorList) {
     errorBlock.classList = 'error-block alert alert-danger rounded shadow-sm mb-3 p-4'; // Устанавливаем классы для блока ошибок
     errorTitle.insertAdjacentHTML('afterbegin', '<strong>О нет! </strong> Измените пару вещей и повторите попытку.'); // Вставляем HTML внутрь заголовка ошибок
@@ -108,16 +112,20 @@ function scrollToErrorInput(form, errors){
     if (errorKeys.length > 0) { // Проверяем, есть ли ключи в массиве
         const firstErrorKey = errorKeys[0]; // Получаем первый ключ
         const inputWithError = form.querySelector(`[name="item[${firstErrorKey}]"]`); // Находим элемент с именем первого ключа
-        const offsetTop = inputWithError.offsetTop - 100; // Получаем вертикальное смещение элемента
-        const modal = form.closest('.modal'); // Находим ближайший родительский элемент с классом "modal"
-        modal.scrollTo({ top: offsetTop, behavior: 'smooth' }); // Скроллим до позиции с учетом смещения
+        if (inputWithError) {
+            const offsetTop = inputWithError.offsetTop - 100; // Получаем вертикальное смещение элемента
+            const modal = form.closest('.modal'); // Находим ближайший родительский элемент с классом "modal"
 
-        modal.addEventListener('scroll', function handleScroll() {
-            if (modal.scrollTop === offsetTop) {
-                inputWithError.focus(); // Устанавливаем фокус на элемент после окончания прокрутки
-                modal.removeEventListener('scroll', handleScroll); // Удаляем обработчик события scroll
-            }
-        });
+
+            modal.scrollTo({ top: offsetTop, behavior: 'smooth' }); // Скроллим до позиции с учетом смещения
+
+            modal.addEventListener('scroll', function handleScroll() {
+                if (modal.scrollTop === offsetTop) {
+                    inputWithError.focus(); // Устанавливаем фокус на элемент после окончания прокрутки
+                    modal.removeEventListener('scroll', handleScroll); // Удаляем обработчик события scroll
+                }
+            });
+        }
     }
 }
 

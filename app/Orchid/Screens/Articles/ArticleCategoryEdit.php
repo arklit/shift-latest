@@ -20,15 +20,10 @@ use Orchid\Support\Facades\Layout;
 
 class ArticleCategoryEdit extends EditScreenPattern
 {
+    use CommandBarDeletableTrait;
     protected string $createTitle = 'Создание категории статей';
     protected string $updateTitle = 'Редактирование категории статей';
-    protected string $deleteMessage = 'Запись успешно удалена';
-    protected string $createMessage = 'Запись успешно добавлена';
-    protected string $titleColumnName = 'title';
-    protected array $relations = [
-        'articles' => Article::class
-    ];
-    use CommandBarDeletableTrait;
+    protected array $relations = ['articles'];
 
     public function __construct()
     {

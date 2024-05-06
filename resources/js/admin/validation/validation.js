@@ -34,16 +34,18 @@ export function validateElement(element) {
 }
 
 export function setValidationClass(element, isValid) {
-    const validationClassList = element.classList;
-    const successClass = 'validation-success'; // Класс для успешной валидации
-    const errorClass = 'validation-error'; // Класс для неуспешной валидации
+    if (element !== null) {
+        const validationClassList = element.classList;
+        const successClass = 'validation-success'; // Класс для успешной валидации
+        const errorClass = 'validation-error'; // Класс для неуспешной валидации
 
-    if (isValid) {
-        validationClassList.remove(errorClass); // Удаление класса неуспешной валидации
-        validationClassList.add(successClass); // Добавление класса успешной валидации
-    } else {
-        validationClassList.remove(successClass); // Удаление класса успешной валидации
-        validationClassList.add(errorClass); // Добавление класса неуспешной валидации
+        if (isValid) {
+            validationClassList.remove(errorClass); // Удаление класса неуспешной валидации
+            validationClassList.add(successClass); // Добавление класса успешной валидации
+        } else {
+            validationClassList.remove(successClass); // Удаление класса успешной валидации
+            validationClassList.add(errorClass); // Добавление класса неуспешной валидации
+        }
     }
 }
 

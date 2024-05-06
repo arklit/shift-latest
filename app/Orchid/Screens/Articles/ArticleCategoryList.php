@@ -20,10 +20,7 @@ use Orchid\Support\Facades\Layout;
 class ArticleCategoryList extends ListScreenPattern
 {
     use ActivitySignsTrait;
-
-    protected array $relations = [
-        'articles' => Article::class,
-    ];
+    protected array $relations = ['articles'];
     public function __construct()
     {
         $this->route = OrchidRoutes::ARTICLE_CATEGORIES;

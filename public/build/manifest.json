@@ -15,7 +15,7 @@
     "src": "public/assets/img/admin/tree/plus.svg"
   },
   "resources/js/admin/app.js": {
-    "file": "assets/app-2214ae8f.js",
+    "file": "assets/app-54ed61b9.js",
     "imports": [
       "__commonjsHelpers-725317a4.js"
     ],
@@ -38,7 +38,7 @@
     "src": "resources/js/client/app.js"
   },
   "resources/scss/admin/app.scss": {
-    "file": "assets/app-8fe63bf7.css",
+    "file": "assets/app-c914a9db.css",
     "isEntry": true,
     "src": "resources/scss/admin/app.scss"
   },

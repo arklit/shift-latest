@@ -270,3 +270,56 @@
     backdrop-filter: blur(10px);
     color: #fff;
 }
+.command-bar-wrapper{
+    top: 0;
+    transition: .1s;
+    .commandbar-layout{
+        transition: .1s;
+        &.sticky{
+            margin-bottom: 0!important;
+            border-top-left-radius: 0!important;
+            border-top-right-radius: 0!important;
+            padding: 10px 1.5rem!important;
+            transition: .1s;
+            h1{
+                transition: .1s;
+                position: relative;
+                bottom: 2px;
+            }
+        }
+    }
+}
+
+.datetime {
+    width: 150px;
+}
+
+.logo-img {
+    background-color: #edeef0;
+    border-radius: 5px;
+    padding: 10px;
+    text-align: center;
+}
+
+.logo-img img {
+    width: 200px
+}
+
+.underline {
+    text-decoration: underline;
+}
+
+.cropper-preview {
+    max-height: 350px;
+    max-width: 350px;
+}
+
+.btn.btn-link {
+    svg {
+        overflow: visible;
+    }
+}
+
+.tox-statusbar__text-container {
+    display: none !important;
+}

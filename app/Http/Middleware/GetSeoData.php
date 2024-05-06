@@ -11,9 +11,10 @@ class GetSeoData
     public function handle(Request $request, Closure $next)
     {
         $url = request()->path();
-        $seo = Seo::query()->where('url', $url)->first();
+        $formattedUrl = $url === '/' ? '/' : '/' . $url . '/';
+        $seo = Seo::query()->where('url', $formattedUrl)->first();
 
-        view()->composer('*',
+        view()->composer(['layout'],
             function ($view) use ($seo) {
                 $view->with(compact('seo'));
             }
@@ -21,4 +22,5 @@ class GetSeoData
 
         return $next($request);
     }
+
 }

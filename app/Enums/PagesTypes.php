@@ -19,7 +19,6 @@ enum PagesTypes: string
     case PAGE_CONTACTS = 'contacts';
     case PAGE_COOPERATION = 'cooperation';
 
-
     public function getLayout()
     {
         return match ($this->value) {
@@ -46,7 +45,7 @@ enum PagesTypes: string
         return match ($this->value) {
             self::PAGE->value => 'Редактирование страницы',
             self::LINK->value => 'Редактирование ссылки',
-            self::PAGE_ABOUT->value => 'Редактирование страницы по шаблону - О нас',
+            self::PAGE_ABOUT->value => 'Редактирование страницы по шаблону - О компании',
             self::PAGE_CONTACTS->value => 'Редактирование страницы по шаблону - Контакты',
             self::PAGE_COOPERATION->value => 'Редактирование страницы по шаблону - Сотрудничество',
         };
@@ -57,7 +56,7 @@ enum PagesTypes: string
         return match ($this->value) {
             self::PAGE->value => 'Страница',
             self::LINK->value => 'Ссылка',
-            self::PAGE_ABOUT->value => 'О нас',
+            self::PAGE_ABOUT->value => 'О компании',
             self::PAGE_CONTACTS->value => 'Контакты',
             self::PAGE_COOPERATION->value => 'Сотрудничество',
         };
@@ -72,5 +71,4 @@ enum PagesTypes: string
         }
         return $array;
     }
-
 }

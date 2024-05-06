@@ -15,10 +15,8 @@ use Orchid\Support\Facades\Layout;
 
 class PageList extends ListScreenPattern
 {
-    protected ?string $listRedirect = 'platform.pages.list';
-    protected ?string $updateRoute = 'platform.pages.edit';
-
     use ActivitySignsTrait;
+    protected ?string $updateRoute = 'platform.pages.edit';
 
     public function __construct()
     {

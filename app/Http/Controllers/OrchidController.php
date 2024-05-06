@@ -23,7 +23,7 @@ class OrchidController extends Controller
             $formData['url'] = Str::finish(Str::start($formData['url'], '/'), '/');
         }
 
-        $rules = ModalValidation::from($formData['modal_id'])->getRules();
+        $rules = ModalValidation::from($formData['modal_id'])->getRules($formData['id'] ?? null);
         $messages = ModalValidation::from($formData['modal_id'])->getMessages();
 
         $validator = Validator::make($formData, $rules, $messages);

@@ -18,7 +18,6 @@ class ConfiguratorEdit extends EditScreenPattern
 {
     protected string $createTitle = 'Создание конфигурации';
     protected string $updateTitle = 'Редактирование конфигурации';
-    protected Collection $configData;
 
     public function __construct()
     {

@@ -1,6 +1,5 @@
 // Функция для обновления скрытых инпутов
 function updateHiddenInputsOrder(dropzonePreviews, element) {
-    console.log('Обновленные превью:');
     let newChildrenWithDataFileId = dropzonePreviews.querySelectorAll('[data-file-id]');
     newChildrenWithDataFileId.forEach((child, index) => {
         let hiddenInputs = element.querySelectorAll('input[type="hidden"][class*="files-"]');

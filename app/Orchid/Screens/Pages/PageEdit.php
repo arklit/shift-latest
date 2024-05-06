@@ -16,12 +16,9 @@ use Orchid\Support\Facades\Layout;
 
 class PageEdit extends EditScreenPattern
 {
-    protected ?string $listRedirect = 'platform.pages.list';
-    protected string $deleteMessage = 'Запись успешно удалена';
-    protected string $titleName = 'name';
-    protected ?Rows $layout = null;
-
     use CommandBarDeletableTrait;
+    protected string $deleteMessage = 'Запись успешно удалена';
+    protected ?Rows $layout = null;
 
     public function __construct()
     {
