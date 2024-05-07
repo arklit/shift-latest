@@ -10,6 +10,7 @@ use App\Orchid\Screens\Articles\ArticleCategoryList;
 use App\Orchid\Screens\Articles\ArticleEdit;
 use App\Orchid\Screens\Articles\ArticleList;
 use App\Orchid\Screens\ConfiguratorEdit;
+use App\Orchid\Screens\CreatorScreen;
 use App\Orchid\Screens\Pages\LinkLayout;
 use App\Orchid\Screens\Pages\PageLayout;
 use App\Orchid\Screens\Pages\PageList;
@@ -39,6 +40,7 @@ Route::screen('/robots', RobotsScreen::class)->name(OrchidRoutes::ROBOTS->base()
 Route::screen('/sitemap', SitemapScreen::class)->name(OrchidRoutes::SITEMAP->base());
 Route::screen('/seo', SeoScreen::class)->name(OrchidRoutes::SEO->base());
 Route::screen('/configurator', ConfiguratorEdit::class)->name(OrchidRoutes::CONFIGURATOR->base());
+Route::screen('/creator', CreatorScreen::class)->name(OrchidRoutes::SCREEN_CREATOR->base());
 
 Route::screen('/pages', PageList::class)->name('platform.pages.list');
 Route::screen('/pages/{item}', PageEdit::class)->name('platform.pages.edit');
