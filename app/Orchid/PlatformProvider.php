@@ -43,6 +43,7 @@ class PlatformProvider extends OrchidServiceProvider
             ]),
             Menu::make('Настройки сайта')->route(OrchidRoutes::CONFIGURATOR->base())->icon('settings'),
             Menu::make('Создание экранов')->route(OrchidRoutes::SCREEN_CREATOR->base())->icon(''),
+            //menu-place
 
             Menu::make(__('Users'))->icon('user')->route('platform.systems.users')
                 ->permission('platform.systems.users')->title('Права доступа'),

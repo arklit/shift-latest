@@ -18,8 +18,8 @@ class ModelName extends ProtoModel
 
     public const TABLE_NAME = 'model_table';
     protected $table = self::TABLE_NAME;
-    protected $allowedSorts = [//..allowedSorts];
-    protected $allowedFilters = [//..allowedFilters];
+    protected $allowedSorts = ['is_active', 'sort', 'title', 'code',//..allowedSorts];
+    protected $allowedFilters = ['title' => Like::class, 'code' => Like::class, 'is_active' => IsActiveFilter::class,//..allowedFilters];
 
     /*public function proto_relation(): HasMany
     {

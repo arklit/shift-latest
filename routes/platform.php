@@ -11,24 +11,20 @@ use App\Orchid\Screens\Articles\ArticleEdit;
 use App\Orchid\Screens\Articles\ArticleList;
 use App\Orchid\Screens\ConfiguratorEdit;
 use App\Orchid\Screens\CreatorScreen;
-use App\Orchid\Screens\Pages\LinkLayout;
-use App\Orchid\Screens\Pages\PageLayout;
 use App\Orchid\Screens\Pages\PageList;
 use App\Orchid\Screens\Pages\PageEdit;
 use App\Orchid\Screens\PlatformScreen;
 use App\Orchid\Screens\Role\RoleEditScreen;
 use App\Orchid\Screens\Role\RoleListScreen;
 use App\Orchid\Screens\Seo\RobotsScreen;
-use App\Orchid\Screens\Seo\SeoEdit;
 use App\Orchid\Screens\Seo\SeoScreen;
 use App\Orchid\Screens\Seo\SitemapScreen;
-use App\Orchid\Screens\StaticPages\StaticPageEdit;
-use App\Orchid\Screens\StaticPages\StaticPageList;
 use App\Orchid\Screens\User\UserEditScreen;
 use App\Orchid\Screens\User\UserListScreen;
 use App\Orchid\Screens\User\UserProfileScreen;
 use Illuminate\Support\Facades\Route;
 use Tabuna\Breadcrumbs\Trail;
+//use-place
 
 Route::prefix('systems')->group(function () {
     Route::post('files', [FilesController::class, 'upload'])->name('systems.files.upload');
@@ -47,6 +43,7 @@ Route::screen('/pages/{item}', PageEdit::class)->name('platform.pages.edit');
 
 OrchidHelper::setAdminRoutes(OrchidRoutes::ARTICLE_CATEGORIES->value, ArticleCategoryList::class, ArticleCategoryEdit::class);
 OrchidHelper::setAdminRoutes(OrchidRoutes::ARTICLES->value, ArticleList::class, ArticleEdit::class);
+//route-place
 
 // Platform > Profile
 Route::screen('profile', UserProfileScreen::class)->name('platform.profile')->breadcrumbs(fn (Trail $trail) => $trail

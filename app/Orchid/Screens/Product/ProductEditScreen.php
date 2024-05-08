@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Orchid\Screens\DirectoryName;
+namespace App\Orchid\Screens\Product;
 
 use App\Enums\OrchidRoutes;
-use App\Models\ProtoModel;
+use App\Models\Product;
 use App\Orchid\Abstractions\EditScreenPattern;
 use App\Orchid\Fields\Cropper;
 use App\Orchid\Helpers\OrchidValidator;
@@ -19,20 +19,20 @@ use Orchid\Screen\Fields\TextArea;
 use Orchid\Support\Facades\Alert;
 use Orchid\Support\Facades\Layout;
 
-class StubEditScreen extends EditScreenPattern
+class ProductEditScreen extends EditScreenPattern
 {
-    protected string $createTitle = 'Создание ITEM';
-    protected string $updateTitle = 'Редактирование ITEM';
+    protected string $createTitle = 'Создание товари';
+    protected string $updateTitle = 'Редактирование товари';
 
     use CommandBarDeletableTrait;
 
     public function __construct()
     {
-        $this->route = OrchidRoutes::PROTO_MODEL;
+        $this->route = OrchidRoutes::PRODUCT;
         $this->routeName = $this->route->list();
     }
 
-    public function query(ProtoModel $item): array
+    public function query(Product $item): array
     {
         return $this->queryMake($item);
     }
@@ -46,7 +46,7 @@ class StubEditScreen extends EditScreenPattern
                     Input::make('item.title')->title('Название')->required(),
                     Input::make('item.code')->title('Код'),
                     Input::make('item.sort')->title('Сортировка')->type('number')->value(0)->required(),
-                    //..fields
+                    
                 ]),
             ]),
             Layout::modal('deleteItem', EmptyModal::class)->title('Уверены, что хотите удалить запись?')
@@ -54,14 +54,14 @@ class StubEditScreen extends EditScreenPattern
         ];
     }
 
-    public function asyncGetItem(ProtoModel $item)
+    public function asyncGetItem(Product $item)
         {
             return [
                 'item' => $item,
             ];
         }
 
-    public function save(ProtoModel $item, Request $request)
+    public function save(Product $item, Request $request)
     {
         $data = $request->input('item');
 
@@ -76,7 +76,7 @@ class StubEditScreen extends EditScreenPattern
         return $validator->isFail() ? $validator->showErrors($this->route, $item->id) : $this->saveItem($item, $data);
     }
 
-    public function remove(ProtoModel $item): RedirectResponse
+    public function remove(Product $item): RedirectResponse
     {
         /*if ($item->relation()->count() !== 0) {
             Alert::error('Этот элемент не является пустым. Его нельзя удалить');
@@ -89,14 +89,14 @@ class StubEditScreen extends EditScreenPattern
     public function getRules(): array
     {
         return [
-//..rules
+
         ];
     }
 
     public function getMessages(): array
     {
         return [
-//..messages
+
         ];
     }
 }

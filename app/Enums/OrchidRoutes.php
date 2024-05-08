@@ -6,6 +6,7 @@ use Exception;
 
 enum OrchidRoutes: string
 {
+    //case-place
     case ARTICLES = 'article';
     case ARTICLE_CATEGORIES = 'article-category';
     case SEO = 'seo';
@@ -41,6 +42,7 @@ enum OrchidRoutes: string
     public function getTitle(): string
     {
         return match ($this->value) {
+            //title-place
             self::ARTICLES->value => 'Публикации',
             self::ARTICLE_CATEGORIES->value => 'Категории публикаций',
             self::PAGES->value => 'Страницы',
@@ -59,6 +61,7 @@ enum OrchidRoutes: string
     public function isSingle(): bool
     {
         return match ($this->value) {
+            //single-place
             self::ARTICLES->value,
             self::ARTICLE_CATEGORIES->value,
             self::PAGES->value,
