@@ -8,10 +8,11 @@ use Illuminate\Support\Str;
 
 class ScreenGeneratorService
 {
-    public function generateListScreen(string $modelName, array $fields): void
+    public function generateListScreen(string $modelName, array $fields, bool $useModal = false): void
     {
         // Путь к шаблону
-        $listScreenStubPath = app_path('Orchid/Console/Stubs/list-screen.stub');
+        $stubFileName = $useModal ? 'list-screen-modal.php' : 'list-screen.stub';
+        $listScreenStubPath = app_path('Orchid/Console/Stubs/' . $stubFileName);
 
         // Читаем содержимое шаблона
         $listScreenContent = File::get($listScreenStubPath);
@@ -40,6 +41,46 @@ class ScreenGeneratorService
 
         // Изменяем права доступа к файлу
         File::chmod($newListScreenPath, 0777);
+
+        if ($useModal) {
+            $this->generateModal($modelName, $fields);
+        }
+    }
+
+    public function generateModal(string $modelName, array $fields): void
+    {
+        // Путь к шаблону
+        $modalStubPath = app_path('Orchid/Console/Stubs/modal.php');
+
+        // Читаем содержимое шаблона
+        $modalContent = File::get($modalStubPath);
+
+        // Генерируем строки для полей
+        $fieldsString = '';
+        foreach ($fields as $field) {
+            $fieldsString .= "Input::make('item.{$field['code']}')->title('{$field['name']}')";
+            if ($field['isRequired']) {
+                $fieldsString .= "->required()";
+            }
+            $fieldsString .= ",\n";
+        }
+
+        // Заменяем плейсхолдеры на данные пользователя и сгенерированные поля
+        $modalContent = str_replace(['ProtoModalModel', '//fields'], [$modelName . 'Modal', $fieldsString], $modalContent);
+
+        // Путь для нового файла
+        $newModalPath = app_path('Orchid/Screens/Modals/' . $modelName . 'Modal.php');
+
+        // Создаем директорию, если она не существует
+        if (!File::exists(dirname($newModalPath))) {
+            File::makeDirectory(dirname($newModalPath), 0777, true);
+        }
+
+        // Сохраняем новый файл
+        File::put($newModalPath, $modalContent);
+
+        // Изменяем права доступа к файлу
+        File::chmod($newModalPath, 0777);
     }
 
     public function generateEditScreen(string $modelName, string $screenTitle, array $fields): void
@@ -52,8 +93,8 @@ class ScreenGeneratorService
 
         // Генерируем строки для полей
         $fieldsString = '';
-        $rulesString = '';
-        $messagesString = '';
+        $rulesString = "\t\t\t'title' => ['bail', 'required', 'max:255'],\n\t\t\t'sort' => ['bail', 'required'],\n\t\t\t'code' => ['bail', 'nullable','regex:~^[A-Za-z0-9\\-_]+$~'],\n";
+        $messagesString = "\t\t\t'title.required' => 'Введите код категории',\n\t\t\t'title.max' => 'Заголовок не может быть длиннее 255 символов',\n\t\t\t'sort.required' => 'Введите порядок сортировки',\n\t\t\t'code.regex' => 'В коде допустимы только цифры и латинские буквы',\n";
         foreach ($fields as $field) {
             if ($field['is_edit']) {
                 $fieldsString .= "{$field['field_type']}::make('item.{$field['code']}')->title('{$field['name']}')";
@@ -119,6 +160,41 @@ class ScreenGeneratorService
         File::chmod($newModelPath, 0777);
     }
 
+    public function updateModalValidation(string $modalName, string $tableName, array $fields): void
+    {
+        // Получаем путь к файлу
+        $validationPath = app_path('Enums/ModalValidation.php');
+
+        // Получаем содержимое файла
+        $validationContent = File::get($validationPath);
+
+        // Генерируем строки для полей
+        $rulesString = "\t\t\t'title' => ['bail', 'required', 'max:255'],\n\t\t\t'sort' => ['bail', 'required'],\n\t\t\t'code' => ['bail', 'nullable' ,'regex:~^[A-Za-z0-9\\-_]*$~', Rule::unique('{$tableName}')->ignore(\$id)],\n";
+        $messagesString = "\t\t\t'title.required' => 'Введите заголовок',\n\t\t\t'title.max' => 'Заголовок не может быть длиннее 255 символов',\n\t\t\t'sort.required' => 'Введите порядок сортировки',\n\t\t\t'code.regex' => 'В коде допустимы только цифры и латинские буквы',\n\t\t\t'code.unique' => 'Код должен быть уникальным',";
+        foreach ($fields as $field) {
+            if ($field['isRequired']) {
+                $messagesString .= str_repeat(' ', 16) . "'{$field['code']}.required' => 'Введите {$field['name']}',\n";
+            }
+            $rulesString .= str_repeat(' ', 16) . "'{$field['code']}' => ['bail', " . ($field['isRequired'] ? "'required'," : "") . " 'max:255'],\n";
+            $messagesString .= str_repeat(' ', 16) . "'{$field['code']}.max' => '{$field['name']} не может быть длиннее 255 символов',\n";
+        }
+        $caseTitle = strtoupper($modalName).'_MODAL';
+        // Добавляем новый case
+        $newCase = "    case {$caseTitle} = '{$modalName}Modal';\n//case-place";
+        $validationContent = str_replace('//case-place', $newCase, $validationContent);
+
+        // Добавляем новые правила
+        $newRules = "            self::{$caseTitle}->value => [\n{$rulesString}            ],\n//rules-place";
+        $validationContent = str_replace('//rules-place', $newRules, $validationContent);
+
+        // Добавляем новые сообщения
+        $newMessages = "            self::{$caseTitle}->value => [\n{$messagesString}            ],\n//messages-place";
+        $validationContent = str_replace('//messages-place', $newMessages, $validationContent);
+
+        // Сохраняем изменения в файле
+        File::put($validationPath, $validationContent);
+    }
+
     public function updateRoutesEnum(string $screenName, string $screenTitle): void
     {
         // Получаем путь к файлу
@@ -159,7 +235,7 @@ class ScreenGeneratorService
         File::put($providerPath, $providerContent);
     }
 
-    public function updateRoutes(string $modelName): void
+    public function updateRoutes(string $modelName, bool $useModal = false): void
     {
         // Получаем путь к файлу
         $routesPath = base_path('routes/platform.php');
@@ -173,11 +249,19 @@ class ScreenGeneratorService
 
         // Добавляем новые импорты
         $newUseListScreen = "use " . $listScreenClass . ";\n";
-        $newUseEditScreen = "use " . $editScreenClass . ";\n";
-        $routesContent = str_replace('//use-place', $newUseListScreen . $newUseEditScreen . '//use-place', $routesContent);
+        $routesContent = str_replace('//use-place', $newUseListScreen . '//use-place', $routesContent);
+
+        if (!$useModal) {
+            $newUseEditScreen = "use " . $editScreenClass . ";\n";
+            $routesContent = str_replace('//use-place', $newUseEditScreen . '//use-place', $routesContent);
+        }
 
         // Добавляем новый маршрут
-        $newRoute = "OrchidHelper::setAdminRoutes(OrchidRoutes::" . strtoupper($modelName) . "->value, " . class_basename($listScreenClass) . "::class, " . class_basename($editScreenClass) . "::class);\n";
+        $newRoute = "OrchidHelper::setAdminRoutes(OrchidRoutes::" . strtoupper($modelName) . "->value, " . class_basename($listScreenClass) . "::class";
+        if (!$useModal) {
+            $newRoute .= ", " . class_basename($editScreenClass) . "::class";
+        }
+        $newRoute .= ");\n";
         $routesContent = str_replace('//route-place', $newRoute . '//route-place', $routesContent);
 
         // Сохраняем изменения в файле
@@ -201,7 +285,7 @@ class ScreenGeneratorService
         $migrationContent = preg_replace('/\$table->id\(\);\s*/', '', $migrationContent, 1);
 
         // Генерируем код для создания столбцов
-        $defaultColumnsCode = "\$table->id();\n\t\t\t\$table->boolean('is_active')->comment('Активность')->default(true);\n\t\t\t\$table->string('title')->comment('Заголовок');\n\t\t\t\$table->string('code')->comment('Код');\n";
+        $defaultColumnsCode = "\$table->id();\n\t\t\t\$table->boolean('is_active')->comment('Активность')->default(true);\n\t\t\t\$table->string('title')->comment('Заголовок');\n\t\t\t\$table->string('code')->comment('Код');\n\t\t\t\$table->integer('sort')->default(0)->comment('Сортировка');";
         $columnsCode = '';
         $lastFieldIndex = count($fields) - 1;
         foreach ($fields as $index => $field) {

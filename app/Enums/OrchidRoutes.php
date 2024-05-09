@@ -13,7 +13,6 @@ enum OrchidRoutes: string
     case ROBOTS = 'robot';
     case SITEMAP = 'sitemap';
     case PAGES = 'pages';
-    case SCREEN_CREATOR = 'screen-creator';
     case CONFIGURATOR = 'configurator';
 
     public function list(): string
@@ -49,7 +48,6 @@ enum OrchidRoutes: string
             self::SEO->value => 'SEO-модуль',
             self::CONFIGURATOR->value => 'Конфигуратор',
             self::ROBOTS->value => 'Robots.txt',
-            self::SCREEN_CREATOR->value => 'Создание экрана',
             self::SITEMAP->value => 'Карта сайта',
             default => throw new Exception('Unexpected match value'),
         };
@@ -68,7 +66,6 @@ enum OrchidRoutes: string
             self::SEO->value => false,
             self::CONFIGURATOR->value,
             self::SITEMAP->value,
-            self::SCREEN_CREATOR->value,
             self::ROBOTS->value => true,
             default => throw new Exception('Unexpected match value'),
         };

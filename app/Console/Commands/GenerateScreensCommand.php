@@ -15,21 +15,22 @@ class GenerateScreensCommand extends Command
 
     public function handle(ScreenGeneratorService $screenGeneratorService): void
     {
-        $useModal = $this->confirm('Do you want to use a modal window instead of an edit screen?', false);
+        $useModal = $this->askWithCompletion('Do you want to use a modal window instead of an edit screen?', ['yes', 'no'], 'no');
+        $useModal = $useModal === 'yes';
 
-        $modelName = $this->anticipate('Enter model name', []);
-        $screenTitle = $this->anticipate('Enter screen title', []);
-//        $menuTitle = $this->anticipate('Enter menu title', []);
-//        $tableName = strtolower(Str::snake(Str::plural($modelName)));
+        $modelName = $this->askWithCompletion('Enter model name', []);
+        $screenTitle = $this->askWithCompletion('Enter screen title', []);
+        $menuTitle = $this->askWithCompletion('Enter menu title', []);
+        $tableName = strtolower(Str::snake(Str::plural($modelName)));
 
         $fields = [];
         while (true) {
-            $fieldName = $this->anticipate('Enter field name (or "stop" to finish)', []);
+            $fieldName = $this->askWithCompletion('Enter field name (or "stop" to finish)', []);
             if ($fieldName === 'stop') {
                 break;
             }
 
-            $fieldCode = $this->anticipate('Enter field code', []);
+            $fieldCode = $this->askWithCompletion('Enter field code', []);
             $fieldType = $this->choice('Enter Orchid field class', ['Input', 'Cropper', 'Textarea', 'Checkbox', 'Select'], 0);
             $columnType = $this->choice('Enter column type', ['integer', 'string', 'text', 'boolean', 'json'], 0);
             $isList = $this->confirm('Should this field be displayed on the list screen?', true);
@@ -46,24 +47,27 @@ class GenerateScreensCommand extends Command
         }
 
         if ($useModal) {
-//            $screenGeneratorService->generateListScreenForModal($modelName, $fields);
+            $screenGeneratorService->generateListScreen($modelName, $fields, true);
+            $screenGeneratorService->updateRoutes($modelName, true);
+            $screenGeneratorService->updateModalValidation($modelName, $tableName, $fields);
         } else {
             // Generate screens, model, etc. using the existing logic
-//            $screenGeneratorService->generateListScreen($modelName, $fields);
+            $screenGeneratorService->generateListScreen($modelName, $fields);
             $screenGeneratorService->generateEditScreen($modelName, $screenTitle, $fields);
+            $screenGeneratorService->updateRoutes($modelName);
         }
 
         // These methods are common to both scenarios
-//        $screenGeneratorService->generateModel($modelName, $tableName, $fields);
-//        $screenGeneratorService->updateRoutesEnum($modelName, $screenTitle);
-//        $screenGeneratorService->updateMenu($menuTitle, $modelName);
-//        $screenGeneratorService->updateRoutes($modelName);
-//        $screenGeneratorService->createMigration($modelName, $fields);
+        $screenGeneratorService->generateModel($modelName, $tableName, $fields);
+        $screenGeneratorService->updateRoutesEnum($modelName, $screenTitle);
+        $screenGeneratorService->updateMenu($menuTitle, $modelName);
 
-//        if ($this->confirm('Do you want to run the migrations now?', true)) {
-//            Artisan::call('migrate');
-//            $this->info('Migrations run successfully.');
-//        }
+        $screenGeneratorService->createMigration($modelName, $fields);
+
+        if ($this->confirm('Do you want to run the migrations now?', true)) {
+            Artisan::call('migrate');
+            $this->info('Migrations run successfully.');
+        }
 
         $this->info('Screens and model generated successfully.');
     }
