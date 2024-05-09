@@ -8,39 +8,151 @@ use Illuminate\Support\Str;
 
 class ScreenGeneratorService
 {
-    public function generateListScreen(string $modelName, array $fields, bool $useModal = false): void
+    private function getStub(string $stubFileName): string
     {
-        // Путь к шаблону
-        $stubFileName = $useModal ? 'list-screen-modal.php' : 'list-screen.stub';
-        $listScreenStubPath = app_path('Orchid/Console/Stubs/' . $stubFileName);
+        $stubPath = app_path('Orchid/Console/Stubs/' . $stubFileName);
+        return File::get($stubPath);
+    }
 
-        // Читаем содержимое шаблона
-        $listScreenContent = File::get($listScreenStubPath);
+    private function replacePlaceholders(string $content, array $replacements): string
+    {
+        return str_replace(array_keys($replacements), array_values($replacements), $content);
+    }
 
-        // Генерируем строки для полей
+    private function createFile(string $filePath, string $content): void
+    {
+        if (!File::exists(dirname($filePath))) {
+            File::makeDirectory(dirname($filePath), 0777, true);
+        }
+        File::put($filePath, $content);
+        File::chmod($filePath, 0777);
+    }
+
+    private function generateListFieldsString(array $fields, bool $isList = false): string
+    {
         $fieldsString = '';
         foreach ($fields as $field) {
-            if ($field['is_list']) {
+            if ($field['is_list'] === $isList) {
                 $fieldsString .= "TD::make('{$field['code']}', '{$field['name']}')->sort()->filter(),\n";
             }
         }
+        return $fieldsString;
+    }
 
-        // Заменяем плейсхолдеры на данные пользователя и сгенерированные поля
-        $listScreenContent = str_replace(['DirectoryName', 'ProtoModel', 'StubListScreen', '//..fields', 'PROTO_MODEL'], [$modelName, $modelName, $modelName . 'ListScreen', $fieldsString, strtoupper(Str::snake($modelName))], $listScreenContent);
+    private function generateEditFields(array $fields): string
+    {
+        $fieldsString = '';
+        foreach ($fields as $field) {
+            if ($field['is_edit']) {
+                $fieldsString .= "{$field['field_type']}::make('item.{$field['code']}')->title('{$field['name']}')";
+                if ($field['is_required']) {
+                    $fieldsString .= "->required()";
+                }
+                $fieldsString .= ",\n";
+            }
+        }
+        return $fieldsString;
+    }
 
-        // Путь для нового файла
-        $newListScreenPath = app_path('Orchid/Screens/' . $modelName . '/' . $modelName . 'ListScreen.php');
-
-        // Создаем директорию, если она не существует
-        if (!File::exists(dirname($newListScreenPath))) {
-            File::makeDirectory(dirname($newListScreenPath), 0777, true);
+    private function generateRulesString(array $fields, string $tableName, bool $isEdit = false): string
+    {
+        $rulesString = "\t\t\t'title' => ['bail', 'required', 'max:255'],\n\t\t\t'sort' => ['bail', 'required'],\n\t\t\t'code' => ['bail', 'nullable' ,'regex:~^[A-Za-z0-9\\-_]*$~'";
+        if (!$isEdit) {
+            $rulesString .= ", Rule::unique('{$tableName}')->ignore(\$id)],\n";
+        } else {
+            $rulesString .= "],\n";
         }
 
-        // Сохраняем новый файл
-        File::put($newListScreenPath, $listScreenContent);
+        foreach ($fields as $field) {
+            $rulesString .= str_repeat(' ', 16) . "'{$field['code']}' => ['bail', " . ($field['is_required'] ? "'required'," : "") . " 'max:255'],\n";
+        }
+        return $rulesString;
+    }
 
-        // Изменяем права доступа к файлу
-        File::chmod($newListScreenPath, 0777);
+    private function generateMessagesString(array $fields): string
+    {
+        $messagesString = "\t\t\t'title.required' => 'Введите заголовок',\n\t\t\t'title.max' => 'Заголовок не может быть длиннее 255 символов',\n\t\t\t'sort.required' => 'Введите порядок сортировки',\n\t\t\t'code.regex' => 'В коде допустимы только цифры и латинские буквы',\n\t\t\t'code.unique' => 'Код должен быть уникальным',\n";
+        foreach ($fields as $field) {
+            $messagesString .= str_repeat(' ', 16) . "'{$field['code']}.max' => '{$field['name']} не может быть длиннее 255 символов',\n";
+            if ($field['is_required']) {
+                $messagesString .= str_repeat(' ', 16) . "'{$field['code']}.required' => 'Введите {$field['name']}',\n";
+            }
+        }
+        return $messagesString;
+    }
+
+    private function generateAllowedSorts(array $fields): string
+    {
+        $allowedSorts = '';
+        foreach ($fields as $field) {
+            $allowedSorts .= "'{$field['code']}', ";
+        }
+        return $allowedSorts;
+    }
+
+    private function generateAllowedFilters(array $fields): string
+    {
+        $allowedFilters = '';
+        foreach ($fields as $field) {
+            $allowedFilters .= "'{$field['code']}' => Like::class, ";
+        }
+        return $allowedFilters;
+    }
+
+
+    private function generateScreenClass(string $modelName, string $screenType): string
+    {
+        return "App\\Orchid\\Screens\\" . $modelName . "\\" . $modelName . $screenType;
+    }
+
+    private function generateUseStatement(string $class): string
+    {
+        return "use " . $class . ";\n";
+    }
+
+    private function generateRouteStatement(string $modelName, string $listScreenClass, ?string $editScreenClass): string
+    {
+        $routeStatement = "OrchidHelper::setAdminRoutes(OrchidRoutes::" . strtoupper($modelName) . "->value, " . class_basename($listScreenClass) . "::class";
+        if ($editScreenClass) {
+            $routeStatement .= ", " . class_basename($editScreenClass) . "::class";
+        }
+        $routeStatement .= ");\n";
+        return $routeStatement;
+    }
+
+    private function generateDefaultColumnsCode(): string
+    {
+        return "\$table->id();\n\t\t\t\$table->boolean('is_active')->comment('Активность')->default(true);\n\t\t\t\$table->string('title')->comment('Заголовок');\n\t\t\t\$table->string('code')->comment('Код');\n\t\t\t\$table->integer('sort')->default(0)->comment('Сортировка');\n";
+    }
+
+    private function generateColumnsCode(array $fields): string
+    {
+        $columnsCode = '';
+        $lastFieldIndex = count($fields) - 1;
+        foreach ($fields as $index => $field) {
+            $columnsCode .= "\t\t\t\$table->{$field['column_type']}('{$field['code']}')->nullable()->comment('{$field['name']}');";
+            if ($index !== $lastFieldIndex) {
+                $columnsCode .= "\n";
+            }
+        }
+        return $columnsCode;
+    }
+
+    public function generateListScreen(string $modelName, array $fields, bool $useModal = false): void
+    {
+        $stubFileName = $useModal ? 'list-screen-modal.stub' : 'list-screen.stub';
+        $listScreenContent = $this->getStub($stubFileName);
+        $fieldsString = $this->generateListFieldsString($fields, true);
+        $replacements = [
+            'DirectoryName' => $modelName,
+            'ProtoModel' => $modelName,
+            'StubListScreen' => $modelName . 'ListScreen',
+            '//..fields' => $fieldsString,
+            'PROTO_MODEL' => strtoupper(Str::snake($modelName))
+        ];
+        $listScreenContent = $this->replacePlaceholders($listScreenContent, $replacements);
+        $newListScreenPath = app_path('Orchid/Screens/' . $modelName . '/' . $modelName . 'ListScreen.php');
+        $this->createFile($newListScreenPath, $listScreenContent);
 
         if ($useModal) {
             $this->generateModal($modelName, $fields);
@@ -49,149 +161,75 @@ class ScreenGeneratorService
 
     public function generateModal(string $modelName, array $fields): void
     {
-        // Путь к шаблону
-        $modalStubPath = app_path('Orchid/Console/Stubs/modal.php');
+        $modalContent = $this->getStub('modal.stub');
 
-        // Читаем содержимое шаблона
-        $modalContent = File::get($modalStubPath);
+        $fieldsString = $this->generateEditFields($fields);
+        $replacements = ['ProtoModalModel' => $modelName . 'Modal', '//fields' => $fieldsString];
+        $modalContent = $this->replacePlaceholders($modalContent, $replacements);
 
-        // Генерируем строки для полей
-        $fieldsString = '';
-        foreach ($fields as $field) {
-            $fieldsString .= "Input::make('item.{$field['code']}')->title('{$field['name']}')";
-            if ($field['isRequired']) {
-                $fieldsString .= "->required()";
-            }
-            $fieldsString .= ",\n";
-        }
-
-        // Заменяем плейсхолдеры на данные пользователя и сгенерированные поля
-        $modalContent = str_replace(['ProtoModalModel', '//fields'], [$modelName . 'Modal', $fieldsString], $modalContent);
-
-        // Путь для нового файла
         $newModalPath = app_path('Orchid/Screens/Modals/' . $modelName . 'Modal.php');
-
-        // Создаем директорию, если она не существует
-        if (!File::exists(dirname($newModalPath))) {
-            File::makeDirectory(dirname($newModalPath), 0777, true);
-        }
-
-        // Сохраняем новый файл
-        File::put($newModalPath, $modalContent);
-
-        // Изменяем права доступа к файлу
-        File::chmod($newModalPath, 0777);
+        $this->createFile($newModalPath, $modalContent);
     }
 
-    public function generateEditScreen(string $modelName, string $screenTitle, array $fields): void
+    public function generateEditScreen(string $modelName, string $screenTitle, string $tableName, array $fields): void
     {
-        // Путь к шаблону
-        $editScreenStubPath = app_path('Orchid/Console/Stubs/edit-screen.php');
+        $editScreenContent = $this->getStub('edit-screen.stub');
 
-        // Читаем содержимое шаблона
-        $editScreenContent = File::get($editScreenStubPath);
+        $fieldsString = $this->generateEditFields($fields);
+        $rulesString = $this->generateRulesString($fields, $tableName, true);
+        $messagesString = $this->generateMessagesString($fields);
+        $replacements = [
+            'ITEM' => $screenTitle,
+            'DirectoryName' => $modelName,
+            'ProtoModel' => $modelName,
+            'StubEditScreen' => $modelName . 'EditScreen',
+            '//..fields' => $fieldsString,
+            'PROTO_MODEL' => strtoupper(Str::snake($modelName)),
+            '//..rules' => $rulesString,
+            '//..messages' => $messagesString
+        ];
+        $editScreenContent = $this->replacePlaceholders($editScreenContent, $replacements);
 
-        // Генерируем строки для полей
-        $fieldsString = '';
-        $rulesString = "\t\t\t'title' => ['bail', 'required', 'max:255'],\n\t\t\t'sort' => ['bail', 'required'],\n\t\t\t'code' => ['bail', 'nullable','regex:~^[A-Za-z0-9\\-_]+$~'],\n";
-        $messagesString = "\t\t\t'title.required' => 'Введите код категории',\n\t\t\t'title.max' => 'Заголовок не может быть длиннее 255 символов',\n\t\t\t'sort.required' => 'Введите порядок сортировки',\n\t\t\t'code.regex' => 'В коде допустимы только цифры и латинские буквы',\n";
-        foreach ($fields as $field) {
-            if ($field['is_edit']) {
-                $fieldsString .= "{$field['field_type']}::make('item.{$field['code']}')->title('{$field['name']}')";
-                if ($field['isRequired']) {
-                    $fieldsString .= "->required()";
-                    $messagesString .= str_repeat(' ', 12) . "'{$field['code']}.required' => 'Введите {$field['name']}',\n";
-                }
-                $fieldsString .= ",\n";
-                $rulesString .= str_repeat(' ', 12) . "'{$field['code']}' => ['bail', " . ($field['isRequired'] ? "'required'," : "") . " 'max:255'],\n";
-                $messagesString .= str_repeat(' ', 12) . "'{$field['code']}.max' => '{$field['name']} не может быть длиннее 255 символов',\n";
-            }
-        }
-
-        // Заменяем плейсхолдеры на данные пользователя и сгенерированные поля
-        $editScreenContent = str_replace(['ITEM', 'DirectoryName', 'ProtoModel', 'StubEditScreen', '//..fields', 'PROTO_MODEL', '//..rules', '//..messages'], [$screenTitle, $modelName, $modelName, $modelName . 'EditScreen', $fieldsString, strtoupper(Str::snake($modelName)), $rulesString, $messagesString], $editScreenContent);
-
-        // Путь для нового файла
         $newEditScreenPath = app_path('Orchid/Screens/' . $modelName . '/' . $modelName . 'EditScreen.php');
-
-        // Создаем директорию, если она не существует
-        if (!File::exists(dirname($newEditScreenPath))) {
-            File::makeDirectory(dirname($newEditScreenPath), 0777, true);
-        }
-
-        // Сохраняем новый файл
-        File::put($newEditScreenPath, $editScreenContent);
-
-        // Изменяем права доступа к файлу
-        File::chmod($newEditScreenPath, 0777);
+        $this->createFile($newEditScreenPath, $editScreenContent);
     }
 
     public function generateModel(string $modelName, string $tableName, array $fields): void
     {
-        // Путь к шаблону
-        $modelStubPath = app_path('Orchid/Console/Stubs/model.stub');
+        $modelContent = $this->getStub('model.stub');
 
-        // Читаем содержимое шаблона
-        $modelContent = File::get($modelStubPath);
+        $allowedSorts = $this->generateAllowedSorts($fields);
+        $allowedFilters = $this->generateAllowedFilters($fields);
+        $replacements = [
+            'ModelName' => $modelName,
+            'model_table' => $tableName,
+            '//..allowedSorts' => $allowedSorts,
+            '//..allowedFilters' => $allowedFilters
+        ];
+        $modelContent = $this->replacePlaceholders($modelContent, $replacements);
 
-        // Генерируем строки для полей
-        $allowedSorts = '';
-        $allowedFilters = '';
-        foreach ($fields as $field) {
-            $allowedSorts .= "'{$field['code']}', ";
-            $allowedFilters .= "'{$field['code']}' => Like::class, ";
-        }
-
-        // Заменяем плейсхолдеры на данные пользователя и сгенерированные поля
-        $modelContent = str_replace(['ModelName', 'model_table', '//..allowedSorts', '//..allowedFilters'], [$modelName, $tableName, $allowedSorts, $allowedFilters], $modelContent);
-
-        // Путь для нового файла
         $newModelPath = app_path('Models/' . $modelName . '.php');
-
-        // Создаем директорию, если она не существует
-        if (!File::exists(dirname($newModelPath))) {
-            File::makeDirectory(dirname($newModelPath), 0777, true);
-        }
-
-        // Сохраняем новый файл
-        File::put($newModelPath, $modelContent);
-
-        // Изменяем права доступа к файлу
-        File::chmod($newModelPath, 0777);
+        $this->createFile($newModelPath, $modelContent);
     }
 
     public function updateModalValidation(string $modalName, string $tableName, array $fields): void
     {
-        // Получаем путь к файлу
         $validationPath = app_path('Enums/ModalValidation.php');
-
-        // Получаем содержимое файла
         $validationContent = File::get($validationPath);
 
-        // Генерируем строки для полей
-        $rulesString = "\t\t\t'title' => ['bail', 'required', 'max:255'],\n\t\t\t'sort' => ['bail', 'required'],\n\t\t\t'code' => ['bail', 'nullable' ,'regex:~^[A-Za-z0-9\\-_]*$~', Rule::unique('{$tableName}')->ignore(\$id)],\n";
-        $messagesString = "\t\t\t'title.required' => 'Введите заголовок',\n\t\t\t'title.max' => 'Заголовок не может быть длиннее 255 символов',\n\t\t\t'sort.required' => 'Введите порядок сортировки',\n\t\t\t'code.regex' => 'В коде допустимы только цифры и латинские буквы',\n\t\t\t'code.unique' => 'Код должен быть уникальным',";
-        foreach ($fields as $field) {
-            if ($field['isRequired']) {
-                $messagesString .= str_repeat(' ', 16) . "'{$field['code']}.required' => 'Введите {$field['name']}',\n";
-            }
-            $rulesString .= str_repeat(' ', 16) . "'{$field['code']}' => ['bail', " . ($field['isRequired'] ? "'required'," : "") . " 'max:255'],\n";
-            $messagesString .= str_repeat(' ', 16) . "'{$field['code']}.max' => '{$field['name']} не может быть длиннее 255 символов',\n";
-        }
-        $caseTitle = strtoupper($modalName).'_MODAL';
-        // Добавляем новый case
+        $rulesString = $this->generateRulesString($fields, $tableName);
+        $messagesString = $this->generateMessagesString($fields);
+
+        $caseTitle = strtoupper($modalName) . '_MODAL';
         $newCase = "    case {$caseTitle} = '{$modalName}Modal';\n//case-place";
         $validationContent = str_replace('//case-place', $newCase, $validationContent);
 
-        // Добавляем новые правила
         $newRules = "            self::{$caseTitle}->value => [\n{$rulesString}            ],\n//rules-place";
         $validationContent = str_replace('//rules-place', $newRules, $validationContent);
 
-        // Добавляем новые сообщения
         $newMessages = "            self::{$caseTitle}->value => [\n{$messagesString}            ],\n//messages-place";
         $validationContent = str_replace('//messages-place', $newMessages, $validationContent);
 
-        // Сохраняем изменения в файле
         File::put($validationPath, $validationContent);
     }
 
@@ -237,69 +275,43 @@ class ScreenGeneratorService
 
     public function updateRoutes(string $modelName, bool $useModal = false): void
     {
-        // Получаем путь к файлу
         $routesPath = base_path('routes/platform.php');
-
-        // Получаем содержимое файла
         $routesContent = File::get($routesPath);
 
-        // Генерируем пути к классам экранов
-        $listScreenClass = "App\\Orchid\\Screens\\" . $modelName . "\\" . $modelName . "ListScreen";
-        $editScreenClass = "App\\Orchid\\Screens\\" . $modelName . "\\" . $modelName . "EditScreen";
+        $listScreenClass = $this->generateScreenClass($modelName, 'ListScreen');
+        $editScreenClass = $useModal ? null : $this->generateScreenClass($modelName, 'EditScreen');
 
-        // Добавляем новые импорты
-        $newUseListScreen = "use " . $listScreenClass . ";\n";
+        $newUseListScreen = $this->generateUseStatement($listScreenClass);
         $routesContent = str_replace('//use-place', $newUseListScreen . '//use-place', $routesContent);
 
         if (!$useModal) {
-            $newUseEditScreen = "use " . $editScreenClass . ";\n";
+            $newUseEditScreen = $this->generateUseStatement($editScreenClass);
             $routesContent = str_replace('//use-place', $newUseEditScreen . '//use-place', $routesContent);
         }
 
-        // Добавляем новый маршрут
-        $newRoute = "OrchidHelper::setAdminRoutes(OrchidRoutes::" . strtoupper($modelName) . "->value, " . class_basename($listScreenClass) . "::class";
-        if (!$useModal) {
-            $newRoute .= ", " . class_basename($editScreenClass) . "::class";
-        }
-        $newRoute .= ");\n";
+        $newRoute = $this->generateRouteStatement($modelName, $listScreenClass, $editScreenClass);
         $routesContent = str_replace('//route-place', $newRoute . '//route-place', $routesContent);
 
-        // Сохраняем изменения в файле
         File::put($routesPath, $routesContent);
     }
 
     public function createMigration(string $modelName, array $fields): void
     {
-        // Преобразуем имя модели в snake_case и добавляем суффикс "_table"
         $tableName = Str::snake(Str::plural($modelName));
-
-        // Создаем файл миграции
         Artisan::call('make:migration', ['name' => "create_{$tableName}_table", '--create' => $tableName]);
 
-        // Получаем путь к файлу миграции
         $migrationsPath = database_path('migrations');
         $migrationFile = collect(File::files($migrationsPath))->last();
         $migrationContent = File::get($migrationFile);
 
-        // Remove the first occurrence of $table->id();
         $migrationContent = preg_replace('/\$table->id\(\);\s*/', '', $migrationContent, 1);
 
-        // Генерируем код для создания столбцов
-        $defaultColumnsCode = "\$table->id();\n\t\t\t\$table->boolean('is_active')->comment('Активность')->default(true);\n\t\t\t\$table->string('title')->comment('Заголовок');\n\t\t\t\$table->string('code')->comment('Код');\n\t\t\t\$table->integer('sort')->default(0)->comment('Сортировка');";
-        $columnsCode = '';
-        $lastFieldIndex = count($fields) - 1;
-        foreach ($fields as $index => $field) {
-            $columnsCode .= "\t\t\t\$table->{$field['column_type']}('{$field['code']}')->nullable()->comment('{$field['name']}');";
-            if ($index !== $lastFieldIndex) {
-                $columnsCode .= "\n";
-            }
-        }
+        $defaultColumnsCode = $this->generateDefaultColumnsCode();
+        $columnsCode = $this->generateColumnsCode($fields);
 
-        // Добавляем код для создания столбцов в файл миграции
         $schemaCreateLine = "Schema::create('{$tableName}', function (Blueprint \$table) {";
         $migrationContent = str_replace($schemaCreateLine, $schemaCreateLine . "\n" . $defaultColumnsCode . $columnsCode, $migrationContent);
 
-        // Сохраняем изменения в файле миграции
         File::put($migrationFile, $migrationContent);
     }
 }

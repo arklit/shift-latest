@@ -42,7 +42,7 @@ class GenerateScreensCommand extends Command
                 'column_type' => $columnType,
                 'is_list' => $isList,
                 'is_edit' => true,
-                'isRequired' => $isRequired,
+                'is_required' => $isRequired,
             ];
         }
 
@@ -53,7 +53,7 @@ class GenerateScreensCommand extends Command
         } else {
             // Generate screens, model, etc. using the existing logic
             $screenGeneratorService->generateListScreen($modelName, $fields);
-            $screenGeneratorService->generateEditScreen($modelName, $screenTitle, $fields);
+            $screenGeneratorService->generateEditScreen($modelName, $screenTitle, $tableName, $fields);
             $screenGeneratorService->updateRoutes($modelName);
         }
 
