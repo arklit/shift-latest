@@ -19,6 +19,13 @@ class OrchidController extends Controller
     public function validateForm(FormRequest $request)
     {
         $formData = $request->input('item');
+
+        if (array_key_exists('title', $formData) && array_key_exists('code', $formData)) {
+            if (empty($formData['code']) && !empty($formData['title'])) {
+                $formData['code'] = Str::slug($formData['title']);
+            }
+        }
+
         if ($formData['modal_id'] === ModalValidation::SEO_MODAL->value && $formData['url']) {
             $formData['url'] = Str::finish(Str::start($formData['url'], '/'), '/');
         }

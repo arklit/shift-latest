@@ -7,6 +7,7 @@ use Illuminate\Validation\Rule;
 
 enum ModalValidation: string
 {
+//case-place
     case SEO_MODAL = 'SeoModal';
     case PAGE_MODAL = 'choosePageType';
     case DELETE_MODAL = 'deleteItem';
@@ -14,6 +15,7 @@ enum ModalValidation: string
     public function getRules($id = null): array
     {
         return match ($this->value) {
+//rules-place
             self::SEO_MODAL->value => [
                 'url' => ['bail', 'required', Rule::unique('seos')->ignore($id)],
                 'title' => ['bail', 'required', 'max:160'],
@@ -31,6 +33,7 @@ enum ModalValidation: string
     public function getMessages(): array
     {
         return match ($this->value) {
+//messages-place
             self::SEO_MODAL->value => [
                 'title.required' => 'Введите заголовок',
                 'title.max' => 'Заголовок не может быть длиннее 160 символов',

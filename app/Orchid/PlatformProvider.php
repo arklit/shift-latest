@@ -42,6 +42,7 @@ class PlatformProvider extends OrchidServiceProvider
                 Menu::make('Sitemap.xml')->route(OrchidRoutes::SITEMAP->base())->icon('map'),
             ]),
             Menu::make('Настройки сайта')->route(OrchidRoutes::CONFIGURATOR->base())->icon('settings'),
+            //menu-place
 
             Menu::make(__('Users'))->icon('user')->route('platform.systems.users')
                 ->permission('platform.systems.users')->title('Права доступа'),
