@@ -3,33 +3,32 @@
     <swiper
         :slides-per-view="1"
     >
-      <swiper-slide v-for="source in src" :key="source">
+      <swiper-slide v-for="source in article.src" :key="source">
         <img alt="chel" :src="source" class="article__img"/>
       </swiper-slide>
     </swiper>
-    <h1 class="article__title">{{title}}</h1>
-    <div class="article__text" v-html="text">
+    <h1 class="article__title">{{article.title}}</h1>
+    <div class="article__text" v-html="article.text">
     </div>
   </div>
 </template>
-<script>
+<script lang="ts" setup>
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/css';
+import type {ArticleType} from "@/app/types";
+import {ref, watchEffect} from "vue";
+interface Props {
+  article: ArticleType;
+}
 
- export default {
-   name: "Article",
-   components: {Swiper, SwiperSlide},
-   props: {
-     title: String,
-     text: {
-       type: String,
-       default: '',
-     },
-     src: Array,
-   }
+const props = defineProps<Props>();
+const articleRef = ref(props.article);
+
+watchEffect(() => {
+  articleRef.value = props.article;
+});
 
 
- }
 </script>
 <style lang="scss">
 </style>

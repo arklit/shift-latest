@@ -10,7 +10,8 @@ export let articles =  [
     { id: 6, title: 'fashion show inspo', text: '<p>some details from fashion show</p>', src: ['assets/img/he.jpg', 'assets/img/prada.jpg', 'assets/img/sacai.jpg', 'assets/img/noir.jpg'] },
     { id: 5, title: 'colin meredith', text: '<p>фешн энтузиаст colin__meredith  который делает всякие штуки для amine и занимается кастомом горпкорных итемов, в тч арктерикса, приложил руки к созданию сета для 6 дропа системы.</p><p>Такие эксперименты и симбиозы стали возможны, скорее всего, благодаря команде которая трудится над специальными проектами внутри арктерикса:</p><p>@takakasuga</p><p>@jackhwalker</p><p>@love2rage</p><p>@rocks.ca</p><p>@cheynacarr</p>', src: ['assets/img/meredith1.jpg', 'assets/img/meredith2.jpg', 'assets/img/meredith3.jpg', 'assets/img/meredith4.jpg'] },
 ]
-export let links =  [
+
+export let links  =  [
     { text: 'maison kitsune x and wander ss 23', active: true, id: 0 },
     { text: 'nowhere', active: false, id: 1 },
     { text: 'katsuya Kamo', active: false, id: 2 },
