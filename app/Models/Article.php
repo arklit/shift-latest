@@ -2,57 +2,36 @@
 
 namespace App\Models;
 
-use App\Orchid\Filters\CategoryFilter;
 use App\Orchid\Filters\DateCreatedFilter;
-use App\Orchid\Filters\DatePublishFilter;
 use App\Orchid\Filters\IsActiveFilter;
+use App\Traits\CodeScopeTrait;
 use App\Traits\IsActiveScopeTrait;
 use App\Traits\ReadyToPublicationScopeTrait;
 use App\Traits\SortedByPublicationScopeTrait;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
+use App\Traits\SortedScopeTrait;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Orchid\Filters\Types\Like;
 
 class Article extends ProtoModel
 {
     use IsActiveScopeTrait;
+    use SortedScopeTrait;
+    use CodeScopeTrait;
     use ReadyToPublicationScopeTrait;
     use SortedByPublicationScopeTrait;
 
     public const TABLE_NAME = 'articles';
-    public const PER_PAGE = 10;
-
     protected $table = self::TABLE_NAME;
-    protected array $allowedSorts = ['is_active', 'category_id', 'sort', 'title', 'slug', 'created_at', 'publication_date'];
-    protected array $allowedFilters = [
-        'title' => Like::class,
-        'slug' => Like::class,
-        'created_at' => DateCreatedFilter::class,
-        'publication_date' => DatePublishFilter::class,
-        'is_active' => IsActiveFilter::class,
-        'category_id' => CategoryFilter::class
-    ];
+    protected $allowedSorts = ['is_active', 'sort', 'title', 'code','category_id', 'publication_date', 'description', 'image', ];
+    protected $allowedFilters = ['title' => Like::class, 'code' => Like::class, 'is_active' => IsActiveFilter::class,'category_id' => Like::class, 'publication_date' => Like::class, 'description' => Like::class, 'image' => Like::class, ];
 
-    protected $casts = [
-        'publication_date' => 'datetime'
-    ];
-
-    public function category(): BelongsTo
+    public function category(): HasOne
     {
-        return $this->belongsTo(ArticleCategory::class, 'category_id', 'id');
+        return $this->hasOne(ArticleCategory::class, 'id', 'category_id');
     }
 
-    public function setSlug(string $slug): static
+    /*public function proto_relation(): HasMany
     {
-        $this->slug = Str::slug($this->id . '-' . $slug);
-        return $this;
-    }
-
-    public function getDateFormatted()
-    {
-        $date = Carbon::make($this->publication_date);
-        return $date->isoFormat("DD.MM.YYYY");
-    }
+        return $this->hasMany(ProtoModel::class, 'proto_foreign_key', 'id');
+    }*/
 }
-

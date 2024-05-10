@@ -73,9 +73,12 @@ class ScreenGeneratorService
     {
         $messagesString = "\t\t\t'title.required' => 'Введите заголовок',\n\t\t\t'title.max' => 'Заголовок не может быть длиннее 255 символов',\n\t\t\t'sort.required' => 'Введите порядок сортировки',\n\t\t\t'code.regex' => 'В коде допустимы только цифры и латинские буквы',\n\t\t\t'code.unique' => 'Код должен быть уникальным',\n";
         foreach ($fields as $field) {
-            $messagesString .= str_repeat(' ', 16) . "'{$field['code']}.max' => '{$field['name']} не может быть длиннее 255 символов',\n";
+            $lowerFieldName = strtolower($field['name']);
+            $upperFieldName = strtoupper($field['name']);
+
+            $messagesString .= str_repeat(' ', 16) . "'{$field['code']}.max' => '{$upperFieldName} не может быть длиннее 255 символов',\n";
             if ($field['is_required']) {
-                $messagesString .= str_repeat(' ', 16) . "'{$field['code']}.required' => 'Введите {$field['name']}',\n";
+                $messagesString .= str_repeat(' ', 16) . "'{$field['code']}.required' => 'Введите {$lowerFieldName}',\n";
             }
         }
         return $messagesString;
@@ -112,7 +115,7 @@ class ScreenGeneratorService
 
     private function generateRouteStatement(string $modelName, string $listScreenClass, ?string $editScreenClass): string
     {
-        $routeStatement = "OrchidHelper::setAdminRoutes(OrchidRoutes::" . strtoupper($modelName) . "->value, " . class_basename($listScreenClass) . "::class";
+        $routeStatement = "OrchidHelper::setAdminRoutes(OrchidRoutes::" . strtoupper(Str::snake($modelName)) . "->value, " . class_basename($listScreenClass) . "::class";
         if ($editScreenClass) {
             $routeStatement .= ", " . class_basename($editScreenClass) . "::class";
         }
@@ -242,15 +245,15 @@ class ScreenGeneratorService
         $enumContent = File::get($enumPath);
 
         // Добавляем новый case в enum
-        $newCase = "case " . strtoupper($screenName) . " = '" . strtolower($screenName) . "';\n    ";
+        $newCase = "case " . strtoupper(Str::snake($screenName)) . " = '" . strtolower(Str::kebab($screenName)) . "';\n    ";
         $enumContent = str_replace('//case-place', $newCase . '//case-place', $enumContent);
 
         // Добавляем новую запись в getTitle
-        $newTitle = "self::" . strtoupper($screenName) . "->value => '" . $screenTitle . "',\n            ";
+        $newTitle = "self::" . strtoupper(Str::snake($screenName)) . "->value => '" . $screenTitle . "',\n            ";
         $enumContent = str_replace('//title-place', $newTitle . '//title-place', $enumContent);
 
         // Добавляем новую запись в isSingle
-        $newSingle = "self::" . strtoupper($screenName) . "->value => false,\n            ";
+        $newSingle = "self::" . strtoupper(Str::snake($screenName)) . "->value => false,\n            ";
         $enumContent = str_replace('//single-place', $newSingle . '//single-place', $enumContent);
 
         // Сохраняем изменения в файле
@@ -266,7 +269,7 @@ class ScreenGeneratorService
         $providerContent = File::get($providerPath);
 
         // Добавляем новый пункт меню
-        $newMenu = "Menu::make('" . $menuTitle . "')->route(OrchidRoutes::" . strtoupper($modelName) . "->list())->icon(''),\n            ";
+        $newMenu = "Menu::make('" . $menuTitle . "')->route(OrchidRoutes::" . strtoupper(Str::snake($modelName)) . "->list())->icon(''),\n            ";
         $providerContent = str_replace('//menu-place', $newMenu . '//menu-place', $providerContent);
 
         // Сохраняем изменения в файле

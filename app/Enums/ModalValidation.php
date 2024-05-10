@@ -7,6 +7,7 @@ use Illuminate\Validation\Rule;
 
 enum ModalValidation: string
 {
+    case ARTICLE_CATEGORY_MODAL = 'ArticleCategoryModal';
 //case-place
     case SEO_MODAL = 'SeoModal';
     case PAGE_MODAL = 'choosePageType';
@@ -15,6 +16,12 @@ enum ModalValidation: string
     public function getRules($id = null): array
     {
         return match ($this->value) {
+            self::ARTICLE_CATEGORY_MODAL->value => [
+                'title' => ['bail', 'required', 'max:255'],
+                'sort' => ['bail', 'required'],
+                'code' => ['bail', 'nullable', 'regex:~^[A-Za-z0-9\-_]*$~', Rule::unique('article_categories')->ignore($id)],
+                'description' => ['bail', 'max:255'],
+            ],
 //rules-place
             self::SEO_MODAL->value => [
                 'url' => ['bail', 'required', Rule::unique('seos')->ignore($id)],
@@ -33,6 +40,14 @@ enum ModalValidation: string
     public function getMessages(): array
     {
         return match ($this->value) {
+            self::ARTICLE_CATEGORY_MODAL->value => [
+                'title.required' => 'Введите заголовок',
+                'title.max' => 'Заголовок не может быть длиннее 255 символов',
+                'sort.required' => 'Введите порядок сортировки',
+                'code.regex' => 'В коде допустимы только цифры и латинские буквы',
+                'code.unique' => 'Код должен быть уникальным',
+                'description.max' => 'Описание не может быть длиннее 255 символов',
+            ],
 //messages-place
             self::SEO_MODAL->value => [
                 'title.required' => 'Введите заголовок',

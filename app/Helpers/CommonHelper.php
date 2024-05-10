@@ -80,4 +80,24 @@ class CommonHelper
             return $ruleValue;
         }
     }
+
+    public static function setBreadCrumbs(string $route, string $parentRoute, string $title, array $params): void
+    {
+        Breadcrumbs::for($route, fn(Trail $t) => $t->parent($parentRoute)
+            ->push($title, route($route, $params)));
+    }
+
+    public static function getBreadCrumbs(Trail $t, array $crumbs)
+    {
+        $t->parent(ClientRoutes::MAIN_PAGE->value);
+        foreach ($crumbs as $crumb) {
+            $t->push($crumb['title'], route($crumb['route'], $crumb['params'] ?? []));
+        }
+        return $t;
+    }
+
+    public static function setCrumbs($crumbs): void
+    {
+        Breadcrumbs::for(Route::currentRouteName(), fn(Trail $t) => CommonHelper::getBreadCrumbs($t, $crumbs));
+    }
 }

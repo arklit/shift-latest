@@ -13,9 +13,9 @@ class ArticlesService
     public function getCategoriesWithCurrent(?ArticleCategory $currentCategory = null)
     {
         $categories = ArticleCategory::query()->active()->sorted()->whereHas('articles', fn($q) => $q->active()->publicated())->get();
-        $categories->each(function ($category) use ($currentCategory) {
-            $category->current = $category->id === $currentCategory->id;
-        });
+        if ($currentCategory) {
+            $categories->transform(fn($category) => $category->code === $currentCategory->code ? $currentCategory : $category);
+        }
 
         return $categories;
     }
@@ -32,6 +32,6 @@ class ArticlesService
         return $articles->active()
             ->publicated()
             ->publicationSorted()
-            ->paginate(perPage: Article::PER_PAGE, page: $page);
+            ->paginate(perPage: 10, page: $page);
     }
 }

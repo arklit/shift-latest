@@ -30,25 +30,25 @@ class PlatformProvider extends OrchidServiceProvider
         return [
 
             Menu::make('Публикации')->icon('feed')->list([
-                Menu::make('Статьи')->route(OrchidRoutes::ARTICLES->list())->icon('book-open'),
-                Menu::make('Категории статей')->route(OrchidRoutes::ARTICLE_CATEGORIES->list())->icon('list'),
+                Menu::make('Статьи')->route(OrchidRoutes::ARTICLE->list())->icon(''),
+                Menu::make('Категории статей')->route(OrchidRoutes::ARTICLE_CATEGORY->list())->icon('list'),
             ]),
 
-            Menu::make('Страницы')->route(OrchidRoutes::PAGES->list())->icon('info'),
+//            Menu::make('Страницы')->route(OrchidRoutes::PAGES->list())->icon('info'),
 
-            Menu::make('Настройки SEO')->icon('globe')->list([
-                Menu::make('SEO')->route(OrchidRoutes::SEO->base())->icon('docs'),
-                Menu::make('Robots.txt')->route(OrchidRoutes::ROBOTS->base())->icon('android'),
-                Menu::make('Sitemap.xml')->route(OrchidRoutes::SITEMAP->base())->icon('map'),
-            ]),
+//            Menu::make('Настройки SEO')->icon('globe')->list([
+//                Menu::make('SEO')->route(OrchidRoutes::SEO->base())->icon('docs'),
+//                Menu::make('Robots.txt')->route(OrchidRoutes::ROBOTS->base())->icon('android'),
+//                Menu::make('Sitemap.xml')->route(OrchidRoutes::SITEMAP->base())->icon('map'),
+//            ]),
             Menu::make('Настройки сайта')->route(OrchidRoutes::CONFIGURATOR->base())->icon('settings'),
             //menu-place
 
-            Menu::make(__('Users'))->icon('user')->route('platform.systems.users')
-                ->permission('platform.systems.users')->title('Права доступа'),
-
-            Menu::make(__('Roles'))->icon('lock')->route('platform.systems.roles')
-                ->permission('platform.systems.roles'),
+//            Menu::make(__('Users'))->icon('user')->route('platform.systems.users')
+//                ->permission('platform.systems.users')->title('Права доступа'),
+//
+//            Menu::make(__('Roles'))->icon('lock')->route('platform.systems.roles')
+//                ->permission('platform.systems.roles'),
         ];
     }
 

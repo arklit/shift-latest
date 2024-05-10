@@ -95,7 +95,6 @@ class ConfiguratorEdit extends EditScreenPattern
     {
         $data = $request->input('item');
         try {
-            $data['banner_video'] = $data['banner_video'][0];
             $result = CommonRepository::take()->updateConfigurationData($data);
         } catch (\Exception $e) {
             return redirect()->route($this->route->base())->withInput()->withErrors([$e->getMessage()]);

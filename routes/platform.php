@@ -5,10 +5,6 @@ declare(strict_types=1);
 use App\Enums\OrchidRoutes;
 use App\Http\Controllers\FilesController;
 use App\Orchid\Helpers\OrchidHelper;
-use App\Orchid\Screens\Articles\ArticleCategoryEdit;
-use App\Orchid\Screens\Articles\ArticleCategoryList;
-use App\Orchid\Screens\Articles\ArticleEdit;
-use App\Orchid\Screens\Articles\ArticleList;
 use App\Orchid\Screens\ConfiguratorEdit;
 use App\Orchid\Screens\Pages\PageList;
 use App\Orchid\Screens\Pages\PageEdit;
@@ -23,6 +19,9 @@ use App\Orchid\Screens\User\UserListScreen;
 use App\Orchid\Screens\User\UserProfileScreen;
 use Illuminate\Support\Facades\Route;
 use Tabuna\Breadcrumbs\Trail;
+use App\Orchid\Screens\ArticleCategory\ArticleCategoryListScreen;
+use App\Orchid\Screens\Article\ArticleListScreen;
+use App\Orchid\Screens\Article\ArticleEditScreen;
 //use-place
 
 Route::prefix('systems')->group(function () {
@@ -39,8 +38,8 @@ Route::screen('/configurator', ConfiguratorEdit::class)->name(OrchidRoutes::CONF
 Route::screen('/pages', PageList::class)->name('platform.pages.list');
 Route::screen('/pages/{item}', PageEdit::class)->name('platform.pages.edit');
 
-OrchidHelper::setAdminRoutes(OrchidRoutes::ARTICLE_CATEGORIES->value, ArticleCategoryList::class, ArticleCategoryEdit::class);
-OrchidHelper::setAdminRoutes(OrchidRoutes::ARTICLES->value, ArticleList::class, ArticleEdit::class);
+OrchidHelper::setAdminRoutes(OrchidRoutes::ARTICLE_CATEGORY->value, ArticleCategoryListScreen::class);
+OrchidHelper::setAdminRoutes(OrchidRoutes::ARTICLE->value, ArticleListScreen::class, ArticleEditScreen::class);
 //route-place
 
 // Platform > Profile

@@ -14,12 +14,12 @@ return new class extends Migration
     public function up()
     {
         Schema::create('article_categories', function (Blueprint $table) {
-            $table->id();
-            $table->boolean('is_active');
-            $table->string('title');
-            $table->string('code');
-            $table->text('description')->nullable();
-            $table->integer('sort')->default(0);
+$table->id();
+			$table->boolean('is_active')->comment('Активность')->default(true);
+			$table->string('title')->comment('Заголовок');
+			$table->string('code')->comment('Код');
+			$table->integer('sort')->default(0)->comment('Сортировка');
+			$table->text('description')->nullable()->comment('Описание');
             $table->timestamps();
         });
     }

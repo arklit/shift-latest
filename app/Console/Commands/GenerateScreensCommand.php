@@ -32,7 +32,7 @@ class GenerateScreensCommand extends Command
 
             $fieldCode = $this->askWithCompletion('Enter field code', []);
             $fieldType = $this->choice('Enter Orchid field class', ['Input', 'Cropper', 'Textarea', 'Checkbox', 'Select'], 0);
-            $columnType = $this->choice('Enter column type', ['integer', 'string', 'text', 'boolean', 'json'], 0);
+            $columnType = $this->choice('Enter column type', ['integer', 'string', 'text', 'boolean', 'json', 'timestamp'], 0);
             $isList = $this->confirm('Should this field be displayed on the list screen?', true);
             $isRequired = $this->confirm('Is this field required?', true);
             $fields[] = [

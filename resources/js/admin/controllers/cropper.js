@@ -13,8 +13,7 @@ export default class CropperRocont extends window.Controller {
      *
      */
     connect() {
-        const { url, value } = this.data.get;
-        const image = url ? url : value;
+        let image = this.data.get('url') ? this.data.get('url') : this.data.get(`value`);
 
         const preview = this.element.querySelector('.cropper-preview');
         const remove = this.element.querySelector('.cropper-remove');

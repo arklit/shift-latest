@@ -18,21 +18,11 @@ class ArticleCategory extends ProtoModel
 
     public const TABLE_NAME = 'article_categories';
     protected $table = self::TABLE_NAME;
-    protected $allowedSorts = ['is_active', 'sort', 'title', 'code', 'created_at'];
-    protected $allowedFilters = [
-        'title' => Like::class,
-        'code' => Like::class,
-        'is_active' => IsActiveFilter::class,
-        'created_at' => DateCreatedFilter::class
-    ];
+    protected $allowedSorts = ['is_active', 'sort', 'title', 'code','description', ];
+    protected $allowedFilters = ['title' => Like::class, 'code' => Like::class, 'is_active' => IsActiveFilter::class,'description' => Like::class, ];
 
     public function articles(): HasMany
     {
-        return $this->hasMany(Article::class, 'category_id', 'id');
-    }
-
-    public function rules()
-    {
-        return config('presets.orchid.validators.article-category.rules');
+        return $this->hasMany(Article::class, 'category_id');
     }
 }
