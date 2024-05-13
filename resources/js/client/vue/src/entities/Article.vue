@@ -8,17 +8,17 @@
       </swiper-slide>
     </swiper>
     <h1 class="article__title">{{article.title}}</h1>
-    <div class="article__text" v-html="article.text">
+    <div class="article__text" v-html="article.description">
     </div>
   </div>
 </template>
 <script lang="ts" setup>
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/css';
-import type {ArticleType} from "@/app/types";
+import type {ArticleType} from "../app/types";
 import {ref, watchEffect} from "vue";
 interface Props {
-  article: ArticleType;
+  article: ArticleType | null;
 }
 
 const props = defineProps<Props>();

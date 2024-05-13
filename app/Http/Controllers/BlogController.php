@@ -14,8 +14,8 @@ class BlogController extends Controller
 {
     public function getArticlesList(ArticlesService $articlesService, Request $request)
     {
-        $data = $request->all();
-        $page = $data->page ?: 1;
+        $data = $request->input('page');
+        $page = $data?: 1;
 
         $categories = $articlesService->getCategoriesWithCurrent();
         $articles = $articlesService->getArticlesList($page);

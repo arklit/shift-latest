@@ -15,7 +15,7 @@
     "src": "public/assets/img/admin/tree/plus.svg"
   },
   "resources/js/admin/app.js": {
-    "file": "assets/app-563f3cb1.js",
+    "file": "assets/app-0984cf7c.js",
     "imports": [
       "__commonjsHelpers-725317a4.js"
     ],
@@ -23,14 +23,14 @@
     "src": "resources/js/admin/app.js"
   },
   "resources/js/client/app.css": {
-    "file": "assets/app-626ac7d4.css",
+    "file": "assets/app-7c8ef494.css",
     "src": "resources/js/client/app.css"
   },
   "resources/js/client/app.js": {
     "css": [
-      "assets/app-626ac7d4.css"
+      "assets/app-7c8ef494.css"
     ],
-    "file": "assets/app-71bb984a.js",
+    "file": "assets/app-e2784c4c.js",
     "imports": [
       "__commonjsHelpers-725317a4.js"
     ],

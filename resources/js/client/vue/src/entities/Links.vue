@@ -2,7 +2,7 @@
     <div class="links-wrapper" :class="{ 'links-wrapper_open': openRef === true}">
       <div class="links">
         <div
-            v-for="link in links"
+            v-for="link in activeLinks"
             :key="link.id"
             :class="['link',{ active: link.active} ]"
             @click="setActive(link)"
@@ -12,16 +12,15 @@
     </div>
   </template>
   <script lang="ts" setup>
-  import {defineProps, ref, watchEffect} from 'vue'
-    import type {Link} from "@/app/types.ts";
+  import {defineProps, reactive, ref, watchEffect} from 'vue'
+    import type {Link} from "../app/types.ts";
 
     interface Props {
-      links: Link[]
+      links: Link[] | null,
       isOpen: Boolean
     }
 
     const props = defineProps<Props>()
-    const {links, isOpen} = props
 
     const emit = defineEmits(['activateTab', 'prevArticle', 'nextArticle'])
 
@@ -29,9 +28,11 @@
       emit('activateTab', link)
     }
   const openRef = ref(props.isOpen);
+  let activeLinks = reactive(props.links)
 
   watchEffect(() => {
     openRef.value = props.isOpen;
+    activeLinks = props.links
   });
 
   </script>

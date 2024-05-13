@@ -1,6 +1,7 @@
 import { defineConfig, loadEnv } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue'
+import { fileURLToPath, URL } from 'node:url'
 export default ({ mode }) => {
     process.env = {...process.env, ...loadEnv(mode, process.cwd())};
 
@@ -14,6 +15,11 @@ export default ({ mode }) => {
                 host: process.env.VITE_HOST ?? 'localhost',
                 port,
             },
+        },
+        resolve: {
+            alias: {
+                '@': fileURLToPath(new URL('./resources/js/vue/src/', import.meta.url))
+            }
         },
         plugins: [
             vue(),

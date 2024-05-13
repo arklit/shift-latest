@@ -6,6 +6,6 @@ export interface Link {
 export interface ArticleType {
     id: number;
     title: string;
-    text: string;
+    description: string;
     src: string[];
 }
